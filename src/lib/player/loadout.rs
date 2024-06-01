@@ -1,6 +1,5 @@
-use crate::libs::luck::LuckContributor;
-use crate::libs::player::offerings::Offering;
-use crate::libs::team::LivingCount;
+use crate::lib::luck::LuckContributor;
+use crate::lib::player::offerings::Offering;
 use super::{perks, SlipperyMeat};
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
@@ -56,7 +55,7 @@ impl Loadout {
 
 #[cfg(test)]
 mod tests {
-    use crate::libs::player::UpTheAnte;
+    use crate::lib::player::UpTheAnte;
     use super::*;
 
     #[test]

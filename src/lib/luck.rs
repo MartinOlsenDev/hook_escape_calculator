@@ -1,6 +1,5 @@
-use crate::libs::player::{UpTheAnte, SlipperyMeat};
-use crate::libs::team::LivingCount;
-use crate::libs::player::Offering;
+use crate::lib::player::{UpTheAnte, SlipperyMeat};
+use crate::lib::player::Offering;
 
 pub enum LuckContributor{
     Personal(f64),

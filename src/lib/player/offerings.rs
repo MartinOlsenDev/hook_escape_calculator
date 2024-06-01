@@ -1,4 +1,4 @@
-use crate::libs::luck::LuckScope;
+use crate::lib::luck::LuckScope;
 
 pub enum Offering {
     ChalkPouch,
