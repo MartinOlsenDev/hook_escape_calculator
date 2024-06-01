@@ -1,0 +1,23 @@
+[package]
+name = "hook_escape_calculator"
+version = "0.1.0"
+authors = ["Martin Olsen"]
+edition = "2021"
+build = "build.rs"
+license = "GPL-3"
+license-file = "LICENSE.txt"
+description = "A calculator for the odds of escape in the video game Dead By Daylight."
+
+[dependencies]
+slint = "1.6.0"
+# num-rational integration planned for future release
+
+[build-dependencies]
+slint-build = "1.6.0"
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
+codegen-units = 1
+panic = "abort"
