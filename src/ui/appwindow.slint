@@ -1,0 +1,77 @@
+import {
+    Button,
+    VerticalBox,
+    Switch,
+    CheckBox,
+    AboutSlint
+} from "std-widgets.slint";
+
+component TeamDisplay inherits GridLayout {
+    Row {
+        Text { text: "Survivor"; }
+        Text { text: "Slippery Meat"; }
+        Text { text: "Up the Ante"; }
+        Text { text: "Offering"; }
+        Text { text: "Alive"; }
+        Text { text: "Attempt\nChance"; }
+        Text { text: "Escape\nChance"; }
+    }
+    Row {
+        Text { text: "Survivor Name Here"; horizontal-stretch: 0%; }
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        Text { text: "0.0%"; }
+        Text { text: "0.0%"; }
+    }
+    Row {
+        Text { text: "Survivor Name Here"; horizontal-stretch: 0%; }
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        Text { text: "0.0%"; }
+        Text { text: "0.0%"; }
+    }
+    Row {
+        Text { text: "Survivor Name Here"; horizontal-stretch: 0%; }
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        Text { text: "0.0%"; }
+        Text { text: "0.0%"; }
+    }
+    Row {
+        Text { text: "Survivor Name Here"; horizontal-stretch: 0%; }
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        CheckBox {}
+        Text { text: "0.0%"; }
+        Text { text: "0.0%"; }
+    }
+}
+
+export component AppWindow inherits Window {
+    title: "Unhook Calculator";
+    default-font-family: "Open Sans";
+    //background: rgb(36, 36, 40);
+
+    VerticalLayout {
+    alignment: start;
+    advanced := Switch {
+        checked: false;
+        text: "Advanced View";
+    }
+    if !advanced.checked : basicLayout := TeamDisplay {}
+    if advanced.checked : advancedLayout := TeamDisplay {}
+
+    HorizontalLayout {
+        height: parent.height * 1%;
+        alignment: end;
+        AboutSlint {}
+    }
+    }
+}
