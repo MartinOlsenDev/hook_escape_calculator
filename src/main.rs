@@ -1,4 +1,4 @@
-mod libs;
+mod lib;
 slint::include_modules!();
 
 fn main() -> Result<(), slint::PlatformError> {
