@@ -1,33 +1,21 @@
-pub enum LivingCount {
-    Zero,
-    One,
-    Two,
-    Three,
-    Four
-}
+use std::error;
+
+pub struct LivingCount(pub u8);
 
 impl From<LivingCount> for u8 {
     fn from(value: LivingCount) -> Self {
-        match value {
-            LivingCount::Zero => 0_u8,
-            LivingCount::One => 1_u8,
-            LivingCount::Two => 2_u8,
-            LivingCount::Three => 3_u8,
-            LivingCount::Four => 4_u8
-        }
+        value.0
     }
 }
 
+// todo: Create proper error type
 impl TryFrom<u8> for LivingCount {
-    type Error = ();
-    fn try_from(value: u8) -> Result<Self, Self::Error> {
-        match value {
-            0 => Ok(LivingCount::Zero),
-            1 => Ok(LivingCount::One),
-            2 => Ok(LivingCount::Two),
-            3 => Ok(LivingCount::Three),
-            4 => Ok(LivingCount::Four),
-            _ => Err(()),
+    type Error = Box<dyn error::Error>;
+    fn try_from(value: u8) -> Result<Self, Box<dyn error::Error>> {
+        if value <= 4 {
+            Ok(Self(value))
+        } else {
+            Err("invalid living count".into()).into()
         }
     }
 }

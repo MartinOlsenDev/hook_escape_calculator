@@ -1,5 +1,5 @@
-mod living_count;
-pub use living_count::LivingCount;
+pub mod living_count;
+use living_count::LivingCount;
 use super::player::Loadout;
 use super::player::Player;
 
@@ -12,11 +12,16 @@ impl Team {
     fn list(&self) -> &[Player; 4] {
         &self.0
     }
-    fn alive_not_counting(&self, uncounted_player: &Player) -> u8 {
-        self.list().iter()
+    fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
+        /// Counting a list of 4 members that has been filtered cannot possibly exceed 4,
+        /// So LivingCount::try_from is infallible in this case.
+        LivingCount::try_from(
+            self.list().iter()
             .filter(|&player| player.is_alive)
             .filter(|&player| !std::ptr::eq(player, uncounted_player))
-            .count() as u8
+            .count()
+            as u8
+        ).unwrap()
     }
 
     fn calc_global_static_luck(&self) -> f64 {
@@ -28,7 +33,7 @@ impl Team {
     fn calc_global_dyn_luck(&self) -> f64 {
         self.list().iter()
             .filter(|player| player.is_alive)
-            .map(|player| (player, self.alive_not_counting(&player)))
+            .map(|player| (player, (self.alive_not_counting(&player))))
             .map(|(player, living_count)| player.loadout.ante_calculator(living_count))
             .sum()
     }
