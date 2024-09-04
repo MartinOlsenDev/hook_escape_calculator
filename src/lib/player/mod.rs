@@ -1,9 +1,8 @@
 mod loadout;
 mod offerings;
-mod perks;
+pub mod perks;
 
 pub use loadout::Loadout;
-pub use perks::{SlipperyMeat, UpTheAnte};
 pub use offerings::Offering;
 
 

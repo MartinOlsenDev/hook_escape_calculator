@@ -1,4 +1,4 @@
-use crate::lib::player::{UpTheAnte, SlipperyMeat};
+use crate::lib::player::perks::{UpTheAnte, SlipperyMeat};
 use crate::lib::player::Offering;
 
 pub enum LuckContributor{
