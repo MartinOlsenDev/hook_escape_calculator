@@ -3,17 +3,13 @@ name = "hook_escape_calculator"
 version = "0.1.0"
 authors = ["Martin Olsen<Martin.Olsen2@protonmail.com>"]
 edition = "2021"
-build = "build.rs"
 license = "GPL-3"
 license-file = "LICENSE.txt"
 description = "A calculator for the odds of escape in the video game Dead By Daylight."
 
 [dependencies]
-slint = "1.6.0"
+iced = "0.12.1"
 # num-rational integration planned for future release
-
-[build-dependencies]
-slint-build = "1.6.0"
 
 [profile.release]
 opt-level = "z"

@@ -1,6 +1,6 @@
-use crate::lib::luck::LuckContributor;
-use crate::lib::player::offerings::Offering;
-use super::perks::{SlipperyMeat, UpTheAnte};
+use crate::lib::player::luck::LuckContributor;
+use crate::lib::player::luck::offerings::Offering;
+use crate::lib::player::luck::perks::{SlipperyMeat, UpTheAnte};
 use crate::lib::team::living_count::LivingCount;
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
@@ -51,6 +51,12 @@ impl Loadout {
         self.offering.as_ref()
             .map(|o| LuckContributor::from(o).global_bonus())
             .unwrap_or(0.0)
+    }
+}
+
+impl Default for Loadout {
+    fn default() -> Self {
+        todo!()
     }
 }
 

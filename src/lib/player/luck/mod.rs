@@ -1,5 +1,9 @@
-use crate::lib::player::perks::{UpTheAnte, SlipperyMeat};
-use crate::lib::player::Offering;
+pub mod offerings;
+pub mod perks;
+
+use offerings::Offering;
+// todo: avoid glob import
+use perks::*;
 
 pub enum LuckContributor{
     Personal(f64),

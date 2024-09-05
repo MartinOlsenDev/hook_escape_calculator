@@ -6,12 +6,17 @@ use super::player::Player;
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
 
-struct Team([Player; 4]);
+pub struct Team([Player; 4]);
 
+// Modification Methods
 impl Team {
     fn list(&self) -> &[Player; 4] {
         &self.0
     }
+}
+
+// Calculating Methods
+impl Team {
     fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
         /// Counting a list of 4 members that has been filtered cannot possibly exceed 4,
         /// So LivingCount::try_from is infallible in this case.
@@ -71,5 +76,11 @@ impl Team {
             iter.next().unwrap(),
             iter.next().unwrap()
         ]
+    }
+}
+
+impl Default for Team {
+    fn default() -> Self {
+        todo!()
     }
 }
