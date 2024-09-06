@@ -1,62 +1,81 @@
-use super::perks::{SlipperyMeat, UpTheAnte};
-use super::luck::LuckContributor;
+use crate::lib::backend::luck_mod::{CalculatableLuck, CalculatedLuck, DynamicLuck, Luck, LuckSource};
+use super::perks::{Perk, SlipperyMeat, UpTheAnte};
 use super::offerings::Offering;
 use super::living_count::LivingCount;
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
+type PerkSlot = Option<Perk>;
+type OfferingSlot = Option<Offering>;
+
+#[derive(Debug, Clone, Copy)]
 pub struct Loadout {
-    slippery_meat_status: Option<SlipperyMeat>,
-    up_the_ante_status: Option<UpTheAnte>,
-    offering: Option<Offering>
+    perks: [PerkSlot; 4],
+    offering: OfferingSlot
 }
 
 
 // Personally active unhook modifiers from this player
 impl Loadout {
     pub fn make_max_unhook(&self) -> u8 {
-        match self.slippery_meat_status {
-            Some(_) => 6,
-            None => 3
+        let has_slippery = self.perks.iter()
+            .any(|perk| if let Some(Perk::SlipperyMeat(_)) = perk { true } else { false });
+        match has_slippery {
+            true => 6,
+            false => 3
         }
     }
-
-    pub fn make_personal_luck(&self) -> f64 {
-        let slippery_contrib = if let Some(slippery) = &self.slippery_meat_status {
-            LuckContributor::from(slippery).personal_bonus()
-        } else { 0.0 };
-
-        let offering_contrib = if let Some(ref offering) = &self.offering {
-            LuckContributor::from(offering).personal_bonus()
-        } else { 0.0 };
-
-        slippery_contrib + offering_contrib
+    pub fn make_personal_luck(&self) -> Luck {
+        let perk_luck: Luck = self.perks.iter()
+            .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
+            .map(|slot| match slot {
+                Some(LuckSource::Calculated(luck)) => luck.get_personal(),
+                _ => 0.0
+            })
+            .sum();
+        let offering_luck = self.offering
+            .map(|offering| offering.personal_luck())
+            .map(|x| x.get_personal())
+            .unwrap_or(0.0);
+        perk_luck + offering_luck
     }
 }
 
 // Globally active unhook modifiers from this player
 impl Loadout {
-    /// Given a number of living non-self players, returns the bonus from Up the Ante
-    pub fn ante_calculator(&self, living_count: LivingCount) -> f64 {
-        match &self.up_the_ante_status {
-            Some(ref ante) => {
-                let l = LuckContributor::from(ante);
-                l.ante_coefficient().unwrap_or(0.0) * living_count.0 as f64
-            },
-            None => 0.0
-        }
+    /// Returns a list of the dynamic luck sources that await calculation.
+    pub fn get_dyn_luck(&self) -> Vec<DynamicLuck> {
+        self.perks.iter()
+            .filter_map(|&perk| perk)
+            .map(|perk| -> LuckSource { perk.into() })
+            .filter_map(|luck| luck.get_dynamic())
+            .collect()
     }
 
-    pub fn global_static_modifier(&self) -> f64 {
-        self.offering.as_ref()
-            .map(|o| LuckContributor::from(o).global_bonus())
-            .unwrap_or(0.0)
+    pub fn global_static_modifier(&self) -> Luck {
+        let perk_luck: Luck = self.perks.iter()
+            .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
+            .map(|slot| match slot {
+                Some(LuckSource::Calculated(CalculatedLuck::Global(luck))) => luck,
+                _ => 0.0
+            })
+            .sum();
+
+        let offering_luck: Luck = self.offering
+            .map(|offering| offering.personal_luck() )
+            .map(|luck| luck.get_global() )
+            .unwrap_or(0.0);
+
+        perk_luck + offering_luck
     }
 }
 
 impl Default for Loadout {
     fn default() -> Self {
-        todo!()
+        Loadout {
+            perks: [None; 4],
+            offering: None
+        }
     }
 }
 

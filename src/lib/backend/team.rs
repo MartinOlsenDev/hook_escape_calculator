@@ -1,30 +1,29 @@
+use crate::lib::backend::luck_mod::{CalculatedLuck, DynamicLuck};
 use super::living_count::LivingCount;
 use super::player::Player;
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
-
+#[derive(Debug, Clone, Copy, Default)]
 pub struct Team([Player; 4]);
 
 // Modification Methods
 impl Team {
-    fn list(&self) -> &[Player; 4] {
+    pub fn list(&self) -> &[Player; 4] {
         &self.0
     }
 }
 
 // Calculating Methods
 impl Team {
-    fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
-        /// Counting a list of 4 members that has been filtered cannot possibly exceed 4,
-        /// So LivingCount::try_from is infallible in this case.
+    pub fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
         LivingCount::try_from(
             self.list().iter()
             .filter(|&player| player.is_alive)
             .filter(|&player| !std::ptr::eq(player, uncounted_player))
             .count()
             as u8
-        ).unwrap()
+        ).expect("Filtering on a [_;4] cannot yield count exceeding 4.")
     }
 
     fn calc_global_static_luck(&self) -> f64 {
@@ -34,11 +33,21 @@ impl Team {
     }
 
     fn calc_global_dyn_luck(&self) -> f64 {
-        self.list().iter()
-            .filter(|player| player.is_alive)
-            .map(|player| (player, (self.alive_not_counting(&player))))
-            .map(|(player, living_count)| player.loadout.ante_calculator(living_count))
-            .sum()
+        let mut output_luck = 0.0;
+
+        for player in self.list() {
+            for dyn_luck in player.loadout.get_dyn_luck() {
+                if let DynamicLuck::Team(team_dynamic_luck) = dyn_luck {
+                    let calc_luck = team_dynamic_luck.make_global_luck(&self, player);
+                    match calc_luck {
+                        CalculatedLuck::Global(luck) => output_luck += luck,
+                        _ => continue
+                    }
+                }
+            }
+        }
+
+        output_luck
     }
 
     fn full_make_player_luck(&self) -> [f64; 4] {
@@ -74,11 +83,5 @@ impl Team {
             iter.next().unwrap(),
             iter.next().unwrap()
         ]
-    }
-}
-
-impl Default for Team {
-    fn default() -> Self {
-        todo!()
     }
 }

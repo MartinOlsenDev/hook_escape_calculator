@@ -7,3 +7,4 @@ pub mod offerings;
 pub mod perks;
 pub mod player;
 pub mod team;
+pub mod luck_mod;

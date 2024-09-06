@@ -1,5 +1,6 @@
 use super::loadout::Loadout;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Player {
     pub loadout: Loadout,
     pub is_alive: bool
@@ -7,6 +8,9 @@ pub struct Player {
 
 impl Default for Player {
     fn default() -> Self {
-        todo!()
+        Player {
+            loadout: Loadout::default(),
+            is_alive: true
+        }
     }
 }

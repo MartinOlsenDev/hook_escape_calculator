@@ -1,15 +1,38 @@
-mod constants {
-    pub const UTA_TIER1: f64 = 0.01;
-    pub const UTA_TIER2: f64 = 0.02;
-    pub const UTA_TIER3: f64 = 0.03;
+use super::luck_mod::{
+    CalculatableLuck, CalculatedLuck, DynamicLuck,
+    Luck, LuckSource, TeamDynamicLuck
+};
+use super::living_count::LivingCount;
 
-    pub const SM_TIER1: f64 = 0.02;
-    pub const SM_TIER2: f64 = 0.03;
-    pub const SM_TIER3: f64 = 0.04;
+mod constants {
+    use super::Luck;
+    pub const UTA_TIER1: Luck = 0.01;
+    pub const UTA_TIER2: Luck = 0.02;
+    pub const UTA_TIER3: Luck = 0.03;
+
+    pub const SM_TIER1: Luck = 0.02;
+    pub const SM_TIER2: Luck = 0.03;
+    pub const SM_TIER3: Luck = 0.04;
 
 }
 use constants as k;
 
+#[derive(Debug, Clone, Copy)]
+pub enum Perk {
+    UpTheAnte(UpTheAnte),
+    SlipperyMeat(SlipperyMeat)
+}
+
+impl From<Perk> for LuckSource {
+    fn from(value: Perk) -> Self {
+        match value {
+            Perk::UpTheAnte(perk) => perk.into(),
+            Perk::SlipperyMeat(perk) => perk.into()
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum UpTheAnte {
     One,
     Two,
@@ -17,7 +40,10 @@ pub enum UpTheAnte {
 }
 
 impl UpTheAnte {
-    pub fn luck_mod(&self) -> f64 {
+    pub fn make_luck(&self, living_count: &LivingCount) -> Luck {
+        living_count.0 as Luck * self.get_multiplier()
+    }
+    fn get_multiplier(&self) -> Luck {
         match &self {
             Self::One => k::UTA_TIER1,
             Self::Two => k::UTA_TIER2,
@@ -26,18 +52,41 @@ impl UpTheAnte {
     }
 }
 
+impl From<UpTheAnte> for LuckSource {
+    fn from(value: UpTheAnte) -> Self {
+        LuckSource::Dynamic(
+            DynamicLuck::Team(
+                TeamDynamicLuck::UpTheAnte(value)
+            )
+        )
+    }
+}
+
+#[derive(Debug, Clone, Copy)]
 pub enum SlipperyMeat {
     One,
     Two,
     Three
 }
 
-impl SlipperyMeat {
-    pub fn luck_mod(&self) -> f64 {
-        match &self {
-            Self::One => k::SM_TIER1,
-            Self::Two => k::SM_TIER2,
-            Self::Three => k::SM_TIER3
-        }
+impl From<SlipperyMeat> for LuckSource {
+    fn from(value: SlipperyMeat) -> Self {
+        LuckSource::Calculated(value.personal_luck())
     }
 }
+
+impl CalculatableLuck for SlipperyMeat {
+    fn personal_luck(&self) -> CalculatedLuck {
+        CalculatedLuck::Personal(
+            match &self {
+                Self::One => k::SM_TIER1,
+                Self::Two => k::SM_TIER2,
+                Self::Three => k::SM_TIER3
+            }
+        )
+    }
+    fn global_luck(&self) -> CalculatedLuck {
+        CalculatedLuck::Global(0.0)
+    }
+}
+
