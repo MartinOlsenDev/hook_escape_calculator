@@ -1,5 +1,3 @@
-use crate::lib::{team::Team, player::Player};
-
 use iced::{Element, Error, Sandbox, Settings, Theme};
 use iced::widget::{Text, column, Column};
 
