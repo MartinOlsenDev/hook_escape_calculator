@@ -1,6 +1,6 @@
-use crate::lib::backend::luck_mod::{CalculatedLuck, DynamicLuck};
 use super::living_count::LivingCount;
 use super::player::Player;
+use crate::lib::backend::luck::{CalculatedLuck, DynamicLuck};
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
@@ -18,21 +18,23 @@ impl Team {
 impl Team {
     pub fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
         LivingCount::try_from(
-            self.list().iter()
-            .filter(|&player| player.is_alive)
-            .filter(|&player| !std::ptr::eq(player, uncounted_player))
-            .count()
-            as u8
-        ).expect("Filtering on a [_;4] cannot yield count exceeding 4.")
+            self.list()
+                .iter()
+                .filter(|&player| player.is_alive)
+                .filter(|&player| !std::ptr::eq(player, uncounted_player))
+                .count() as u8,
+        )
+        .expect("Filtering on a [_;4] cannot yield count exceeding 4.")
     }
 
     fn calc_global_static_luck(&self) -> f64 {
-        self.list().iter()
+        self.list()
+            .iter()
             .map(|player| player.loadout.global_static_modifier())
             .sum()
     }
 
-    fn calc_global_dyn_luck(&self) -> f64 {
+    pub fn calc_global_dyn_luck(&self) -> f64 {
         let mut output_luck = 0.0;
 
         for player in self.list() {
@@ -41,7 +43,7 @@ impl Team {
                     let calc_luck = team_dynamic_luck.make_global_luck(&self, player);
                     match calc_luck {
                         CalculatedLuck::Global(luck) => output_luck += luck,
-                        _ => continue
+                        _ => continue,
                     }
                 }
             }
@@ -52,24 +54,26 @@ impl Team {
 
     fn full_make_player_luck(&self) -> [f64; 4] {
         let global_luck = self.calc_global_static_luck() + self.calc_global_dyn_luck();
-        let mut iter = self.list().iter()
-            .map(|player|
-                player.loadout.make_personal_luck()
-                + global_luck
-                + BASE_UNHOOK_CHANCE
-            );
+        let mut iter = self
+            .list()
+            .iter()
+            .map(|player| player.loadout.make_personal_luck() + global_luck + BASE_UNHOOK_CHANCE);
 
-        [iter.next().unwrap(),
+        [
             iter.next().unwrap(),
             iter.next().unwrap(),
-            iter.next().unwrap()
+            iter.next().unwrap(),
+            iter.next().unwrap(),
         ]
     }
 
     pub fn make_escape_chances(&self) -> [f64; 4] {
         let lucks = self.full_make_player_luck();
 
-        let mut iter = self.list().iter().zip(lucks)
+        let mut iter = self
+            .list()
+            .iter()
+            .zip(lucks)
             .map(|(player, luck)| (player.loadout.make_max_unhook(), luck))
             .map(|(tries, luck)| {
                 let chance_fail: f64 = 1.0 - luck;
@@ -81,7 +85,7 @@ impl Team {
             iter.next().unwrap(),
             iter.next().unwrap(),
             iter.next().unwrap(),
-            iter.next().unwrap()
+            iter.next().unwrap(),
         ]
     }
 }

@@ -1,14 +1,11 @@
+use iced::widget::{column, Column, Text};
 use iced::{Element, Error, Sandbox, Settings, Theme};
-use iced::widget::{Text, column, Column};
 
-
-pub struct App {
-
-}
+pub struct App {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Message {
-    Base
+    Base,
 }
 
 impl Sandbox for App {
