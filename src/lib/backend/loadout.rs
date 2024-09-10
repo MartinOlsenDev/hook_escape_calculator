@@ -1,6 +1,6 @@
 use super::offering::Offering;
 use super::perk::{Perk, SlipperyMeat, UpTheAnte};
-use crate::lib::backend::luck::{CalculatableLuck, CalculatedLuck, DynamicLuck, Luck, LuckSource};
+use crate::lib::backend::luck::{CalculatableLuck, CalculatedLuck, DynamicLuck, PersonalLuck, GlobalLuck, LuckSource};
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
@@ -9,7 +9,7 @@ type OfferingSlot = Option<Offering>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Loadout {
-    perks: [PerkSlot; 4], // todo: consider making it size 2
+    perks: [PerkSlot; 2], // increase this size if more luck perks are added
     offering: OfferingSlot,
 }
 
@@ -28,8 +28,8 @@ impl Loadout {
             false => 3,
         }
     }
-    pub fn make_personal_luck(&self) -> Luck {
-        let perk_luck: Luck = self
+    pub fn make_personal_luck(&self) -> PersonalLuck {
+        let perk_luck: PersonalLuck = self
             .perks
             .iter()
             .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
@@ -47,6 +47,14 @@ impl Loadout {
     }
 }
 
+// Iterator-based methods
+impl Loadout {
+    pub fn static_personal_iter(&self) -> Box<dyn Iterator<Item = PersonalLuck>> {
+
+        todo!()
+    }
+}
+
 // Globally active unhook modifiers from this player
 impl Loadout {
     /// Returns a list of the dynamic luck sources that await calculation.
@@ -59,8 +67,8 @@ impl Loadout {
             .collect()
     }
 
-    pub fn global_static_modifier(&self) -> Luck {
-        let perk_luck: Luck = self
+    pub fn global_static_modifier(&self) -> GlobalLuck {
+        let perk_luck: GlobalLuck = self
             .perks
             .iter()
             .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
@@ -70,7 +78,7 @@ impl Loadout {
             })
             .sum();
 
-        let offering_luck: Luck = self
+        let offering_luck: GlobalLuck = self
             .offering
             .map(|offering| offering.global_luck())
             .map(|luck| luck.get_global())
@@ -83,7 +91,7 @@ impl Loadout {
 impl Default for Loadout {
     fn default() -> Self {
         Loadout {
-            perks: [None; 4],
+            perks: [None; 2],
             offering: None,
         }
     }
@@ -101,8 +109,6 @@ mod tests {
             perks: [
                 Some(Perk::SlipperyMeat(SlipperyMeat::One)),
                 None,
-                None,
-                None,
             ],
             offering: Some(Offering::SaltStatuette),
         };
@@ -114,7 +120,7 @@ mod tests {
     #[test]
     fn example1() {
         let survivor = Loadout {
-            perks: [None, Some(Perk::UpTheAnte(UpTheAnte::Three)), None, None],
+            perks: [None, Some(Perk::UpTheAnte(UpTheAnte::Three))],
             offering: Some(Offering::ChalkPouch),
         };
         assert_eq!(survivor.make_personal_luck(), 0.01);

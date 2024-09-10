@@ -2,7 +2,8 @@ use super::perk::UpTheAnte;
 use super::player::Player;
 use super::team::Team;
 
-pub type Luck = f64;
+pub type PersonalLuck = f64;
+pub type GlobalLuck = f64;
 
 /// If the luck value is known at comp-time
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -37,18 +38,18 @@ impl LuckSource {
 /// how much.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum CalculatedLuck {
-    Personal(Luck),
-    Global(Luck),
+    Personal(PersonalLuck),
+    Global(GlobalLuck),
 }
 
 impl CalculatedLuck {
-    pub fn get_personal(&self) -> Luck {
+    pub fn get_personal(&self) -> PersonalLuck {
         match self {
             CalculatedLuck::Personal(luck) => *luck,
             _ => 0.0,
         }
     }
-    pub fn get_global(&self) -> Luck {
+    pub fn get_global(&self) -> GlobalLuck {
         match self {
             CalculatedLuck::Global(luck) => *luck,
             _ => 0.0,
@@ -70,19 +71,19 @@ pub enum TeamDynamicLuck {
 }
 
 impl TeamDynamicLuck {
-    pub fn make_global_luck(&self, team: &Team, player: &Player) -> CalculatedLuck {
+    pub fn make_global_luck(&self, team: &Team, player: &Player) -> GlobalLuck {
         let living_count = team.alive_not_counting(player);
         match self {
             TeamDynamicLuck::UpTheAnte(perk) => {
-                CalculatedLuck::Global(perk.make_luck(&living_count))
+                CalculatedLuck::Global(perk.make_luck(&living_count)).get_global()
             }
         }
     }
 }
 
 pub trait CalculatableLuck {
-    fn personal_luck(&self) -> CalculatedLuck;
-    fn global_luck(&self) -> CalculatedLuck;
+    fn personal_luck(&self) -> PersonalLuck;
+    fn global_luck(&self) -> GlobalLuck;
 }
 
 #[cfg(test)]

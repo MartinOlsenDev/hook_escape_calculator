@@ -1,17 +1,15 @@
 use super::living_count::LivingCount;
-use super::luck::{
-    CalculatableLuck, CalculatedLuck, DynamicLuck, Luck, LuckSource, TeamDynamicLuck,
-};
+use super::luck::{CalculatableLuck, CalculatedLuck, DynamicLuck, GlobalLuck, PersonalLuck, LuckSource, TeamDynamicLuck};
 
 mod constants {
-    use super::Luck;
-    pub const UTA_TIER1: Luck = 0.01;
-    pub const UTA_TIER2: Luck = 0.02;
-    pub const UTA_TIER3: Luck = 0.03;
+    use super::{GlobalLuck, PersonalLuck};
+    pub const UTA_TIER1: GlobalLuck = 0.01;
+    pub const UTA_TIER2: GlobalLuck = 0.02;
+    pub const UTA_TIER3: GlobalLuck = 0.03;
 
-    pub const SM_TIER1: Luck = 0.02;
-    pub const SM_TIER2: Luck = 0.03;
-    pub const SM_TIER3: Luck = 0.04;
+    pub const SM_TIER1: PersonalLuck = 0.02;
+    pub const SM_TIER2: PersonalLuck = 0.03;
+    pub const SM_TIER3: PersonalLuck = 0.04;
 }
 use constants as k;
 
@@ -38,10 +36,10 @@ pub enum UpTheAnte {
 }
 
 impl UpTheAnte {
-    pub fn make_luck(&self, living_count: &LivingCount) -> Luck {
-        living_count.0 as Luck * self.get_multiplier()
+    pub fn make_luck(&self, living_count: &LivingCount) -> GlobalLuck {
+        living_count.0 as GlobalLuck * self.get_multiplier()
     }
-    fn get_multiplier(&self) -> Luck {
+    fn get_multiplier(&self) -> GlobalLuck {
         match &self {
             Self::One => k::UTA_TIER1,
             Self::Two => k::UTA_TIER2,
@@ -65,19 +63,19 @@ pub enum SlipperyMeat {
 
 impl From<SlipperyMeat> for LuckSource {
     fn from(value: SlipperyMeat) -> Self {
-        LuckSource::Calculated(value.personal_luck())
+        LuckSource::Calculated(CalculatedLuck::Personal(value.personal_luck()))
     }
 }
 
 impl CalculatableLuck for SlipperyMeat {
-    fn personal_luck(&self) -> CalculatedLuck {
-        CalculatedLuck::Personal(match &self {
+    fn personal_luck(&self) -> PersonalLuck {
+        match &self {
             Self::One => k::SM_TIER1,
             Self::Two => k::SM_TIER2,
             Self::Three => k::SM_TIER3,
-        })
+        }
     }
-    fn global_luck(&self) -> CalculatedLuck {
-        CalculatedLuck::Global(0.0)
+    fn global_luck(&self) -> GlobalLuck {
+        0.0
     }
 }
