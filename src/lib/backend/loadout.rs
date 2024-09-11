@@ -29,31 +29,13 @@ impl Loadout {
         }
     }
     pub fn make_personal_luck(&self) -> PersonalLuck {
-        let perk_luck: PersonalLuck = self
-            .perks
-            .iter()
-            .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
-            .map(|slot| match slot {
-                Some(LuckSource::Calculated(luck)) => luck.get_personal(),
-                _ => 0.0,
-            })
-            .sum();
-        let offering_luck = self
-            .offering
-            .map(|offering| offering.personal_luck())
-            .map(|x| x.get_personal())
-            .unwrap_or(0.0);
-        perk_luck + offering_luck
+        self.luck_source_iter()
+            .filter_map(|luck_source| luck_source.get_calculated())
+            .map(|calculated_luck| calculated_luck.get_personal())
+            .sum()
     }
 }
 
-// Iterator-based methods
-impl Loadout {
-    pub fn static_personal_iter(&self) -> Box<dyn Iterator<Item = PersonalLuck>> {
-
-        todo!()
-    }
-}
 
 // Globally active unhook modifiers from this player
 impl Loadout {
@@ -68,23 +50,27 @@ impl Loadout {
     }
 
     pub fn global_static_modifier(&self) -> GlobalLuck {
-        let perk_luck: GlobalLuck = self
-            .perks
-            .iter()
-            .map(|slot| slot.map(|perk| -> LuckSource { perk.into() }))
-            .map(|slot| match slot {
-                Some(LuckSource::Calculated(CalculatedLuck::Global(luck))) => luck,
-                _ => 0.0,
-            })
-            .sum();
+        self.luck_source_iter()
+            .filter_map(|luck_source| luck_source.get_calculated())
+            .map(|calculated_luck| calculated_luck.get_global())
+            .sum()
+    }
+}
 
-        let offering_luck: GlobalLuck = self
-            .offering
-            .map(|offering| offering.global_luck())
-            .map(|luck| luck.get_global())
-            .unwrap_or(0.0);
 
-        perk_luck + offering_luck
+// Iterator-based methods
+impl Loadout {
+    pub fn luck_source_iter(&self) -> impl Iterator<Item = LuckSource> {
+        let iter = self.perks.iter()
+            .filter_map(|&perk_slot| perk_slot)
+            .map(|perk| -> LuckSource { perk.into() });
+        if let Some(offering) = self.offering {
+            let offering_luck: LuckSource = offering.into();
+            let offering_once = std::iter::once(offering_luck);
+            iter.chain(offering_once)
+        } else {
+            iter
+        }
     }
 }
 

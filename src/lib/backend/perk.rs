@@ -37,9 +37,9 @@ pub enum UpTheAnte {
 
 impl UpTheAnte {
     pub fn make_luck(&self, living_count: &LivingCount) -> GlobalLuck {
-        living_count.0 as GlobalLuck * self.get_multiplier()
+        (living_count.0 as f64 * self.get_multiplier()) as GlobalLuck
     }
-    fn get_multiplier(&self) -> GlobalLuck {
+    fn get_multiplier(&self) -> f64 {
         match &self {
             Self::One => k::UTA_TIER1,
             Self::Two => k::UTA_TIER2,
