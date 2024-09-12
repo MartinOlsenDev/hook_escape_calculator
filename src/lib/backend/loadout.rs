@@ -4,8 +4,6 @@ use crate::lib::backend::luck::{
     CalculatableLuck, DynamicLuck, GlobalLuck, LuckSource, PersonalLuck, TeamDynamicLuck,
 };
 
-const BASE_UNHOOK_CHANCE: f64 = 0.04;
-
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
 

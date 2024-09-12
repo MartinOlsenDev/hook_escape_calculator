@@ -16,7 +16,7 @@ impl Team {
 
 // Calculating Methods
 impl Team {
-    pub fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
+    fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
         LivingCount::try_from(
             self.list()
                 .iter()
@@ -35,21 +35,10 @@ impl Team {
     }
 
     pub fn calc_global_dyn_luck(&self) -> f64 {
-        let mut output_luck = 0.0;
-
-        for player in self.list() {
-            for dyn_luck in player.loadout.get_dyn_luck() {
-                if let DynamicLuck::Team(team_dynamic_luck) = dyn_luck {
-                    let calc_luck = team_dynamic_luck.make_global_luck(&self, player);
-                    match calc_luck {
-                        CalculatedLuck::Global(luck) => output_luck += luck,
-                        _ => continue,
-                    }
-                }
-            }
-        }
-
-        output_luck
+        self.list()
+            .iter()
+            .map(|player| player.make_ante_luck(&self))
+            .sum()
     }
 
     fn full_make_player_luck(&self) -> [f64; 4] {
