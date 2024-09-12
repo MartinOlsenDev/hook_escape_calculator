@@ -1,5 +1,8 @@
 use super::living_count::LivingCount;
-use super::luck::{CalculatableLuck, CalculatedLuck, DynamicLuck, GlobalLuck, PersonalLuck, LuckSource, TeamDynamicLuck};
+use super::luck::{
+    CalculatableLuck, CalculatedLuck, DynamicLuck, GlobalLuck, LuckSource, PersonalLuck,
+    TeamDynamicLuck,
+};
 
 mod constants {
     use super::{GlobalLuck, PersonalLuck};
@@ -23,7 +26,7 @@ impl Perk {
     pub fn is_slippery(&self) -> bool {
         match self {
             Perk::UpTheAnte(_) => false,
-            Perk::SlipperyMeat(_) => true
+            Perk::SlipperyMeat(_) => true,
         }
     }
 }

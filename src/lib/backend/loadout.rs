@@ -1,6 +1,8 @@
 use super::offering::Offering;
 use super::perk::{Perk, SlipperyMeat, UpTheAnte};
-use crate::lib::backend::luck::{CalculatableLuck, DynamicLuck, PersonalLuck, GlobalLuck, LuckSource};
+use crate::lib::backend::luck::{
+    CalculatableLuck, DynamicLuck, GlobalLuck, LuckSource, PersonalLuck, TeamDynamicLuck,
+};
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
@@ -23,7 +25,8 @@ impl Loadout {
     }
 
     fn has_slippery(&self) -> bool {
-        self.perks.iter()
+        self.perks
+            .iter()
             .filter_map(|&perk_slot| perk_slot)
             .any(|perk| perk.is_slippery())
     }
@@ -35,7 +38,6 @@ impl Loadout {
             .sum()
     }
 }
-
 
 // Globally active unhook modifiers from this player
 impl Loadout {
@@ -49,7 +51,17 @@ impl Loadout {
             .collect()
     }
 
-    pub fn global_static_modifier(&self) -> GlobalLuck {
+    pub fn get_team_uta(&self) -> Option<TeamDynamicLuck> {
+        self.perks
+            .iter()
+            .filter_map(|&perk_slot| perk_slot)
+            .map(|perk| -> LuckSource { perk.into() })
+            .filter_map(|luck| luck.get_dynamic())
+            .filter_map(|luck| luck.get_team_dyn_luck())
+            .next()
+    }
+
+    pub fn make_global_luck(&self) -> GlobalLuck {
         self.luck_source_iter()
             .filter_map(|luck_source| luck_source.get_calculated())
             .map(|calculated_luck| calculated_luck.get_global())
@@ -57,20 +69,22 @@ impl Loadout {
     }
 }
 
-
 // Iterator-based methods
 impl Loadout {
     pub fn luck_source_iter<'a>(&'a self) -> Box<dyn Iterator<Item = LuckSource> + 'a> {
-        let iter = self.perks.iter()
+        let iter = self
+            .perks
+            .iter()
             .filter_map(|&perk_slot| perk_slot)
             .map(|perk: Perk| -> LuckSource { perk.into() });
 
-        let boxed_iter: Box<dyn Iterator<Item = LuckSource>+ 'a> = if let Some(offering) = self.offering {
-            let offering_luck: LuckSource = offering.into();
-            Box::new(iter.chain(std::iter::once(offering_luck)))
-        } else {
-            Box::new(iter)
-        };
+        let boxed_iter: Box<dyn Iterator<Item = LuckSource> + 'a> =
+            if let Some(offering) = self.offering {
+                let offering_luck: LuckSource = offering.into();
+                Box::new(iter.chain(std::iter::once(offering_luck)))
+            } else {
+                Box::new(iter)
+            };
         boxed_iter
     }
 }
@@ -93,15 +107,12 @@ mod tests {
     #[test]
     fn example0() {
         let survivor = Loadout {
-            perks: [
-                Some(Perk::SlipperyMeat(SlipperyMeat::One)),
-                None,
-            ],
+            perks: [Some(Perk::SlipperyMeat(SlipperyMeat::One)), None],
             offering: Some(Offering::SaltStatuette),
         };
         assert_eq!(survivor.make_personal_luck(), 0.02);
         assert_eq!(survivor.make_max_unhook(), 6_u8);
-        assert_eq!(survivor.global_static_modifier(), 0.02);
+        assert_eq!(survivor.make_global_luck(), 0.02);
         assert_eq!(Vec::<DynamicLuck>::new(), survivor.get_dyn_luck());
     }
     #[test]
@@ -112,7 +123,7 @@ mod tests {
         };
         assert_eq!(survivor.make_personal_luck(), 0.01);
         assert_eq!(survivor.make_max_unhook(), 3_u8);
-        assert_eq!(survivor.global_static_modifier(), 0.0);
+        assert_eq!(survivor.make_global_luck(), 0.0);
         assert_eq!(
             vec![DynamicLuck::Team(TeamDynamicLuck::UpTheAnte(
                 UpTheAnte::Three

@@ -30,7 +30,7 @@ impl Team {
     fn calc_global_static_luck(&self) -> f64 {
         self.list()
             .iter()
-            .map(|player| player.loadout.global_static_modifier())
+            .map(|player| player.loadout.make_global_luck())
             .sum()
     }
 

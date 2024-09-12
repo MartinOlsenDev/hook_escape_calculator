@@ -64,6 +64,14 @@ pub enum DynamicLuck {
     Team(TeamDynamicLuck),
 }
 
+impl DynamicLuck {
+    pub fn get_team_dyn_luck(&self) -> Option<TeamDynamicLuck> {
+        match self {
+            DynamicLuck::Team(t) => Some(*t),
+        }
+    }
+}
+
 /// List of all sources of Dynamic Luck within a team.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TeamDynamicLuck {
@@ -77,6 +85,18 @@ impl TeamDynamicLuck {
             TeamDynamicLuck::UpTheAnte(perk) => {
                 CalculatedLuck::Global(perk.make_luck(&living_count)).get_global()
             }
+        }
+    }
+
+    pub fn is_uta(&self) -> bool {
+        match self {
+            TeamDynamicLuck::UpTheAnte(_) => true,
+        }
+    }
+
+    pub fn get_uta(&self) -> Option<UpTheAnte> {
+        match self {
+            TeamDynamicLuck::UpTheAnte(uta) => Some(*uta),
         }
     }
 }

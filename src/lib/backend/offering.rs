@@ -18,7 +18,9 @@ impl From<Offering> for LuckSource {
             ChalkPouch | CreamPouch | IvoryPouch => {
                 LuckSource::Calculated(CalculatedLuck::Personal(value.personal_luck()))
             }
-            SaltPouch | SaltStatuette | SaltyLips => LuckSource::Calculated(CalculatedLuck::Global(value.global_luck())),
+            SaltPouch | SaltStatuette | SaltyLips => {
+                LuckSource::Calculated(CalculatedLuck::Global(value.global_luck()))
+            }
         }
     }
 }
