@@ -1,6 +1,6 @@
 use super::offering::Offering;
 use super::perk::{Perk, SlipperyMeat, UpTheAnte};
-use crate::lib::backend::luck::{CalculatableLuck, CalculatedLuck, DynamicLuck, PersonalLuck, GlobalLuck, LuckSource};
+use crate::lib::backend::luck::{CalculatableLuck, DynamicLuck, PersonalLuck, GlobalLuck, LuckSource};
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 
@@ -16,18 +16,18 @@ pub struct Loadout {
 // Personally active unhook modifiers from this player
 impl Loadout {
     pub fn make_max_unhook(&self) -> u8 {
-        let has_slippery = self.perks.iter().any(|perk| {
-            if let Some(Perk::SlipperyMeat(_)) = perk {
-                true
-            } else {
-                false
-            }
-        });
-        match has_slippery {
+        match self.has_slippery() {
             true => 6,
             false => 3,
         }
     }
+
+    fn has_slippery(&self) -> bool {
+        self.perks.iter()
+            .filter_map(|&perk_slot| perk_slot)
+            .any(|perk| perk.is_slippery())
+    }
+
     pub fn make_personal_luck(&self) -> PersonalLuck {
         self.luck_source_iter()
             .filter_map(|luck_source| luck_source.get_calculated())

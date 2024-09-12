@@ -19,6 +19,15 @@ pub enum Perk {
     SlipperyMeat(SlipperyMeat),
 }
 
+impl Perk {
+    pub fn is_slippery(&self) -> bool {
+        match self {
+            Perk::UpTheAnte(_) => false,
+            Perk::SlipperyMeat(_) => true
+        }
+    }
+}
+
 impl From<Perk> for LuckSource {
     fn from(value: Perk) -> Self {
         match value {
