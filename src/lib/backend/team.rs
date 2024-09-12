@@ -16,7 +16,7 @@ impl Team {
 
 // Calculating Methods
 impl Team {
-    fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
+    pub fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
         LivingCount::try_from(
             self.list()
                 .iter()
@@ -41,8 +41,12 @@ impl Team {
             .sum()
     }
 
+    fn calc_global_luck(&self) -> f64 {
+        self.calc_global_static_luck() + self.calc_global_dyn_luck()
+    }
+
     fn full_make_player_luck(&self) -> [f64; 4] {
-        let global_luck = self.calc_global_static_luck() + self.calc_global_dyn_luck();
+        let global_luck = self.calc_global_luck();
         let mut iter = self
             .list()
             .iter()
@@ -62,11 +66,11 @@ impl Team {
         let mut iter = self
             .list()
             .iter()
+            .map(|player| player.make_max_unhook() )
             .zip(lucks)
-            .map(|(player, luck)| (player.loadout.make_max_unhook(), luck))
             .map(|(tries, luck)| {
                 let chance_fail: f64 = 1.0 - luck;
-                let chance_fail_all = chance_fail.powi(tries as i32);
+                let chance_fail_all = chance_fail.powi(i32::from(tries));
                 let chance_succeed_once = 1.0 - chance_fail_all;
                 chance_succeed_once
             });
@@ -78,3 +82,5 @@ impl Team {
         ]
     }
 }
+
+// todo: Make Team tests
