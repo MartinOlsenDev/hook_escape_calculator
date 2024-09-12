@@ -11,8 +11,8 @@ pub enum Offering {
     SaltyLips,
 }
 
-impl From<&Offering> for LuckSource {
-    fn from(value: &Offering) -> Self {
+impl From<Offering> for LuckSource {
+    fn from(value: Offering) -> Self {
         use Offering::*;
         match value {
             ChalkPouch | CreamPouch | IvoryPouch => {

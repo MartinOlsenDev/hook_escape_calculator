@@ -1,4 +1,3 @@
-use crate::lib::backend::luck::CalculatedLuck;
 use super::loadout::Loadout;
 
 #[derive(Debug, Clone, Copy)]

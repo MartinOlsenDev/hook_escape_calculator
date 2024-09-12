@@ -60,17 +60,18 @@ impl Loadout {
 
 // Iterator-based methods
 impl Loadout {
-    pub fn luck_source_iter(&self) -> impl Iterator<Item = LuckSource> {
+    pub fn luck_source_iter<'a>(&'a self) -> Box<dyn Iterator<Item = LuckSource> + 'a> {
         let iter = self.perks.iter()
             .filter_map(|&perk_slot| perk_slot)
-            .map(|perk| -> LuckSource { perk.into() });
-        if let Some(offering) = self.offering {
+            .map(|perk: Perk| -> LuckSource { perk.into() });
+
+        let boxed_iter: Box<dyn Iterator<Item = LuckSource>+ 'a> = if let Some(offering) = self.offering {
             let offering_luck: LuckSource = offering.into();
-            let offering_once = std::iter::once(offering_luck);
-            iter.chain(offering_once)
+            Box::new(iter.chain(std::iter::once(offering_luck)))
         } else {
-            iter
-        }
+            Box::new(iter)
+        };
+        boxed_iter
     }
 }
 
