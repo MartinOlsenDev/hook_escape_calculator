@@ -34,7 +34,7 @@ impl Team {
             .sum()
     }
 
-    pub fn calc_global_dyn_luck(&self) -> f64 {
+    fn calc_global_dyn_luck(&self) -> f64 {
         self.list()
             .iter()
             .map(|player| player.make_ante_luck(&self))
