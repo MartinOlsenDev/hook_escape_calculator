@@ -20,11 +20,11 @@ pub enum Perk {
     SlipperyMeat(SlipperyMeat),
 }
 
-impl From<Perk> for LoadoutLuckRecord {
-    fn from(value: Perk) -> Self {
+impl From<&Perk> for LoadoutLuckRecord {
+    fn from(value: &Perk) -> Self {
         match value {
-            Perk::UpTheAnte(perk) => (&perk).into(),
-            Perk::SlipperyMeat(perk) => (&perk).into(),
+            Perk::UpTheAnte(perk) => perk.into(),
+            Perk::SlipperyMeat(perk) => perk.into(),
         }
     }
 }

@@ -1,8 +1,8 @@
+use super::luck_record::LoadoutLuckRecord;
 use super::offering::Offering;
-use super::perk::{Perk, SlipperyMeat, UpTheAnte};
-use crate::lib::backend::luck::{
-    CalculatableLuck, DynamicLuck, GlobalLuck, LuckSource, PersonalLuck, TeamDynamicLuck,
-};
+use super::perk::Perk;
+use frunk::monoid;
+use frunk::Semigroup;
 
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
@@ -13,77 +13,20 @@ pub struct Loadout {
     offering: OfferingSlot,
 }
 
-// Personally active unhook modifiers from this player
 impl Loadout {
-    pub fn make_max_unhook(&self) -> u8 {
-        match self.has_slippery() {
-            true => 6,
-            false => 3,
-        }
-    }
-
-    fn has_slippery(&self) -> bool {
-        self.perks
-            .iter()
-            .filter_map(|&perk_slot| perk_slot)
-            .any(|perk| perk.is_slippery())
-    }
-
-    pub fn make_personal_luck(&self) -> PersonalLuck {
-        self.luck_source_iter()
-            .filter_map(|luck_source| luck_source.get_calculated())
-            .map(|calculated_luck| calculated_luck.get_personal())
-            .sum()
-    }
-}
-
-// Globally active unhook modifiers from this player
-impl Loadout {
-    /// Returns a list of the dynamic luck sources that await calculation.
-    pub fn get_dyn_luck(&self) -> Vec<DynamicLuck> {
-        self.perks
-            .iter()
-            .filter_map(|&perk| perk)
-            .map(|perk| -> LuckSource { perk.into() })
-            .filter_map(|luck| luck.get_dynamic())
-            .collect()
-    }
-
-    pub fn get_team_uta(&self) -> Option<TeamDynamicLuck> {
-        self.perks
-            .iter()
-            .filter_map(|&perk_slot| perk_slot)
-            .map(|perk| -> LuckSource { perk.into() })
-            .filter_map(|luck| luck.get_dynamic())
-            .filter_map(|luck| luck.get_team_dyn_luck())
-            .next()
-    }
-
-    pub fn make_global_luck(&self) -> GlobalLuck {
-        self.luck_source_iter()
-            .filter_map(|luck_source| luck_source.get_calculated())
-            .map(|calculated_luck| calculated_luck.get_global())
-            .sum()
-    }
-}
-
-// Iterator-based methods
-impl Loadout {
-    pub fn luck_source_iter<'a>(&'a self) -> Box<dyn Iterator<Item = LuckSource> + 'a> {
-        let iter = self
+    pub fn collate_luck(&self) -> LoadoutLuckRecord {
+        let perk_record_list: Vec<LoadoutLuckRecord> = self
             .perks
             .iter()
             .filter_map(|&perk_slot| perk_slot)
-            .map(|perk: Perk| -> LuckSource { perk.into() });
+            .map(|perk| LoadoutLuckRecord::from(&perk))
+            .collect();
+        let offering_luck: LoadoutLuckRecord = self
+            .offering
+            .map(|offering| LoadoutLuckRecord::from(&offering))
+            .unwrap_or(LoadoutLuckRecord::default());
 
-        let boxed_iter: Box<dyn Iterator<Item = LuckSource> + 'a> =
-            if let Some(offering) = self.offering {
-                let offering_luck: LuckSource = offering.into();
-                Box::new(iter.chain(std::iter::once(offering_luck)))
-            } else {
-                Box::new(iter)
-            };
-        boxed_iter
+        monoid::combine_all(&perk_record_list).combine(&offering_luck)
     }
 }
 
