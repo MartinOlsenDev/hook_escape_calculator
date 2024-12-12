@@ -25,7 +25,6 @@ impl Offering {
             Offering::ChalkPouch | Offering::SaltPouch => 0.01,
             Offering::CreamPouch | Offering::SaltStatuette => 0.02,
             Offering::IvoryPouch | Offering::SaltyLips => 0.03,
-            _ => 0.0,
         }
     }
     fn luck_is_personal(&self) -> bool {
