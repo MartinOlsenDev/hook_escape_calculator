@@ -167,6 +167,15 @@ pub struct TeamLuckRecord {
     personals: ArrayVec<(Luck, i8), TEAM_MAX_CAPACITY>,
 }
 
+impl TeamLuckRecord {
+    pub fn from_global(luck: Luck) -> Self {
+        TeamLuckRecord {
+            global: luck,
+            personals: ArrayVec::new(),
+        }
+    }
+}
+
 ///TODO: This is a good optimization oppurtunity
 impl Semigroup for TeamLuckRecord {
     fn combine(&self, other: &Self) -> Self {

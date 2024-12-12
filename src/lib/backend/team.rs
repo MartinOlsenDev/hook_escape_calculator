@@ -5,9 +5,9 @@ use super::luck_record::{
 use super::player::Player;
 use arrayvec::ArrayVec;
 use frunk::monoid::combine_all;
+use frunk::Semigroup;
 
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
-const BASE_UNHOOK_RECORD: PlayerLuckRecord = PlayerLuckRecord(LoadoutLuckRecord::from_global(0.04));
 pub const TEAM_MAX_CAPACITY: usize = 4;
 
 #[derive(Debug, Clone, Copy, Default)]
@@ -52,9 +52,10 @@ impl Team {
     }
 
     fn collate_luck(&self) -> TeamLuckRecord {
+        let base_luck: TeamLuckRecord = TeamLuckRecord::from_global(BASE_UNHOOK_CHANCE);
         let team_luck_records: ArrayVec<TeamLuckRecord, TEAM_MAX_CAPACITY> =
             self.make_team_luck_records().collect();
-        combine_all(&team_luck_records)
+        base_luck.combine(&combine_all(&team_luck_records))
     }
 
     /*fn full_make_player_luck(&self) -> [f64; 4] {
