@@ -87,7 +87,7 @@ impl Monoid for LoadoutLuckRecord {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct LoadoutPlayerConverter {
+pub struct LoadoutPlayerConverter {
     is_alive: bool,
 }
 
@@ -116,7 +116,7 @@ impl LoadoutPlayerConverter {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct PlayerLuckRecord {
+pub struct PlayerLuckRecord {
     personal: Luck,
     global: Luck,
     up_the_ante_coeff: Option<Luck>,
