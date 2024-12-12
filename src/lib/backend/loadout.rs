@@ -1,21 +1,26 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::offering::Offering;
-use super::perk::Perk;
+use super::perk::{Perk, COUNT_ALL_KNOWN_LUCK_PERKS};
+use arrayvec::ArrayVec;
 use frunk::monoid;
 use frunk::Semigroup;
+use konst as kon;
+use COUNT_ALL_KNOWN_LUCK_PERKS as COUNT_PERKS;
+
+const PERKSLOT_COUNT: usize = kon::min!(COUNT_PERKS, 4_usize);
 
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Loadout {
-    perks: [PerkSlot; 2], // increase this size if more luck perks are added
+    perks: [PerkSlot; PERKSLOT_COUNT],
     offering: OfferingSlot,
 }
 
 impl Loadout {
     pub fn collate_luck(&self) -> LoadoutLuckRecord {
-        let perk_record_list: Vec<LoadoutLuckRecord> = self
+        let perk_record_list: ArrayVec<LoadoutLuckRecord, COUNT_PERKS> = self
             .perks
             .iter()
             .filter_map(|&perk_slot| perk_slot)

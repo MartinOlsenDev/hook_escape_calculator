@@ -1,3 +1,5 @@
+use super::team::TEAM_MAX_CAPACITY;
+use arrayvec::ArrayVec;
 use frunk::monoid::Monoid;
 use frunk::Semigroup;
 
@@ -142,10 +144,15 @@ impl PlayerTeamConverter {
             .unwrap_or(0.0);
 
         let final_global = global + uta_contribution;
+        let personal_data = {
+            let mut personal_data = ArrayVec::new();
+            personal_data.push((personal, additional_unhooks));
+            personal_data
+        };
 
         TeamLuckRecord {
             global: final_global,
-            personals: vec![(personal, additional_unhooks)],
+            personals: personal_data,
         }
     }
 }
@@ -153,7 +160,7 @@ impl PlayerTeamConverter {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamLuckRecord {
     global: Luck,
-    personals: Vec<(Luck, i8)>,
+    personals: ArrayVec<(Luck, i8), TEAM_MAX_CAPACITY>,
 }
 
 ///TODO: This is a good optimization oppurtunity
@@ -183,7 +190,7 @@ impl Monoid for TeamLuckRecord {
     fn empty() -> Self {
         TeamLuckRecord {
             global: 0.0,
-            personals: Vec::new(),
+            personals: ArrayVec::new(),
         }
     }
 }

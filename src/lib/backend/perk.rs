@@ -2,6 +2,8 @@ use super::luck_record::LoadoutLuckRecord;
 use super::luck_record::Luck;
 use frunk::Semigroup;
 
+pub const COUNT_ALL_KNOWN_LUCK_PERKS: usize = 2;
+
 mod constants {
     use super::Luck;
     pub const UTA_TIER1: Luck = 0.01;

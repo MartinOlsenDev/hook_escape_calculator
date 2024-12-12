@@ -8,8 +8,10 @@ license-file = "LICENSE.txt"
 description = "A calculator for the odds of escape in the video game Dead By Daylight."
 
 [dependencies]
+arrayvec = "0.7.6"
 frunk = "0.4.3"
 iced = "0.12.1"
+konst = "0.3.15"
 # num-rational integration planned for future release
 
 [profile.release]
