@@ -6,4 +6,5 @@ pub mod luck;
 pub mod offering;
 pub mod perk;
 pub mod player;
+pub mod player_luck_record;
 pub mod team;
