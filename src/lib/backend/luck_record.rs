@@ -174,6 +174,29 @@ impl TeamLuckRecord {
             personals: ArrayVec::new(),
         }
     }
+    pub fn luck_unhook_mod_pairs_iter<'a>(&'a self) -> impl Iterator<Item = (Luck, i8)> + 'a {
+        self.personals
+            .iter()
+            .map(|(luck, unhook_mod)| (luck + self.global, *unhook_mod))
+    }
+    pub fn make_single_and_total_unhook_pairs<'a>(
+        &'a self,
+    ) -> impl Iterator<Item = (Luck, Luck)> + 'a {
+        self.luck_unhook_mod_pairs_iter()
+            .map(|(luck, unhook_count)| {
+                let chance_fail: Luck = 1.0 - luck;
+                let chance_fail_all = chance_fail.powi(i32::from(unhook_count) + 3);
+                let chance_succeed_once = 1.0 - chance_fail_all;
+                (luck, chance_succeed_once)
+            })
+    }
+    pub fn make_single_and_total_unhook_strings(
+        self,
+    ) -> ArrayVec<(String, String), TEAM_MAX_CAPACITY> {
+        self.make_single_and_total_unhook_pairs()
+            .map(|(single, all)| (format!("{0:.2}", single), format!("{0:.2}", all)))
+            .collect()
+    }
 }
 
 ///TODO: This is a good optimization oppurtunity

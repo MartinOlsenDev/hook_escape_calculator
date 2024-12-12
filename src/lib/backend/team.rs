@@ -58,40 +58,7 @@ impl Team {
         base_luck.combine(&combine_all(&team_luck_records))
     }
 
-    /*fn full_make_player_luck(&self) -> [f64; 4] {
-        let global_luck = self.calc_global_luck();
-        let mut iter = self
-            .list()
-            .iter()
-            .map(|player| player.loadout.make_personal_luck() + global_luck + BASE_UNHOOK_CHANCE);
-
-        [
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-        ]
+    pub fn luck_string_output(&self) -> ArrayVec<(String, String), TEAM_MAX_CAPACITY> {
+        self.collate_luck().make_single_and_total_unhook_strings()
     }
-
-    pub fn make_escape_chances(&self) -> [f64; 4] {
-        let lucks = self.full_make_player_luck();
-
-        let mut iter = self
-            .list()
-            .iter()
-            .map(|player| player.make_max_unhook())
-            .zip(lucks)
-            .map(|(tries, luck)| {
-                let chance_fail: f64 = 1.0 - luck;
-                let chance_fail_all = chance_fail.powi(i32::from(tries));
-                let chance_succeed_once = 1.0 - chance_fail_all;
-                chance_succeed_once
-            });
-        [
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-            iter.next().unwrap(),
-        ]
-    }*/
 }
