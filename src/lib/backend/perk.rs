@@ -1,4 +1,3 @@
-use super::luck_producer::LuckProducer;
 use super::luck_record::LoadoutLuckRecord;
 use super::luck_record::Luck;
 use frunk::Semigroup;
