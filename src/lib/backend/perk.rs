@@ -61,7 +61,7 @@ pub enum SlipperyMeat {
 }
 
 impl SlipperyMeat {
-    fn get_luck_value(&self) -> f64 {
+    const fn get_luck_value(&self) -> f64 {
         match self {
             SlipperyMeat::One => k::SM_TIER1,
             SlipperyMeat::Two => k::SM_TIER2,

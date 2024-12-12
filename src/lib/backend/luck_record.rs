@@ -94,7 +94,7 @@ pub struct LoadoutPlayerConverter {
 }
 
 impl LoadoutPlayerConverter {
-    pub fn new(is_alive: bool) -> Self {
+    pub const fn new(is_alive: bool) -> Self {
         Self { is_alive }
     }
     pub fn convert(&self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
@@ -117,6 +117,10 @@ impl LoadoutPlayerConverter {
     }
 }
 
+///TODO: Convert this into its own struct with named fields. Change
+///from Option<f64> to f64 for up the ante. then make
+///LoadoutPlayerConverter, as well as the associated caller
+///function in player.rs
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PlayerLuckRecord(pub LoadoutLuckRecord);
 
@@ -126,7 +130,7 @@ pub struct PlayerTeamConverter {
 }
 
 impl PlayerTeamConverter {
-    pub fn new(living_other_than_self_count: u8) -> Self {
+    pub const fn new(living_other_than_self_count: u8) -> Self {
         Self {
             living_other_than_self_count,
         }

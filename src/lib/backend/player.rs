@@ -8,7 +8,7 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn is_alive(&self) -> bool {
+    pub const fn is_alive(&self) -> bool {
         self.is_alive
     }
     fn make_record_converter(&self) -> LoadoutPlayerConverter {
