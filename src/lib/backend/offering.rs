@@ -1,5 +1,4 @@
-use super::luck::{CalculatableLuck, GlobalLuck, PersonalLuck};
-use crate::lib::backend::luck::{CalculatedLuck, LuckSource};
+use super::luck_record::{LoadoutLuckRecord, Luck};
 
 #[derive(Debug, Clone, Copy)]
 pub enum Offering {
@@ -11,36 +10,28 @@ pub enum Offering {
     SaltyLips,
 }
 
-impl From<Offering> for LuckSource {
-    fn from(value: Offering) -> Self {
-        use Offering::*;
-        match value {
-            ChalkPouch | CreamPouch | IvoryPouch => {
-                LuckSource::Calculated(CalculatedLuck::Personal(value.personal_luck()))
-            }
-            SaltPouch | SaltStatuette | SaltyLips => {
-                LuckSource::Calculated(CalculatedLuck::Global(value.global_luck()))
-            }
+impl From<&Offering> for LoadoutLuckRecord {
+    fn from(offering: &Offering) -> Self {
+        match offering.luck_is_personal() {
+            true => Self::from_personal(offering.luck_value()),
+            false => Self::from_global(offering.luck_value()),
         }
     }
 }
 
-impl CalculatableLuck for Offering {
-    fn personal_luck(&self) -> PersonalLuck {
+impl Offering {
+    fn luck_value(&self) -> Luck {
         match self {
-            Offering::ChalkPouch => 0.01,
-            Offering::CreamPouch => 0.02,
-            Offering::IvoryPouch => 0.03,
+            Offering::ChalkPouch | Offering::SaltPouch => 0.01,
+            Offering::CreamPouch | Offering::SaltStatuette => 0.02,
+            Offering::IvoryPouch | Offering::SaltyLips => 0.03,
             _ => 0.0,
         }
     }
-
-    fn global_luck(&self) -> GlobalLuck {
+    fn luck_is_personal(&self) -> bool {
         match self {
-            Offering::SaltPouch => 0.01,
-            Offering::SaltStatuette => 0.02,
-            Offering::SaltyLips => 0.03,
-            _ => 0.0,
+            Offering::ChalkPouch | Offering::CreamPouch | Offering::IvoryPouch => true,
+            _ => false,
         }
     }
 }
