@@ -8,11 +8,14 @@ pub struct Player {
 }
 
 impl Player {
+    pub fn is_alive(&self) -> bool {
+        self.is_alive
+    }
     fn make_record_converter(&self) -> LoadoutPlayerConverter {
         LoadoutPlayerConverter::new(self.is_alive)
     }
 
-    fn make_player_luck(&self) -> PlayerLuckRecord {
+    pub fn make_player_luck(&self) -> PlayerLuckRecord {
         self.make_record_converter()
             .convert(self.loadout.collate_luck())
     }

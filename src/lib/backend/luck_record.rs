@@ -15,7 +15,7 @@ pub struct LoadoutLuckRecord {
 
 /// Init methods
 impl LoadoutLuckRecord {
-    pub fn from_personal(personal: Luck) -> Self {
+    pub const fn from_personal(personal: Luck) -> Self {
         Self {
             personal,
             global: 0.0,
@@ -23,7 +23,7 @@ impl LoadoutLuckRecord {
             additional_unhooks: 0,
         }
     }
-    pub fn from_global(global: Luck) -> Self {
+    pub const fn from_global(global: Luck) -> Self {
         Self {
             personal: 0.0,
             global,
@@ -31,7 +31,7 @@ impl LoadoutLuckRecord {
             additional_unhooks: 0,
         }
     }
-    pub fn from_uta(uta: Luck) -> Self {
+    pub const fn from_uta(uta: Luck) -> Self {
         Self {
             personal: 0.0,
             global: 0.0,
@@ -39,7 +39,7 @@ impl LoadoutLuckRecord {
             additional_unhooks: 0,
         }
     }
-    pub fn from_unhook_mod(additional_unhooks: i8) -> Self {
+    pub const fn from_unhook_mod(additional_unhooks: i8) -> Self {
         Self {
             personal: 0.0,
             global: 0.0,
@@ -106,42 +106,39 @@ impl LoadoutPlayerConverter {
         // Up the Ante to the global luck.
         let up_the_ante_coeff = up_the_ante_coeff.filter(|_| self.is_alive);
 
-        PlayerLuckRecord {
+        PlayerLuckRecord(LoadoutLuckRecord {
             personal,
             global,
             up_the_ante_coeff,
             additional_unhooks,
-        }
+        })
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct PlayerLuckRecord {
-    personal: Luck,
-    global: Luck,
-    up_the_ante_coeff: Option<Luck>,
-    additional_unhooks: i8,
-}
+pub struct PlayerLuckRecord(pub LoadoutLuckRecord);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct PlayerTeamConverter {
-    living_count: u8,
+pub struct PlayerTeamConverter {
+    living_other_than_self_count: u8,
 }
 
 impl PlayerTeamConverter {
-    pub fn new(living_count: u8) -> Self {
-        Self { living_count }
+    pub fn new(living_other_than_self_count: u8) -> Self {
+        Self {
+            living_other_than_self_count,
+        }
     }
     pub fn convert(&self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
-        let &PlayerLuckRecord {
+        let &LoadoutLuckRecord {
             personal,
             global,
             up_the_ante_coeff: uta_coeff,
             additional_unhooks,
-        } = plr;
+        } = &plr.0;
 
         let uta_contribution = uta_coeff
-            .map(|x| x * f64::from(self.living_count))
+            .map(|x| x * f64::from(self.living_other_than_self_count))
             .unwrap_or(0.0);
 
         let final_global = global + uta_contribution;
