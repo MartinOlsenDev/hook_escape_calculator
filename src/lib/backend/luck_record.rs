@@ -159,10 +159,10 @@ pub struct TeamLuckRecord {
 ///TODO: This is a good optimization oppurtunity
 impl Semigroup for TeamLuckRecord {
     fn combine(&self, other: &Self) -> Self {
-        let &TeamLuckRecord {
+        let TeamLuckRecord {
             global: global0,
             personals: personals0,
-        } = &self;
+        } = self;
 
         let TeamLuckRecord {
             global: global1,
