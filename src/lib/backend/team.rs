@@ -31,34 +31,30 @@ impl Team {
         .expect("Filtering on a [_;4] cannot yield count exceeding 4.")
     }
 
-    fn make_player_luck_records(&self) -> Vec<PlayerLuckRecord> {
-        self.list()
-            .iter()
-            .map(|player| player.make_player_luck())
-            .collect()
+    fn make_player_luck_records<'a>(&'a self) -> impl Iterator<Item = PlayerLuckRecord> + 'a {
+        self.list().iter().map(|player| player.make_player_luck())
     }
 
-    fn make_team_adapters(&self) -> Vec<PlayerTeamConverter> {
+    fn make_team_adapters<'a>(&'a self) -> impl Iterator<Item = PlayerTeamConverter> + 'a {
         self.list()
             .iter()
             .map(|player| self.alive_not_counting(&player))
             .map(|count| PlayerTeamConverter::new(count.into()))
-            .collect()
     }
 
-    fn make_team_luck_records(&self) -> Vec<TeamLuckRecord> {
+    fn make_team_luck_records<'a>(&'a self) -> impl Iterator<Item = TeamLuckRecord> + 'a {
         let player_record_iter = self.make_player_luck_records().into_iter();
         let player_converter_iter = self.make_team_adapters().into_iter();
         let iter = player_record_iter.zip(player_converter_iter);
         iter.map(|(record, converter)| converter.convert(&record))
-            .collect()
     }
 
     fn collate_luck(&self) -> TeamLuckRecord {
-        combine_all(&self.make_team_luck_records())
+        let team_luck_records: Vec<TeamLuckRecord> = self.make_team_luck_records().collect();
+        combine_all(&team_luck_records)
     }
 
-    fn full_make_player_luck(&self) -> [f64; 4] {
+    /*fn full_make_player_luck(&self) -> [f64; 4] {
         let global_luck = self.calc_global_luck();
         let mut iter = self
             .list()
@@ -93,7 +89,5 @@ impl Team {
             iter.next().unwrap(),
             iter.next().unwrap(),
         ]
-    }
+    }*/
 }
-
-// todo: Make Team tests
