@@ -1,18 +1,17 @@
-use super::living_count::LivingCount;
-use super::luck::{
-    CalculatableLuck, CalculatedLuck, DynamicLuck, GlobalLuck, LuckSource, PersonalLuck,
-    TeamDynamicLuck,
-};
+use super::luck_producer::LuckProducer;
+use super::luck_record::LoadoutLuckRecord;
+use super::luck_record::Luck;
+use frunk::Semigroup;
 
 mod constants {
-    use super::{GlobalLuck, PersonalLuck};
-    pub const UTA_TIER1: GlobalLuck = 0.01;
-    pub const UTA_TIER2: GlobalLuck = 0.02;
-    pub const UTA_TIER3: GlobalLuck = 0.03;
+    use super::Luck;
+    pub const UTA_TIER1: Luck = 0.01;
+    pub const UTA_TIER2: Luck = 0.02;
+    pub const UTA_TIER3: Luck = 0.03;
 
-    pub const SM_TIER1: PersonalLuck = 0.02;
-    pub const SM_TIER2: PersonalLuck = 0.03;
-    pub const SM_TIER3: PersonalLuck = 0.04;
+    pub const SM_TIER1: Luck = 0.02;
+    pub const SM_TIER2: Luck = 0.03;
+    pub const SM_TIER3: Luck = 0.04;
 }
 use constants as k;
 
@@ -22,20 +21,11 @@ pub enum Perk {
     SlipperyMeat(SlipperyMeat),
 }
 
-impl Perk {
-    pub fn is_slippery(&self) -> bool {
-        match self {
-            Perk::UpTheAnte(_) => false,
-            Perk::SlipperyMeat(_) => true,
-        }
-    }
-}
-
-impl From<Perk> for LuckSource {
+impl From<Perk> for LoadoutLuckRecord {
     fn from(value: Perk) -> Self {
         match value {
-            Perk::UpTheAnte(perk) => perk.into(),
-            Perk::SlipperyMeat(perk) => perk.into(),
+            Perk::UpTheAnte(perk) => (&perk).into(),
+            Perk::SlipperyMeat(perk) => (&perk).into(),
         }
     }
 }
@@ -48,9 +38,6 @@ pub enum UpTheAnte {
 }
 
 impl UpTheAnte {
-    pub fn make_luck(&self, living_count: &LivingCount) -> GlobalLuck {
-        (living_count.0 as f64 * self.get_multiplier()) as GlobalLuck
-    }
     fn get_multiplier(&self) -> f64 {
         match &self {
             Self::One => k::UTA_TIER1,
@@ -59,10 +46,9 @@ impl UpTheAnte {
         }
     }
 }
-
-impl From<UpTheAnte> for LuckSource {
-    fn from(value: UpTheAnte) -> Self {
-        LuckSource::Dynamic(DynamicLuck::Team(TeamDynamicLuck::UpTheAnte(value)))
+impl From<&UpTheAnte> for LoadoutLuckRecord {
+    fn from(item: &UpTheAnte) -> Self {
+        Self::from_uta(item.get_multiplier())
     }
 }
 
@@ -73,21 +59,20 @@ pub enum SlipperyMeat {
     Three,
 }
 
-impl From<SlipperyMeat> for LuckSource {
-    fn from(value: SlipperyMeat) -> Self {
-        LuckSource::Calculated(CalculatedLuck::Personal(value.personal_luck()))
+impl SlipperyMeat {
+    fn get_luck_value(&self) -> f64 {
+        match self {
+            SlipperyMeat::One => k::SM_TIER1,
+            SlipperyMeat::Two => k::SM_TIER2,
+            SlipperyMeat::Three => k::SM_TIER3,
+        }
     }
 }
 
-impl CalculatableLuck for SlipperyMeat {
-    fn personal_luck(&self) -> PersonalLuck {
-        match &self {
-            Self::One => k::SM_TIER1,
-            Self::Two => k::SM_TIER2,
-            Self::Three => k::SM_TIER3,
-        }
-    }
-    fn global_luck(&self) -> GlobalLuck {
-        0.0
+impl From<&SlipperyMeat> for LoadoutLuckRecord {
+    fn from(item: &SlipperyMeat) -> Self {
+        let unhook_chance_mod = Self::from_personal(item.get_luck_value());
+        let unhook_count_mod = Self::from_unhook_mod(3);
+        unhook_chance_mod.combine(&unhook_count_mod)
     }
 }

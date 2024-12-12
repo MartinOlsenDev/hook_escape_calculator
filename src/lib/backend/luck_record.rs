@@ -1,16 +1,52 @@
 use frunk::monoid::Monoid;
 use frunk::Semigroup;
 
-use f64 as Luck;
+pub type Luck = f64;
 
 /// A record that represents a players luck items such that
 /// two personal lucks are summed rather than list appended
 #[derive(PartialEq, Debug, Clone, Copy, Default)]
-struct LoadoutLuckRecord {
+pub struct LoadoutLuckRecord {
     personal: Luck,
     global: Luck,
     up_the_ante_coeff: Option<Luck>,
     additional_unhooks: i8,
+}
+
+/// Init methods
+impl LoadoutLuckRecord {
+    pub fn from_personal(personal: Luck) -> Self {
+        Self {
+            personal,
+            global: 0.0,
+            up_the_ante_coeff: None,
+            additional_unhooks: 0,
+        }
+    }
+    pub fn from_global(global: Luck) -> Self {
+        Self {
+            personal: 0.0,
+            global,
+            up_the_ante_coeff: None,
+            additional_unhooks: 0,
+        }
+    }
+    pub fn from_uta(uta: Luck) -> Self {
+        Self {
+            personal: 0.0,
+            global: 0.0,
+            up_the_ante_coeff: Some(uta),
+            additional_unhooks: 0,
+        }
+    }
+    pub fn from_unhook_mod(additional_unhooks: i8) -> Self {
+        Self {
+            personal: 0.0,
+            global: 0.0,
+            up_the_ante_coeff: None,
+            additional_unhooks,
+        }
+    }
 }
 
 /// A semigroup instance for LoadoutLuckRecord. It is assumed that
