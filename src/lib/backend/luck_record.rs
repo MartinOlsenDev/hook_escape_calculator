@@ -56,23 +56,11 @@ impl LoadoutLuckRecord {
 /// of Up the Ante. If there are, the second is discarded.
 impl Semigroup for LoadoutLuckRecord {
     fn combine(&self, other: &Self) -> Self {
-        let &LoadoutLuckRecord {
-            personal: personal0,
-            global: global0,
-            up_the_ante_coeff: uta0,
-            additional_unhooks: au0,
-        } = &self;
-        let &LoadoutLuckRecord {
-            personal: personal1,
-            global: global1,
-            up_the_ante_coeff: uta1,
-            additional_unhooks: au1,
-        } = other;
-        LoadoutLuckRecord {
-            personal: personal0 + personal1,
-            global: global0 + global1,
-            up_the_ante_coeff: uta0.or(uta1),
-            additional_unhooks: au0 + au1,
+       LoadoutLuckRecord {
+            personal: self.personal + other.personal,
+            global: self.global + other.global,
+            up_the_ante_coeff: self.up_the_ante_coeff.or(other.up_the_ante_coeff),
+            additional_unhooks: self.additional_unhooks + other.additional_unhooks,
         }
     }
 }
@@ -101,12 +89,12 @@ impl LoadoutPlayerConverter {
         let LoadoutLuckRecord {
             personal,
             global,
-            up_the_ante_coeff,
+            mut up_the_ante_coeff,
             additional_unhooks,
         } = loadout;
         // This line is what causes dead players to not contribute their
         // Up the Ante to the global luck.
-        let up_the_ante_coeff = up_the_ante_coeff.filter(|_| self.is_alive);
+        up_the_ante_coeff = up_the_ante_coeff.filter(|_| self.is_alive);
 
         PlayerLuckRecord(LoadoutLuckRecord {
             personal,
@@ -136,14 +124,14 @@ impl PlayerTeamConverter {
         }
     }
     pub fn convert(&self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
-        let &LoadoutLuckRecord {
+        let LoadoutLuckRecord {
             personal,
             global,
-            up_the_ante_coeff: uta_coeff,
+            up_the_ante_coeff,
             additional_unhooks,
-        } = &plr.0;
+        } = plr.0;
 
-        let uta_contribution = uta_coeff
+        let uta_contribution = up_the_ante_coeff
             .map(|x| x * f64::from(self.living_other_than_self_count))
             .unwrap_or(0.0);
 
@@ -202,21 +190,14 @@ impl TeamLuckRecord {
 ///TODO: This is a good optimization oppurtunity
 impl Semigroup for TeamLuckRecord {
     fn combine(&self, other: &Self) -> Self {
-        let TeamLuckRecord {
-            global: global0,
-            personals: personals0,
-        } = self;
-
-        let TeamLuckRecord {
-            global: global1,
-            personals: personals1,
-        } = other;
-
-        let mut personals = personals0.clone();
-        personals.extend(personals1.clone());
+        let personals = {
+            let mut personals = self.personals.clone();
+            personals.extend(other.personals.clone());
+            personals
+        };
 
         TeamLuckRecord {
-            global: global0 + global1,
+            global: self.global + other.global,
             personals,
         }
     }
