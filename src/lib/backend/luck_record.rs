@@ -178,6 +178,8 @@ impl TeamLuckRecord {
                 (luck, chance_succeed_once)
             })
     }
+    //TODO: This should probably be done at callsite by a front-end
+    // that's received the pairs
     pub fn make_single_and_total_unhook_strings(
         self,
     ) -> ArrayVec<(String, String), TEAM_MAX_CAPACITY> {
