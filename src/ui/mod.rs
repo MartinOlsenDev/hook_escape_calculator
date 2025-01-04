@@ -7,4 +7,3 @@ pub struct App {}
 enum Message {
     Base,
 }
-

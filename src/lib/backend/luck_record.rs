@@ -56,7 +56,7 @@ impl LoadoutLuckRecord {
 /// of Up the Ante. If there are, the second is discarded.
 impl Semigroup for LoadoutLuckRecord {
     fn combine(&self, other: &Self) -> Self {
-       LoadoutLuckRecord {
+        LoadoutLuckRecord {
             personal: self.personal + other.personal,
             global: self.global + other.global,
             up_the_ante_coeff: self.up_the_ante_coeff.or(other.up_the_ante_coeff),
