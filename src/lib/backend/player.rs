@@ -6,7 +6,7 @@ pub struct Player {
     loadout: Loadout,
     is_alive: bool,
 }
-// accessors
+// Mutable Accessors
 impl Player {
     pub fn get_mut_loadout(&mut self) -> &mut Loadout {
         &mut self.loadout

@@ -13,7 +13,7 @@ pub const TEAM_MAX_CAPACITY: usize = 4;
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
 pub struct Team([Player; TEAM_MAX_CAPACITY]);
 
-// Accessor Methods
+// Mutable Accessor Methods
 impl Team {
     pub fn list(&self) -> &[Player; TEAM_MAX_CAPACITY] {
         &self.0
