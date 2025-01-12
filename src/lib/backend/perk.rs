@@ -17,76 +17,41 @@ mod constants {
 use constants as k;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum Perk {
-    UpTheAnte(UpTheAnte),
-    SlipperyMeat(SlipperyMeat),
+pub struct Perk {
+    name: PerkName,
+    tier: Tier,
 }
 
-// mutator
-impl Perk {
-    //TODO: Make this produce an error on failure
-    pub fn set_uta(&mut self, i: usize) {
-        match i {
-            1 => *self = Perk::UpTheAnte(UpTheAnte::One),
-            2 => *self = Perk::UpTheAnte(UpTheAnte::Two),
-            3 => *self = Perk::UpTheAnte(UpTheAnte::Three),
-            _ => *self = Perk::UpTheAnte(UpTheAnte::Three),
-        }
-    }
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+enum Tier {
+    One,
+    Two,
+    Three,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+enum PerkName {
+    SlipperyMeat,
+    UpTheAnte,
 }
 
 impl From<&Perk> for LoadoutLuckRecord {
-    fn from(value: &Perk) -> Self {
-        match value {
-            Perk::UpTheAnte(perk) => perk.into(),
-            Perk::SlipperyMeat(perk) => perk.into(),
+    fn from(perk: &Perk) -> Self {
+        match (perk.name, perk.tier) {
+            (PerkName::UpTheAnte, Tier::One) => LoadoutLuckRecord::from_uta(k::UTA_TIER1),
+            (PerkName::UpTheAnte, Tier::Two) => LoadoutLuckRecord::from_uta(k::UTA_TIER2),
+            (PerkName::UpTheAnte, Tier::Three) => LoadoutLuckRecord::from_uta(k::UTA_TIER3),
+            (PerkName::SlipperyMeat, tier) => slippery_meat_record(tier),
         }
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum UpTheAnte {
-    One,
-    Two,
-    Three,
-}
-
-impl UpTheAnte {
-    fn get_multiplier(&self) -> f64 {
-        match &self {
-            Self::One => k::UTA_TIER1,
-            Self::Two => k::UTA_TIER2,
-            Self::Three => k::UTA_TIER3,
-        }
-    }
-}
-impl From<&UpTheAnte> for LoadoutLuckRecord {
-    fn from(item: &UpTheAnte) -> Self {
-        Self::from_uta(item.get_multiplier())
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum SlipperyMeat {
-    One,
-    Two,
-    Three,
-}
-
-impl SlipperyMeat {
-    const fn get_luck_value(&self) -> f64 {
-        match self {
-            SlipperyMeat::One => k::SM_TIER1,
-            SlipperyMeat::Two => k::SM_TIER2,
-            SlipperyMeat::Three => k::SM_TIER3,
-        }
-    }
-}
-
-impl From<&SlipperyMeat> for LoadoutLuckRecord {
-    fn from(item: &SlipperyMeat) -> Self {
-        let unhook_chance_mod = LoadoutLuckRecord::from_personal(item.get_luck_value());
-        let unhook_count_mod = LoadoutLuckRecord::from_unhook_mod(3);
-        unhook_chance_mod.combine(&unhook_count_mod)
-    }
+fn slippery_meat_record(tier: Tier) -> LoadoutLuckRecord {
+    let unhook_chance_record = LoadoutLuckRecord::from_personal(match tier {
+        Tier::One => k::SM_TIER1,
+        Tier::Two => k::SM_TIER2,
+        Tier::Three => k::SM_TIER3,
+    });
+    let unhook_count_record = LoadoutLuckRecord::from_unhook_mod(3);
+    unhook_chance_record.combine(&unhook_count_record)
 }
