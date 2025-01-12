@@ -18,6 +18,9 @@ impl Team {
     pub fn list(&self) -> &[Player; TEAM_MAX_CAPACITY] {
         &self.0
     }
+    pub fn get_player_mut(&mut self, i: usize) -> Option<&mut Player> {
+        self.0.get_mut(i)
+    }
 }
 
 // Calculating Methods

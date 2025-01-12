@@ -19,6 +19,15 @@ pub struct Loadout {
 }
 
 impl Loadout {
+    pub fn perk_mut(&mut self, i: usize) -> Option<&mut Perk> {
+        self.perks.get_mut(i).and_then(|item| item.as_mut())
+    }
+    pub fn offering_mut(&mut self) -> Option<&mut Offering> {
+        self.offering.as_mut()
+    }
+}
+
+impl Loadout {
     pub fn collate_luck(&self) -> LoadoutLuckRecord {
         let perk_record_list: ArrayVec<LoadoutLuckRecord, COUNT_PERKS> = self
             .perks

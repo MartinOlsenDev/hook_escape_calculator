@@ -22,6 +22,19 @@ pub enum Perk {
     SlipperyMeat(SlipperyMeat),
 }
 
+// mutator
+impl Perk {
+    //TODO: Make this produce an error on failure
+    pub fn set_uta(&mut self, i: usize) {
+        match i {
+            1 => *self = Perk::UpTheAnte(UpTheAnte::One),
+            2 => *self = Perk::UpTheAnte(UpTheAnte::Two),
+            3 => *self = Perk::UpTheAnte(UpTheAnte::Three),
+            _ => *self = Perk::UpTheAnte(UpTheAnte::Three),
+        }
+    }
+}
+
 impl From<&Perk> for LoadoutLuckRecord {
     fn from(value: &Perk) -> Self {
         match value {
@@ -72,8 +85,8 @@ impl SlipperyMeat {
 
 impl From<&SlipperyMeat> for LoadoutLuckRecord {
     fn from(item: &SlipperyMeat) -> Self {
-        let unhook_chance_mod = Self::from_personal(item.get_luck_value());
-        let unhook_count_mod = Self::from_unhook_mod(3);
+        let unhook_chance_mod = LoadoutLuckRecord::from_personal(item.get_luck_value());
+        let unhook_count_mod = LoadoutLuckRecord::from_unhook_mod(3);
         unhook_chance_mod.combine(&unhook_count_mod)
     }
 }

@@ -6,6 +6,18 @@ pub struct Player {
     loadout: Loadout,
     is_alive: bool,
 }
+// accessors
+impl Player {
+    pub fn get_mut_loadout(&mut self) -> &mut Loadout {
+        &mut self.loadout
+    }
+    pub fn set_alive(&mut self) {
+        self.is_alive = true;
+    }
+    pub fn set_dead(&mut self) {
+        self.is_alive = false;
+    }
+}
 
 impl Player {
     pub const fn is_alive(&self) -> bool {
