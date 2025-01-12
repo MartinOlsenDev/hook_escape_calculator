@@ -1,6 +1,6 @@
 use super::luck_record::{LoadoutLuckRecord, Luck};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Offering {
     ChalkPouch,
     CreamPouch,

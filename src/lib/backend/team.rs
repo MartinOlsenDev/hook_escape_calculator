@@ -10,7 +10,7 @@ use frunk::Semigroup;
 const BASE_UNHOOK_CHANCE: f64 = 0.04;
 pub const TEAM_MAX_CAPACITY: usize = 4;
 
-#[derive(Debug, Clone, Copy, Default)]
+#[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
 pub struct Team([Player; TEAM_MAX_CAPACITY]);
 
 // Accessor Methods

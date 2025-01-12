@@ -12,7 +12,7 @@ const PERKSLOT_COUNT: usize = kon::min!(COUNT_PERKS, 4_usize);
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loadout {
     perks: [PerkSlot; PERKSLOT_COUNT],
     offering: OfferingSlot,

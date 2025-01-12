@@ -16,7 +16,7 @@ mod constants {
 }
 use constants as k;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum Perk {
     UpTheAnte(UpTheAnte),
     SlipperyMeat(SlipperyMeat),
@@ -31,7 +31,7 @@ impl From<&Perk> for LoadoutLuckRecord {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum UpTheAnte {
     One,
     Two,
@@ -53,7 +53,7 @@ impl From<&UpTheAnte> for LoadoutLuckRecord {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SlipperyMeat {
     One,
     Two,
