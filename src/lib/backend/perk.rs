@@ -29,7 +29,7 @@ enum Tier {
     Three,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 enum PerkName {
     SlipperyMeat,
     UpTheAnte,
