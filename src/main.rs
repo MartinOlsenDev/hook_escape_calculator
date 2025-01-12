@@ -1,6 +1,6 @@
 mod lib;
 mod ui;
 
-fn main() -> Result<(), ()> {
-    Ok(())
+fn main() -> iced::Result {
+    ui::run()
 }
