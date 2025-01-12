@@ -13,8 +13,8 @@ pub enum Offering {
 impl From<&Offering> for LoadoutLuckRecord {
     fn from(offering: &Offering) -> Self {
         match offering.luck_is_personal() {
-            true => Self::from_personal(offering.luck_value()),
-            false => Self::from_global(offering.luck_value()),
+            true => LoadoutLuckRecord::from_personal(offering.luck_value()),
+            false => LoadoutLuckRecord::from_global(offering.luck_value()),
         }
     }
 }
