@@ -12,7 +12,7 @@ const PERKSLOT_COUNT: usize = kon::min!(COUNT_PERKS, 4_usize);
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loadout {
     perks: [PerkSlot; PERKSLOT_COUNT],
     offering: OfferingSlot,
@@ -38,18 +38,9 @@ impl Loadout {
         let offering_luck: LoadoutLuckRecord = self
             .offering
             .map(|offering| LoadoutLuckRecord::from(&offering))
-            .unwrap_or(LoadoutLuckRecord::default());
+            .unwrap_or_default();
 
         monoid::combine_all(&perk_record_list).combine(&offering_luck)
-    }
-}
-
-impl Default for Loadout {
-    fn default() -> Self {
-        Loadout {
-            perks: [None; 2],
-            offering: None,
-        }
     }
 }
 

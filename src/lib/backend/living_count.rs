@@ -15,7 +15,7 @@ impl TryFrom<u8> for LivingCount {
         if value <= 4 {
             Ok(Self(value))
         } else {
-            Err("invalid living count".into()).into()
+            Err("invalid living count".into())
         }
     }
 }

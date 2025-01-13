@@ -28,9 +28,6 @@ impl Offering {
         }
     }
     const fn luck_is_personal(&self) -> bool {
-        match self {
-            Offering::ChalkPouch | Offering::CreamPouch | Offering::IvoryPouch => true,
-            _ => false,
-        }
+        matches!(self, Offering::ChalkPouch | Offering::CreamPouch | Offering::IvoryPouch)
     }
 }
