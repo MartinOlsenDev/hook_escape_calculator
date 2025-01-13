@@ -1,16 +1,29 @@
 use super::loadout::Loadout;
 use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
+use super::perk::Tier;
+use super::offering::Offering;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Player {
     loadout: Loadout,
     is_alive: bool,
 }
+
+// Delegated Mutators
+impl Player {
+    pub fn set_slippery(&mut self, tier: Option<Tier>) {
+        self.loadout.set_slippery(tier);
+    }
+    pub fn set_uta(&mut self, tier: Option<Tier>) {
+        self.loadout.set_uta(tier);
+    }
+    pub fn set_offering(&mut self, offering: Option<Offering>) {
+        self.loadout.set_offering(offering);
+    }
+}
+
 // Mutable Accessors
 impl Player {
-    pub fn get_mut_loadout(&mut self) -> &mut Loadout {
-        &mut self.loadout
-    }
     pub fn set_alive(&mut self) {
         self.is_alive = true;
     }
