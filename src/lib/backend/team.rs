@@ -61,7 +61,9 @@ impl Team {
         base_luck.combine(&combine_all(&team_luck_records))
     }
 
-    pub fn luck_string_output(&self) -> ArrayVec<(String, String), TEAM_MAX_CAPACITY> {
-        self.collate_luck().make_single_and_total_unhook_strings()
+    pub fn luck_string_output(&self) -> ArrayVec<(f64, f64), TEAM_MAX_CAPACITY> {
+        self.collate_luck()
+            .make_single_and_total_unhook_pairs()
+            .collect()
     }
 }
