@@ -167,9 +167,7 @@ impl TeamLuckRecord {
             .iter()
             .map(|(luck, unhook_mod)| (luck + self.global, *unhook_mod))
     }
-    pub fn make_single_and_total_unhook_pairs(
-        &self,
-    ) -> impl Iterator<Item = (Luck, Luck)> + '_ {
+    pub fn make_single_and_total_unhook_pairs(&self) -> impl Iterator<Item = (Luck, Luck)> + '_ {
         self.luck_unhook_mod_pairs_iter()
             .map(|(luck, unhook_count)| {
                 let chance_fail: Luck = 1.0 - luck;

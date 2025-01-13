@@ -1,7 +1,7 @@
 use super::loadout::Loadout;
 use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
-use super::perk::Tier;
 use super::offering::Offering;
+use super::perk::Tier;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Player {

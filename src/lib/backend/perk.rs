@@ -24,10 +24,7 @@ pub struct Perk {
 
 impl Perk {
     pub fn new(name: PerkName, tier: Tier) -> Perk {
-        Perk {
-            name,
-            tier
-        }
+        Perk { name, tier }
     }
 }
 

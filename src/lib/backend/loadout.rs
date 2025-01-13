@@ -1,6 +1,6 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::offering::Offering;
-use super::perk::{Perk, COUNT_ALL_KNOWN_LUCK_PERKS, Tier, PerkName};
+use super::perk::{Perk, PerkName, Tier, COUNT_ALL_KNOWN_LUCK_PERKS};
 use arrayvec::ArrayVec;
 use frunk::monoid;
 use frunk::Semigroup;
@@ -22,13 +22,19 @@ pub struct Loadout {
 
 impl Loadout {
     pub fn set_slippery(&mut self, tier: Option<Tier>) {
-        let sm = self.perks.get_mut(SLIPPERY_INDEX).expect("Slippery Meat index at 0 ought to exist.");
+        let sm = self
+            .perks
+            .get_mut(SLIPPERY_INDEX)
+            .expect("Slippery Meat index at 0 ought to exist.");
 
         *sm = tier.map(|t| Perk::new(PerkName::SlipperyMeat, t));
     }
 
     pub fn set_uta(&mut self, tier: Option<Tier>) {
-        let uta = self.perks.get_mut(UTA_INDEX).expect("UTA index at 1 ought to exist.");
+        let uta = self
+            .perks
+            .get_mut(UTA_INDEX)
+            .expect("UTA index at 1 ought to exist.");
 
         *uta = tier.map(|t| Perk::new(PerkName::UpTheAnte, t));
     }
