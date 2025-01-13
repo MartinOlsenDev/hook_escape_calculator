@@ -51,7 +51,7 @@ impl LoadoutLuckRecord {
     }
 }
 
-/// A semigroup instance for LoadoutLuckRecord. It is assumed that
+/// A semigroup instance for `LoadoutLuckRecord`. It is assumed that
 /// the input player luck items does not contain multiple instances
 /// of Up the Ante. If there are, the second is discarded.
 impl Semigroup for LoadoutLuckRecord {
@@ -85,7 +85,7 @@ impl LoadoutPlayerConverter {
     pub const fn new(is_alive: bool) -> Self {
         Self { is_alive }
     }
-    pub fn convert(&self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
+    pub fn convert(self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
         let LoadoutLuckRecord {
             personal,
             global,
@@ -105,10 +105,10 @@ impl LoadoutPlayerConverter {
     }
 }
 
-///TODO: Convert this into its own struct with named fields. Change
-///from Option<f64> to f64 for up the ante. then make
-///LoadoutPlayerConverter, as well as the associated caller
-///function in player.rs
+//TODO: Convert this into its own struct with named fields. Change
+//from Option<f64> to f64 for up the ante. then make
+//LoadoutPlayerConverter, as well as the associated caller
+//function in player.rs
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PlayerLuckRecord(pub LoadoutLuckRecord);
 
@@ -123,7 +123,7 @@ impl PlayerTeamConverter {
             living_other_than_self_count,
         }
     }
-    pub fn convert(&self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
+    pub fn convert(self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
         let LoadoutLuckRecord {
             personal,
             global,
@@ -131,9 +131,8 @@ impl PlayerTeamConverter {
             additional_unhooks,
         } = plr.0;
 
-        let uta_contribution = up_the_ante_coeff
-            .map(|x| x * f64::from(self.living_other_than_self_count))
-            .unwrap_or(0.0);
+        let uta_contribution =
+            up_the_ante_coeff.map_or(0.0, |x| x * f64::from(self.living_other_than_self_count));
 
         let final_global = global + uta_contribution;
         let personal_data = {

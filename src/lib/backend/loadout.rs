@@ -45,7 +45,7 @@ impl Loadout {
 }
 
 impl Loadout {
-    pub fn collate_luck(&self) -> LoadoutLuckRecord {
+    pub fn collate_luck(self) -> LoadoutLuckRecord {
         let perk_record_list: ArrayVec<LoadoutLuckRecord, COUNT_PERKS> = self
             .perks
             .iter()

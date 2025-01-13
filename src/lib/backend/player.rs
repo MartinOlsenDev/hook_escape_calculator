@@ -33,14 +33,14 @@ impl Player {
 }
 
 impl Player {
-    pub const fn is_alive(&self) -> bool {
+    pub const fn is_alive(self) -> bool {
         self.is_alive
     }
-    fn make_record_converter(&self) -> LoadoutPlayerConverter {
+    fn make_record_converter(self) -> LoadoutPlayerConverter {
         LoadoutPlayerConverter::new(self.is_alive)
     }
 
-    pub fn make_player_luck(&self) -> PlayerLuckRecord {
+    pub fn make_player_luck(self) -> PlayerLuckRecord {
         self.make_record_converter()
             .convert(self.loadout.collate_luck())
     }

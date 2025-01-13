@@ -25,13 +25,16 @@ impl Team {
 
 // Calculating Methods
 impl Team {
-    fn alive_not_counting(&self, uncounted_player: &Player) -> LivingCount {
+    fn alive_not_counting(self, uncounted_player: &Player) -> LivingCount {
         LivingCount::try_from(
-            self.list()
-                .iter()
-                .filter(|&player| player.is_alive())
-                .filter(|&player| !std::ptr::eq(player, uncounted_player))
-                .count() as u8,
+            u8::try_from(
+                self.list()
+                    .iter()
+                    .filter(|&player| player.is_alive())
+                    .filter(|&player| !std::ptr::eq(player, uncounted_player))
+                    .count(),
+            )
+            .expect("Filtering on [_;4] cannot yield count outside u8"),
         )
         .expect("Filtering on a [_;4] cannot yield count exceeding 4.")
     }
