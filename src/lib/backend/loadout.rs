@@ -1,6 +1,6 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::offering::Offering;
-use super::perk::{Perk, COUNT_ALL_KNOWN_LUCK_PERKS};
+use super::perk::{Perk, COUNT_ALL_KNOWN_LUCK_PERKS, Tier, PerkName};
 use arrayvec::ArrayVec;
 use frunk::monoid;
 use frunk::Semigroup;
@@ -8,6 +8,8 @@ use konst as kon;
 use COUNT_ALL_KNOWN_LUCK_PERKS as COUNT_PERKS;
 
 const PERKSLOT_COUNT: usize = kon::min!(COUNT_PERKS, 4_usize);
+const SLIPPERY_INDEX: usize = 0;
+const UTA_INDEX: usize = 1;
 
 type PerkSlot = Option<Perk>;
 type OfferingSlot = Option<Offering>;
@@ -19,11 +21,20 @@ pub struct Loadout {
 }
 
 impl Loadout {
-    pub fn perk_mut(&mut self, i: usize) -> Option<&mut Perk> {
-        self.perks.get_mut(i).and_then(|item| item.as_mut())
+    pub fn set_slippery(&mut self, tier: Option<Tier>) {
+        let sm = self.perks.get_mut(SLIPPERY_INDEX).expect("Slippery Meat index at 0 ought to exist.");
+
+        *sm = tier.map(|t| Perk::new(PerkName::SlipperyMeat, t));
     }
-    pub fn offering_mut(&mut self) -> Option<&mut Offering> {
-        self.offering.as_mut()
+
+    pub fn set_uta(&mut self, tier: Option<Tier>) {
+        let uta = self.perks.get_mut(UTA_INDEX).expect("UTA index at 1 ought to exist.");
+
+        *uta = tier.map(|t| Perk::new(PerkName::UpTheAnte, t));
+    }
+
+    pub fn set_offering(&mut self, new: Option<Offering>) {
+        self.offering = new;
     }
 }
 
