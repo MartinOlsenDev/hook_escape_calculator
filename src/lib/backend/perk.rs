@@ -22,15 +22,24 @@ pub struct Perk {
     tier: Tier,
 }
 
+impl Perk {
+    pub fn new(name: PerkName, tier: Tier) -> Perk {
+        Perk {
+            name,
+            tier
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-enum Tier {
+pub enum Tier {
     One,
     Two,
     Three,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum PerkName {
+pub enum PerkName {
     SlipperyMeat,
     UpTheAnte,
 }
