@@ -11,7 +11,11 @@ description = "A calculator for the odds of escape in the video game Dead By Day
 arrayvec = "0.7.6"
 frunk = "0.4.3"
 konst = "0.3.15"
+fltk = "1.5.2"
 # num-rational integration planned for future release
+
+[build-dependencies]
+fl2rust = "0.5"
 
 [lints.rust]
 unsafe_code = "forbid"
