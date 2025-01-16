@@ -9,5 +9,5 @@ fn main() {
     ui.but.set_callback(move |_| {
         println!("Works!");
     });
-    app.run().unwrap();
+    app.run().expect("Internal fltk error encountered.");
 }
