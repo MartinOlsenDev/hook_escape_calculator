@@ -1,17 +1,73 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0400
+version 1.0401
 header_name {.h}
 code_name {.cxx}
 class UserInterface {open
 } {
   Function {make_window()} {open
   } {
-    Fl_Window {} {open selected
-      xywh {138 161 440 355} type Double visible
+    Fl_Window {} {open
+      xywh {470 105 640 360} type Double resizable visible
     } {
-      Fl_Button but {
-        label {Click me}
-        xywh {175 230 95 45}
+      Fl_Flex {} {open
+        xywh {0 0 640 360} resizable fixed_size_tuples {1  0 30 }
+      } {
+        Fl_Flex {} {open
+          xywh {0 0 640 30} type HORIZONTAL fixed_size_tuples {1  1 80 }
+        } {
+          Fl_Box {} {
+            xywh {0 0 560 30} box UP_BOX
+          }
+          Fl_Menu_Bar {} {open
+            xywh {560 0 80 30}
+          } {
+            Submenu {} {
+              label Help open
+              xywh {0 0 100 20}
+            } {
+              MenuItem {} {
+                label About
+                xywh {0 0 100 20}
+              }
+            }
+          }
+        }
+        Fl_Flex {} {open
+          xywh {0 30 640 330} resizable
+        } {
+          Fl_Flex {} {open
+            xywh {0 30 640 83} type HORIZONTAL
+          } {
+            Fl_Box {} {
+              label {Survivor 1}
+              xywh {0 30 640 83}
+            }
+          }
+          Fl_Flex {} {open
+            xywh {0 113 640 83} type HORIZONTAL
+          } {
+            Fl_Box {} {
+              label {Survivor 2}
+              xywh {0 113 640 83}
+            }
+          }
+          Fl_Flex {} {open
+            xywh {0 196 640 82} type HORIZONTAL
+          } {
+            Fl_Box {} {
+              label {Survivor 3}
+              xywh {0 196 640 82}
+            }
+          }
+          Fl_Flex {} {open
+            xywh {0 278 640 82} type HORIZONTAL
+          } {
+            Fl_Box {} {
+              label {Survivor 4}
+              xywh {0 278 640 82}
+            }
+          }
+        }
       }
     }
   }
