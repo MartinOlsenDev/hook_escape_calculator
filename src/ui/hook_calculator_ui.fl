@@ -35,20 +35,122 @@ class UserInterface {open
         Fl_Flex {} {open
           xywh {0 30 640 330} resizable
         } {
-          Fl_Flex {} {open
+          Fl_Flex {} {
             xywh {0 30 640 83} type HORIZONTAL
           } {
             Fl_Box {} {
               label {Survivor 1}
-              xywh {0 30 640 83}
+              xywh {0 30 320 83}
+            }
+            Fl_Choice {} {
+              user_data {id:sm1} open
+              xywh {320 30 320 83} down_box BORDER_BOX
+            } {
+              MenuItem {} {
+                label NA
+                xywh {0 0 100 20}
+              }
+              MenuItem {} {
+                label {Tier 1}
+                xywh {0 0 100 20}
+              }
+              MenuItem {} {
+                label {Tier 2}
+                xywh {0 0 100 20}
+              }
+              MenuItem {} {
+                label {Tier 3}
+                xywh {0 0 100 20}
+              }
             }
           }
-          Fl_Flex {} {open
-            xywh {0 113 640 83} type HORIZONTAL
+          Fl_Flex {} {
+            user_data {id:surv2_flex} open
+            xywh {0 113 640 83}
           } {
             Fl_Box {} {
-              label {Survivor 2}
-              xywh {0 113 640 83}
+              xywh {0 113 640 28}
+            }
+            Fl_Flex {} {open
+              xywh {0 141 640 28} type HORIZONTAL
+            } {
+              Fl_Box {} {
+                label {Survivor 2}
+                xywh {0 141 92 28}
+              }
+              Fl_Box {} {
+                label label
+                xywh {92 141 92 28}
+              }
+              Fl_Flex {} {open
+                xywh {184 141 92 28} type HORIZONTAL
+              } {
+                Fl_Box {} {
+                  xywh {184 141 31 28}
+                }
+                Fl_Choice {} {open selected
+                  xywh {215 141 31 28} down_box BORDER_BOX
+                } {}
+                Fl_Box {} {
+                  xywh {246 141 30 28}
+                }
+              }
+              Fl_Flex {} {
+                xywh {276 141 91 28} type HORIZONTAL
+              } {
+                Fl_Box {} {
+                  xywh {276 141 31 28}
+                }
+                Fl_Choice {} {open
+                  xywh {307 141 30 28} down_box BORDER_BOX
+                } {}
+                Fl_Box {} {
+                  xywh {337 141 30 28}
+                }
+              }
+              Fl_Flex {} {open
+                xywh {367 141 91 28} type HORIZONTAL
+              } {
+                Fl_Box {} {
+                  xywh {367 141 31 28}
+                }
+                Fl_Check_Button {} {
+                  user_data {id:surv1_alive}
+                  xywh {398 141 30 28} down_box DOWN_BOX
+                }
+                Fl_Box {} {
+                  xywh {428 141 30 28}
+                }
+              }
+              Fl_Flex {} {open
+                xywh {458 141 91 28} type HORIZONTAL
+              } {
+                Fl_Box {} {
+                  xywh {458 141 31 28}
+                }
+                Fl_Text_Display {} {
+                  xywh {489 141 30 28}
+                }
+                Fl_Box {} {
+                  xywh {519 141 30 28}
+                }
+              }
+              Fl_Flex {} {open
+                xywh {549 141 91 28} type HORIZONTAL
+              } {
+                Fl_Box {} {
+                  xywh {549 141 31 28}
+                }
+                Fl_Text_Display {} {
+                  xywh {580 141 30 28}
+                }
+                Fl_Box {} {
+                  xywh {610 141 30 28}
+                }
+              }
+            }
+            Fl_Box {} {
+              xywh {0 169 640 27}
             }
           }
           Fl_Flex {} {open
