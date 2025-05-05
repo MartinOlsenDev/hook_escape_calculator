@@ -27,13 +27,14 @@ impl Team {
 
 // Calculating Methods
 impl Team {
-    fn alive_not_counting(self, uncounted_player: &Player) -> LivingCount {
+    fn alive_not_counting(self, uncounted_player: usize) -> LivingCount {
         LivingCount::try_from(
             u8::try_from(
                 self.list()
                     .iter()
-                    .filter(|&player| player.is_alive())
-                    .filter(|&player| !std::ptr::eq(player, uncounted_player))
+                    .enumerate()
+                    .filter(|(_, player)| player.is_alive())
+                    .filter(|(i, _)| *i != uncounted_player)
                     .count(),
             )
             .expect("Filtering on [_;4] cannot yield count outside u8"),
@@ -46,9 +47,8 @@ impl Team {
     }
 
     fn make_team_adapters(&self) -> impl Iterator<Item = PlayerTeamConverter> + '_ {
-        self.list()
-            .iter()
-            .map(|player| self.alive_not_counting(player))
+        (0_usize..(self.list().len()))
+            .map(|id| self.alive_not_counting(id))
             .map(|count| PlayerTeamConverter::new(count.into()))
     }
 
