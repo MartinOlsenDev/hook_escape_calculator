@@ -1,3 +1,5 @@
+use derive_getters::Getters;
+
 use super::loadout::Loadout;
 use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
 use super::offering::Offering;
@@ -22,7 +24,7 @@ impl Player {
     }
 }
 
-// Mutable Accessors
+// Mutators
 impl Player {
     pub fn set_alive(&mut self) {
         self.is_alive = true;
@@ -32,14 +34,32 @@ impl Player {
     }
 }
 
+// Delegated Getters
+impl Player {
+    pub fn get_slippery_tier(&self) -> Option<crate::lib::perk::Tier> {
+        self.loadout.get_slippery().map(|x| x.tier().clone())
+    }
+    pub fn get_uta_tier(&self) -> Option<crate::lib::perk::Tier> {
+        self.loadout.get_uta().map(|x| x.tier().clone())
+    }
+    pub fn get_offering(&self) -> Option<crate::lib::offering::Offering> {
+        self.loadout.get_offering()
+    }
+}
+
+// Getters
 impl Player {
     pub const fn is_alive(self) -> bool {
         self.is_alive
+    }
+    pub const fn is_dead(self) -> bool {
+        !self.is_alive()
     }
     fn make_record_converter(self) -> LoadoutPlayerConverter {
         LoadoutPlayerConverter::new(self.is_alive)
     }
 
+    // Consider placing in sub-module
     pub fn make_player_luck(self) -> PlayerLuckRecord {
         self.make_record_converter()
             .convert(self.loadout.collate_luck())

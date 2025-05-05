@@ -1,6 +1,10 @@
 mod lib;
 mod ui;
+use ui::App;
+use iced;
 
-fn main() {
-    println!("Hello World!");
+fn main() -> iced::Result {
+    iced::application("Hook Calculator", App::update, App::view)
+        //.theme(App::theme)
+        .run()
 }

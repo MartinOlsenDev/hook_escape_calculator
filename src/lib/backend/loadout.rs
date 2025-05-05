@@ -1,18 +1,18 @@
 use super::luck_record::LoadoutLuckRecord;
-use super::offering::Offering;
-use super::perk::{Perk, PerkName, Tier, COUNT_ALL_KNOWN_LUCK_PERKS};
+use super::offering::{Offering, OfferingSlot};
+use super::perk::{Perk, PerkSlot, PerkName, Tier};
+
 use arrayvec::ArrayVec;
 use frunk::monoid;
 use frunk::Semigroup;
 use konst as kon;
-use COUNT_ALL_KNOWN_LUCK_PERKS as COUNT_PERKS;
+use derive_getters::Getters;
 
-const PERKSLOT_COUNT: usize = kon::min!(COUNT_PERKS, 4_usize);
+use crate::lib::constants as k;
+
+const PERKSLOT_COUNT: usize = kon::min!(k::COUNT_ALL_KNOWN_LUCK_PERKS, 4_usize);
 const SLIPPERY_INDEX: usize = 0;
 const UTA_INDEX: usize = 1;
-
-type PerkSlot = Option<Perk>;
-type OfferingSlot = Option<Offering>;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loadout {
@@ -20,6 +20,7 @@ pub struct Loadout {
     offering: OfferingSlot,
 }
 
+// mutators
 impl Loadout {
     pub fn set_slippery(&mut self, tier: Option<Tier>) {
         let sm = self
@@ -44,9 +45,29 @@ impl Loadout {
     }
 }
 
+// accessors
+impl Loadout {
+    pub fn get_slippery(&self) -> PerkSlot {
+        self.perks
+            .get(SLIPPERY_INDEX)
+            .and_then(|x| x.as_ref())
+            .copied()
+    }
+    pub fn get_uta(&self) -> PerkSlot {
+        self.perks
+            .get(UTA_INDEX)
+            .and_then(Option::as_ref)
+            .copied()
+    }
+    pub fn get_offering(&self) -> OfferingSlot {
+        self.offering
+    }
+}
+
+// luck collater
 impl Loadout {
     pub fn collate_luck(self) -> LoadoutLuckRecord {
-        let perk_record_list: ArrayVec<LoadoutLuckRecord, COUNT_PERKS> = self
+        let perk_record_list: ArrayVec<LoadoutLuckRecord, {k::COUNT_ALL_KNOWN_LUCK_PERKS}> = self
             .perks
             .iter()
             .filter_map(|&perk_slot| perk_slot)

@@ -1,26 +1,17 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::luck_record::Luck;
 use frunk::Semigroup;
+use derive_getters::Getters;
+use strum::{IntoEnumIterator, EnumIter};
 
-pub const COUNT_ALL_KNOWN_LUCK_PERKS: usize = 2;
+use crate::lib::constants as k;
 
-mod constants {
-    use super::Luck;
-    pub const UTA_TIER1: Luck = 0.01;
-    pub const UTA_TIER2: Luck = 0.02;
-    pub const UTA_TIER3: Luck = 0.03;
-
-    pub const SM_TIER1: Luck = 0.02;
-    pub const SM_TIER2: Luck = 0.03;
-    pub const SM_TIER3: Luck = 0.04;
-}
-use constants as k;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Getters)]
 pub struct Perk {
     name: PerkName,
     tier: Tier,
 }
+pub type PerkSlot = Option<Perk>;
 
 impl Perk {
     pub fn new(name: PerkName, tier: Tier) -> Perk {
@@ -28,11 +19,27 @@ impl Perk {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, EnumIter)]
 pub enum Tier {
     One,
     Two,
     Three,
+}
+
+impl Tier {
+    pub fn iterator() -> TierIter {
+        Self::iter()
+    }
+}
+
+impl std::fmt::Display for Tier {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Tier::One => "one",
+            Tier::Two => "two",
+            Tier::Three => "three"
+        })
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
