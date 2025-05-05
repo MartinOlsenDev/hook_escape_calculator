@@ -106,6 +106,10 @@ impl App {
         ]
         .into()
     }
+
+    pub fn theme(&self) -> iced::Theme {
+        iced::Theme::Dracula
+    }
 }
 
 #[derive(Debug, Clone)]
