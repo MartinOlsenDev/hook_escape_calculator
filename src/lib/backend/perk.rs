@@ -1,8 +1,8 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::luck_record::Luck;
-use frunk::Semigroup;
 use derive_getters::Getters;
-use strum::{IntoEnumIterator, EnumIter};
+use frunk::Semigroup;
+use strum::{EnumIter, IntoEnumIterator};
 
 use crate::lib::constants as k;
 
@@ -34,11 +34,15 @@ impl Tier {
 
 impl std::fmt::Display for Tier {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Tier::One => "one",
-            Tier::Two => "two",
-            Tier::Three => "three"
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Tier::One => "one",
+                Tier::Two => "two",
+                Tier::Three => "three",
+            }
+        )
     }
 }
 

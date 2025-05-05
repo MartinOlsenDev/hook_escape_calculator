@@ -152,7 +152,7 @@ impl PlayerTeamConverter {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamLuckRecord {
     global: Luck,
-    personals: ArrayVec<(Luck, i8), {k::TEAM_MAX_CAPACITY}>,
+    personals: ArrayVec<(Luck, i8), { k::TEAM_MAX_CAPACITY }>,
 }
 
 impl TeamLuckRecord {

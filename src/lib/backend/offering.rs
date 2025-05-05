@@ -1,4 +1,4 @@
-use strum::{IntoEnumIterator, EnumIter};
+use strum::{EnumIter, IntoEnumIterator};
 
 use super::luck_record::{LoadoutLuckRecord, Luck};
 
@@ -47,13 +47,17 @@ impl Offering {
 
 impl std::fmt::Display for Offering {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self{
-            Offering::ChalkPouch => "chalk pouch",
-            Offering::CreamPouch => "cream pouch",
-            Offering::IvoryPouch => "ivory pouch",
-            Offering::SaltPouch => "salt pouch",
-            Offering::SaltStatuette => "salt statuette",
-            Offering::SaltyLips => "salty lips"
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Offering::ChalkPouch => "chalk pouch",
+                Offering::CreamPouch => "cream pouch",
+                Offering::IvoryPouch => "ivory pouch",
+                Offering::SaltPouch => "salt pouch",
+                Offering::SaltStatuette => "salt statuette",
+                Offering::SaltyLips => "salty lips",
+            }
+        )
     }
 }

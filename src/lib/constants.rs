@@ -1,4 +1,4 @@
-pub use {offering::*, perk::*, misc::*};
+pub use {misc::*, offering::*, perk::*};
 
 mod offering {
     pub const SLIGHT_LUCK: f64 = 0.01;

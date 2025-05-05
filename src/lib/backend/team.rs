@@ -61,12 +61,12 @@ impl Team {
 
     fn collate_luck(&self) -> TeamLuckRecord {
         let base_luck: TeamLuckRecord = TeamLuckRecord::from_global(k::BASE_UNHOOK_CHANCE);
-        let team_luck_records: ArrayVec<TeamLuckRecord, {k::TEAM_MAX_CAPACITY}> =
+        let team_luck_records: ArrayVec<TeamLuckRecord, { k::TEAM_MAX_CAPACITY }> =
             self.make_team_luck_records().collect();
         base_luck.combine(&combine_all(&team_luck_records))
     }
 
-    pub fn luck_output(&self) -> ArrayVec<(f64, f64), {k::TEAM_MAX_CAPACITY}> {
+    pub fn luck_output(&self) -> ArrayVec<(f64, f64), { k::TEAM_MAX_CAPACITY }> {
         self.collate_luck()
             .make_single_and_total_unhook_pairs()
             .collect()

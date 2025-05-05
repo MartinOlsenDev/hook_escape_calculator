@@ -1,7 +1,7 @@
 mod lib;
 mod ui;
-use ui::App;
 use iced;
+use ui::App;
 
 fn main() -> iced::Result {
     iced::application("Hook Calculator", App::update, App::view)

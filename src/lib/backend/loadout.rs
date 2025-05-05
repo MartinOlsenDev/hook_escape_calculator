@@ -1,12 +1,12 @@
 use super::luck_record::LoadoutLuckRecord;
 use super::offering::{Offering, OfferingSlot};
-use super::perk::{Perk, PerkSlot, PerkName, Tier};
+use super::perk::{Perk, PerkName, PerkSlot, Tier};
 
 use arrayvec::ArrayVec;
+use derive_getters::Getters;
 use frunk::monoid;
 use frunk::Semigroup;
 use konst as kon;
-use derive_getters::Getters;
 
 use crate::lib::constants as k;
 
@@ -54,10 +54,7 @@ impl Loadout {
             .copied()
     }
     pub fn get_uta(&self) -> PerkSlot {
-        self.perks
-            .get(UTA_INDEX)
-            .and_then(Option::as_ref)
-            .copied()
+        self.perks.get(UTA_INDEX).and_then(Option::as_ref).copied()
     }
     pub fn get_offering(&self) -> OfferingSlot {
         self.offering
@@ -67,7 +64,7 @@ impl Loadout {
 // luck collater
 impl Loadout {
     pub fn collate_luck(self) -> LoadoutLuckRecord {
-        let perk_record_list: ArrayVec<LoadoutLuckRecord, {k::COUNT_ALL_KNOWN_LUCK_PERKS}> = self
+        let perk_record_list: ArrayVec<LoadoutLuckRecord, { k::COUNT_ALL_KNOWN_LUCK_PERKS }> = self
             .perks
             .iter()
             .filter_map(|&perk_slot| perk_slot)
