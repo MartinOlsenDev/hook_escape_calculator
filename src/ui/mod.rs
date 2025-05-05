@@ -46,6 +46,17 @@ impl App {
 
     fn view_team(&self) -> Element<Message> {
         let mut rows = Column::new();
+        let column_headers = row![
+            text("Survivor Name"),
+            text("Slippery Meat"),
+            text("Up the Ante"),
+            text("Offering"),
+            text("Living Status"),
+            text("Attempt Chance"),
+            text("Total Chance")
+        ];
+        rows = rows.push(column_headers);
+
         for player_id in 0..k::TEAM_MAX_CAPACITY {
             let player_name = text(format!("Player {}", player_id + 1));
             let row_input = self.make_player(player_id);
