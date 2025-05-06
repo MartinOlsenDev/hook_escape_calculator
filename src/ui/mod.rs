@@ -46,26 +46,35 @@ impl App {
 
     fn view_team(&self) -> Element<Message> {
         let mut rows = Column::new();
-        let column_headers = row![
-            text("Survivor Name"),
-            text("Slippery Meat"),
-            text("Up the Ante"),
-            text("Offering"),
-            text("Living Status"),
-            text("Attempt Chance"),
-            text("Total Chance")
+        let name_header = text("Survivor Name").width(120);
+        let input_headers = row![
+            text("Slippery Meat").width(200),
+            text("Up the Ante").width(200),
+            text("Offering").width(200),
+            text("Living Status").width(120)
         ];
+        let output_headers = row![
+        text("Attempt Chance").width(120),
+        text("Total Chance").width(120)
+        ].width(240);
+        let column_headers = row![
+            name_header,
+            input_headers,
+            output_headers
+        ];
+
+
         rows = rows.push(column_headers);
 
         for player_id in 0..k::TEAM_MAX_CAPACITY {
-            let player_name = text(format!("Player {}", player_id + 1));
+            let player_name = text(format!("Player {}", player_id + 1)).width(120);
             let row_input = self.make_player(player_id);
             let (attempt_chance, total_chance) = self.widgets.odds.get(player_id).expect(
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
             );
             let row_output = row![
-                text(attempt_chance.to_owned()),
-                text(total_chance.to_owned())
+                text(attempt_chance.to_owned()).width(120),
+                text(total_chance.to_owned()).width(120)
             ];
             let row = row![player_name, row_input, row_output];
             rows = rows.push(row)
@@ -86,13 +95,13 @@ impl App {
                 move |TierSlotDisplay(x)| {
                     Message::UpdateSurvivor(SurvivorUpdate::slippery(id, x))
                 }
-            ),
+            ).width(200),
             combo_box(
                 &self.widgets.tier_choices,
                 "",
                 Some(&TierSlotDisplay(player.get_uta_tier())),
                 move |TierSlotDisplay(x)| { Message::UpdateSurvivor(SurvivorUpdate::uta(id, x)) }
-            ),
+            ).width(200),
             combo_box(
                 &self.widgets.offering_choices,
                 "",
@@ -100,9 +109,10 @@ impl App {
                 move |OfferingSlotDisplay(x)| {
                     Message::new_surv_update(id, SurvivorUpdateData::Offering(x))
                 }
-            ),
+            ).width(200),
             checkbox("is dead", player.is_dead())
                 .on_toggle(move |x| Message::new_surv_update(id, SurvivorUpdateData::Life(x)))
+                .width(120)
         ]
         .into()
     }
