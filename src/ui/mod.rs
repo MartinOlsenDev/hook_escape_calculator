@@ -4,7 +4,7 @@ use hook_escape_calculator::*;
 use std::borrow::Cow;
 
 use arrayvec::ArrayVec;
-use iced::widget::{checkbox, combo_box, container, row, text, Column, Container, Text};
+use iced::widget::{checkbox, combo_box, container, row, text, Column};
 use iced::Element;
 
 #[derive(Debug, Clone)]
@@ -16,7 +16,6 @@ pub struct App {
 impl App {
     pub fn update(&mut self, message: Message) {
         match message {
-            Message::Unimplemented => eprintln!("Unimplemented"),
             Message::UpdateSurvivor(x) => self.update_survivor(x),
         }
     }
@@ -244,8 +243,7 @@ impl std::fmt::Display for OfferingSlotDisplay {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Message {
-    UpdateSurvivor(SurvivorUpdate),
-    Unimplemented,
+    UpdateSurvivor(SurvivorUpdate)
 }
 
 impl Message {
@@ -255,7 +253,7 @@ impl Message {
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
-struct SurvivorUpdate {
+pub struct SurvivorUpdate {
     id: usize,
     update: SurvivorUpdateData,
 }

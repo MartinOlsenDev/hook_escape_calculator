@@ -1,6 +1,6 @@
 use super::living_count::LivingCount;
 use super::luck_record::{
-    LoadoutLuckRecord, PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord,
+    PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord,
 };
 use super::player::Player;
 use arrayvec::ArrayVec;

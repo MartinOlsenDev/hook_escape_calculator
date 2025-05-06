@@ -1,5 +1,4 @@
 use super::luck_record::LoadoutLuckRecord;
-use super::luck_record::Luck;
 use derive_getters::Getters;
 use frunk::Semigroup;
 use strum::{EnumIter, IntoEnumIterator};

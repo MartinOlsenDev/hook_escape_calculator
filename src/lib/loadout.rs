@@ -3,7 +3,6 @@ use super::offering::{Offering, OfferingSlot};
 use super::perk::{Perk, PerkName, PerkSlot, Tier};
 
 use arrayvec::ArrayVec;
-use derive_getters::Getters;
 use frunk::monoid;
 use frunk::Semigroup;
 use konst as kon;

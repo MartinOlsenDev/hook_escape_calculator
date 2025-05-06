@@ -1,5 +1,3 @@
-use derive_getters::Getters;
-
 use super::loadout::Loadout;
 use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
 use super::offering::Offering;
@@ -37,10 +35,10 @@ impl Player {
 // Delegated Getters
 impl Player {
     pub fn get_slippery_tier(&self) -> Option<crate::perk::Tier> {
-        self.loadout.get_slippery().map(|x| x.tier().clone())
+        self.loadout.get_slippery().map(|x| *x.tier())
     }
     pub fn get_uta_tier(&self) -> Option<crate::perk::Tier> {
-        self.loadout.get_uta().map(|x| x.tier().clone())
+        self.loadout.get_uta().map(|x| *x.tier())
     }
     pub fn get_offering(&self) -> Option<crate::offering::Offering> {
         self.loadout.get_offering()
