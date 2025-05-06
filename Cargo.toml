@@ -23,6 +23,7 @@ derive_more = { version = "2.0.1", features = ["display"] }
 # consider eliminating derive_more in favor of strum derive display
 strum = { version = "0.27.1", features = ["derive"] }
 derive-getters = {version = "0.5.0", features = ["auto_copy_getters"] }
+mimalloc = {version = "0.1.46", features = ["secure"] }
 # num-rational integration planned for future release
 
 [lints.rust]
