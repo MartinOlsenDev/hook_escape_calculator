@@ -3,7 +3,7 @@ use crate::lib::*;
 use std::borrow::Cow;
 
 use arrayvec::ArrayVec;
-use iced::widget::{checkbox, combo_box, row, text, Column, Text};
+use iced::widget::{checkbox, combo_box, row, text, Column, Text, container, Container};
 use iced::Element;
 
 use crate::lib::constants as k;
@@ -46,7 +46,7 @@ impl App {
 
     fn view_team(&self) -> Element<Message> {
         let mut rows = Column::new();
-        let name_header = text("Survivor Name").width(120);
+        let name_header = text("Survivor Name").width(150);
         let input_headers = row![
             text("Slippery Meat").width(200),
             text("Up the Ante").width(200),
@@ -67,7 +67,7 @@ impl App {
         rows = rows.push(column_headers);
 
         for player_id in 0..k::TEAM_MAX_CAPACITY {
-            let player_name = text(format!("Player {}", player_id + 1)).width(120);
+            let player_name = text(format!("Player {}", player_id + 1)).width(150);
             let row_input = self.make_player(player_id);
             let (attempt_chance, total_chance) = self.widgets.odds.get(player_id).expect(
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
@@ -88,28 +88,28 @@ impl App {
         );
 
         row![
-            combo_box(
+            container(combo_box(
                 &self.widgets.tier_choices,
                 "",
                 Some(&TierSlotDisplay(player.get_slippery_tier())),
                 move |TierSlotDisplay(x)| {
                     Message::UpdateSurvivor(SurvivorUpdate::slippery(id, x))
                 }
-            ).width(200),
-            combo_box(
+            ).width(120)).width(200),
+            container(combo_box(
                 &self.widgets.tier_choices,
                 "",
                 Some(&TierSlotDisplay(player.get_uta_tier())),
                 move |TierSlotDisplay(x)| { Message::UpdateSurvivor(SurvivorUpdate::uta(id, x)) }
-            ).width(200),
-            combo_box(
+            ).width(120)).width(200),
+            container(combo_box(
                 &self.widgets.offering_choices,
                 "",
                 Some(&OfferingSlotDisplay(player.get_offering())),
                 move |OfferingSlotDisplay(x)| {
                     Message::new_surv_update(id, SurvivorUpdateData::Offering(x))
                 }
-            ).width(200),
+            ).width(150)).width(200),
             checkbox("is dead", player.is_dead())
                 .on_toggle(move |x| Message::new_surv_update(id, SurvivorUpdateData::Life(x)))
                 .width(120)
