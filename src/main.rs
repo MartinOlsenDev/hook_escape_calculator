@@ -1,4 +1,3 @@
-mod lib;
 mod ui;
 use iced;
 use iced::Size;

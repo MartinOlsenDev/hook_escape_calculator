@@ -36,13 +36,13 @@ impl Player {
 
 // Delegated Getters
 impl Player {
-    pub fn get_slippery_tier(&self) -> Option<crate::lib::perk::Tier> {
+    pub fn get_slippery_tier(&self) -> Option<crate::perk::Tier> {
         self.loadout.get_slippery().map(|x| x.tier().clone())
     }
-    pub fn get_uta_tier(&self) -> Option<crate::lib::perk::Tier> {
+    pub fn get_uta_tier(&self) -> Option<crate::perk::Tier> {
         self.loadout.get_uta().map(|x| x.tier().clone())
     }
-    pub fn get_offering(&self) -> Option<crate::lib::offering::Offering> {
+    pub fn get_offering(&self) -> Option<crate::offering::Offering> {
         self.loadout.get_offering()
     }
 }

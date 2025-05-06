@@ -2,7 +2,7 @@ use arrayvec::ArrayVec;
 use frunk::monoid::Monoid;
 use frunk::Semigroup;
 
-use crate::lib::constants as k;
+use crate::constants as k;
 
 pub type Luck = f64;
 

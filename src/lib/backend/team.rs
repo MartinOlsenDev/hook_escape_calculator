@@ -7,7 +7,7 @@ use arrayvec::ArrayVec;
 use frunk::monoid::combine_all;
 use frunk::Semigroup;
 
-use crate::lib::constants as k;
+use crate::constants as k;
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
 pub struct Team([Player; k::TEAM_MAX_CAPACITY]);

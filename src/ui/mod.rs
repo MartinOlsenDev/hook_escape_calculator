@@ -1,12 +1,11 @@
-use crate::lib::*;
+use hook_escape_calculator::constants as k;
+use hook_escape_calculator::*;
 
 use std::borrow::Cow;
 
 use arrayvec::ArrayVec;
 use iced::widget::{checkbox, combo_box, container, row, text, Column, Container, Text};
 use iced::Element;
-
-use crate::lib::constants as k;
 
 #[derive(Debug, Clone)]
 pub struct App {

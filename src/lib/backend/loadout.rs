@@ -8,7 +8,7 @@ use frunk::monoid;
 use frunk::Semigroup;
 use konst as kon;
 
-use crate::lib::constants as k;
+use crate::constants as k;
 
 const PERKSLOT_COUNT: usize = kon::min!(k::COUNT_ALL_KNOWN_LUCK_PERKS, 4_usize);
 const SLIPPERY_INDEX: usize = 0;

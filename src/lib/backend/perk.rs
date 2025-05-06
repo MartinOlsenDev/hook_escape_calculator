@@ -4,7 +4,7 @@ use derive_getters::Getters;
 use frunk::Semigroup;
 use strum::{EnumIter, IntoEnumIterator};
 
-use crate::lib::constants as k;
+use crate::constants as k;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Getters)]
 pub struct Perk {
