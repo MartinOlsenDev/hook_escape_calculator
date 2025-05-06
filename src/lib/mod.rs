@@ -1,5 +1,3 @@
-// Internal API not necessarily exposed to the GUI
-
 pub mod living_count;
 pub mod loadout;
 pub mod luck_record;
