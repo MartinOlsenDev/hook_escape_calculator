@@ -1,7 +1,5 @@
 use super::living_count::LivingCount;
-use super::luck_record::{
-    PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord,
-};
+use super::luck_record::{PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord};
 use super::player::Player;
 use arrayvec::ArrayVec;
 use frunk::monoid::combine_all;
@@ -78,7 +76,5 @@ mod tests {
     use super::*;
 
     #[test]
-    fn survivor_with_56_slippery_has() {
-        
-    }
+    fn survivor_with_56_slippery_has() {}
 }

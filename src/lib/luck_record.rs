@@ -1,5 +1,5 @@
 use arrayvec::ArrayVec;
-use frunk::monoid::{Monoid, combine_all};
+use frunk::monoid::{combine_all, Monoid};
 use frunk::Semigroup;
 
 use crate::constants as k;
@@ -211,13 +211,15 @@ mod tests {
 
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
-        for _ in 0..3 { personals.push((SM_TIER3 , 3)) }
+        for _ in 0..3 {
+            personals.push((SM_TIER3, 3))
+        }
 
         let global_team_luck_record = TeamLuckRecord::from_global(BASE_UNHOOK_CHANCE);
 
         global_team_luck_record.combine(&TeamLuckRecord {
             global: UTA_TIER3 * 3.0 * 3.0 + GREAT_LUCK * 3.0,
-            personals
+            personals,
         })
     }
 
@@ -234,12 +236,12 @@ mod tests {
         personals.push((0.04, 3)); // slippery meat
         let player = TeamLuckRecord {
             global: 0.03 + 0.03 * 3., // salty lips & up the ante with 3 others living
-            personals
+            personals,
         };
         let full_team = altruistic_team().combine(&player);
         let full_luck: Vec<(Luck, Luck)> = full_team.make_single_and_total_unhook_pairs().collect();
         let (one_try, all_tries) = full_luck.get(3).expect("3 less than full team size");
         assert!(*all_tries >= 0.9927 && *all_tries < 0.99275);
-        assert!(*one_try >= 0.56 && *one_try < 0.56005 )
+        assert!(*one_try >= 0.56 && *one_try < 0.56005)
     }
 }

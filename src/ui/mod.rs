@@ -243,7 +243,7 @@ impl std::fmt::Display for OfferingSlotDisplay {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Message {
-    UpdateSurvivor(SurvivorUpdate)
+    UpdateSurvivor(SurvivorUpdate),
 }
 
 impl Message {
