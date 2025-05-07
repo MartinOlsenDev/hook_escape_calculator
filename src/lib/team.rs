@@ -72,3 +72,13 @@ impl Team {
             .collect()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn survivor_with_56_slippery_has() {
+        
+    }
+}
