@@ -1,5 +1,5 @@
 use arrayvec::ArrayVec;
-use frunk::monoid::{combine_all, Monoid};
+use frunk::monoid::Monoid;
 use frunk::Semigroup;
 
 use crate::constants as k;
