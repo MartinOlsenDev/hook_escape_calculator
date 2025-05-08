@@ -6,6 +6,7 @@ use std::borrow::Cow;
 use arrayvec::ArrayVec;
 use iced::widget::{checkbox, combo_box, container, row, text, Column};
 use iced::Element;
+use iced::Padding;
 
 #[derive(Debug, Clone)]
 pub struct App {
@@ -72,14 +73,12 @@ impl App {
             );
             let row_output = row![
                 container(
-                    container(container(text(attempt_chance.to_owned())).align_left(110))
-                        .align_right(120)
-                )
+                    text(attempt_chance.to_owned())
+                ).padding(Padding::ZERO.left(10))
                 .width(120),
                 container(
-                    container(container(text(total_chance.to_owned())).align_left(80))
-                        .align_right(100)
-                )
+                    text(total_chance.to_owned())
+                ).padding(Padding::ZERO.left(10))
                 .width(120)
             ];
             let row = row![player_name, row_input, row_output];
@@ -104,7 +103,7 @@ impl App {
                     }
                 )
                 .width(120)
-            )
+            ).padding(Padding::ZERO.left(10))
             .center_x(200),
             container(
                 combo_box(
@@ -116,7 +115,7 @@ impl App {
                     }
                 )
                 .width(120)
-            )
+            ).padding(Padding::ZERO.left(12))
             .center_x(200),
             container(
                 combo_box(
@@ -128,7 +127,7 @@ impl App {
                     }
                 )
                 .width(150)
-            )
+            ).padding(Padding::ZERO.left(23))
             .center_x(200),
             container(
                 checkbox("", player.is_dead())
