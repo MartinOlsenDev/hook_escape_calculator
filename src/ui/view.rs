@@ -3,12 +3,9 @@ use iced::{
     Element, Padding,
 };
 
-use super::App;
-use super::Message;
-use super::OfferingSlotDisplay;
-use super::SurvivorUpdate;
-use super::SurvivorUpdateData;
-use super::TierSlotDisplay;
+use super::{
+    App, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData, TierSlotDisplay,
+};
 
 use hook_escape_calculator::constants as k;
 
