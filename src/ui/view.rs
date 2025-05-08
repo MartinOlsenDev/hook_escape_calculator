@@ -1,11 +1,14 @@
-use iced::{Element, Padding, widget::{Column, container, text, row, combo_box, checkbox}};
+use iced::{
+    widget::{checkbox, combo_box, container, row, text, Column},
+    Element, Padding,
+};
 
 use super::App;
 use super::Message;
-use super::TierSlotDisplay;
+use super::OfferingSlotDisplay;
 use super::SurvivorUpdate;
 use super::SurvivorUpdateData;
-use super::OfferingSlotDisplay;
+use super::TierSlotDisplay;
 
 use hook_escape_calculator::constants as k;
 
@@ -43,14 +46,12 @@ impl App {
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
             );
             let row_output = row![
-                container(
-                    text(attempt_chance.to_owned())
-                ).padding(Padding::ZERO.left(10))
-                .width(120),
-                container(
-                    text(total_chance.to_owned())
-                ).padding(Padding::ZERO.left(10))
-                .width(120)
+                container(text(attempt_chance.to_owned()))
+                    .padding(Padding::ZERO.left(10))
+                    .width(120),
+                container(text(total_chance.to_owned()))
+                    .padding(Padding::ZERO.left(10))
+                    .width(120)
             ];
             let row = row![player_name, row_input, row_output];
             rows = rows.push(row)
@@ -74,7 +75,8 @@ impl App {
                     }
                 )
                 .width(120)
-            ).padding(Padding::ZERO.left(10))
+            )
+            .padding(Padding::ZERO.left(10))
             .center_x(200),
             container(
                 combo_box(
@@ -86,7 +88,8 @@ impl App {
                     }
                 )
                 .width(120)
-            ).padding(Padding::ZERO.left(12))
+            )
+            .padding(Padding::ZERO.left(12))
             .center_x(200),
             container(
                 combo_box(
@@ -98,7 +101,8 @@ impl App {
                     }
                 )
                 .width(150)
-            ).padding(Padding::ZERO.left(23))
+            )
+            .padding(Padding::ZERO.left(23))
             .center_x(200),
             container(
                 checkbox("", player.is_dead())

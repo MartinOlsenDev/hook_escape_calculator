@@ -1,5 +1,4 @@
-use hook_escape_calculator::{perk, offering};
-
+use hook_escape_calculator::{offering, perk};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Message {

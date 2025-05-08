@@ -1,8 +1,4 @@
-use super::App;
-use super::Message;
-use super::SurvivorUpdate;
-use super::SurvivorUpdateData;
-use super::PerkUpdate;
+use super::{App, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData};
 
 use hook_escape_calculator::perk;
 
