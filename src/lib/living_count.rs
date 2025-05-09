@@ -1,5 +1,3 @@
-use std::error;
-
 pub struct LivingCount(pub u8);
 
 impl From<LivingCount> for u8 {
@@ -8,14 +6,13 @@ impl From<LivingCount> for u8 {
     }
 }
 
-// todo: Create proper error type
 impl TryFrom<u8> for LivingCount {
-    type Error = Box<dyn error::Error>;
-    fn try_from(value: u8) -> Result<Self, Box<dyn error::Error>> {
+    type Error = (); // only one possible cause of failure: vaule >4
+    fn try_from(value: u8) -> Result<Self, ()> {
         if value <= 4 {
             Ok(Self(value))
         } else {
-            Err("invalid living count".into())
+            Err(())
         }
     }
 }
