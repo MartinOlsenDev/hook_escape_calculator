@@ -50,7 +50,7 @@ impl App {
                     .padding(Padding::ZERO.left(10))
                     .width(120)
             ];
-            let row = row![player_name, row_input, row_output];
+            let row = container(row![player_name, row_input, row_output]).height(50);
             rows = rows.push(row)
         }
         rows.into()
