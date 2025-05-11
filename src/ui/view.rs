@@ -8,6 +8,7 @@ use super::{
 };
 
 use hook_escape_calculator::constants as k;
+use hook_escape_calculator::perk::PerkName;
 
 impl App {
     pub fn view(&self) -> Element<Message> {
@@ -66,7 +67,7 @@ impl App {
                 combo_box(
                     &self.widgets.tier_choices,
                     "",
-                    Some(&TierSlotDisplay(player.get_slippery_tier())),
+                    Some(&TierSlotDisplay(player.get_perk_tier(PerkName::SlipperyMeat).cloned())),
                     move |TierSlotDisplay(x)| {
                         Message::UpdateSurvivor(SurvivorUpdate::slippery(id, x))
                     }
@@ -79,7 +80,7 @@ impl App {
                 combo_box(
                     &self.widgets.tier_choices,
                     "",
-                    Some(&TierSlotDisplay(player.get_uta_tier())),
+                    Some(&TierSlotDisplay(player.get_perk_tier(PerkName::UpTheAnte).cloned())),
                     move |TierSlotDisplay(x)| {
                         Message::UpdateSurvivor(SurvivorUpdate::uta(id, x))
                     }
@@ -92,7 +93,7 @@ impl App {
                 combo_box(
                     &self.widgets.offering_choices,
                     "",
-                    Some(&OfferingSlotDisplay(player.get_offering())),
+                    Some(&OfferingSlotDisplay(player.get_offering().cloned())),
                     move |OfferingSlotDisplay(x)| {
                         Message::new_surv_update(id, SurvivorUpdateData::Offering(x))
                     }

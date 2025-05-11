@@ -21,22 +21,15 @@ pub struct Loadout {
 
 // mutators
 impl Loadout {
-    pub fn set_slippery(&mut self, tier: Option<Tier>) {
-        let sm = self
-            .perks
-            .get_mut(SLIPPERY_INDEX)
-            .expect("Slippery Meat index at 0 ought to exist.");
+    pub fn set_perk_tier(&mut self, name: PerkName, tier: Option<Tier>) {
+        let mut perk = self.get_perk_mut(name);
 
-        *sm = tier.map(|t| Perk::new(PerkName::SlipperyMeat, t));
-    }
-
-    pub fn set_uta(&mut self, tier: Option<Tier>) {
-        let uta = self
-            .perks
-            .get_mut(UTA_INDEX)
-            .expect("UTA index at 1 ought to exist.");
-
-        *uta = tier.map(|t| Perk::new(PerkName::UpTheAnte, t));
+        match (&mut perk, tier) {
+            (None, None) => (),
+            (Some(_), None) => *perk = None,
+            (None, Some(t)) => *perk = Some(Perk::new(name, t)),
+            (Some(p), Some(t)) => p.set_tier(t)
+        };
     }
 
     pub fn set_offering(&mut self, new: Option<Offering>) {
@@ -46,17 +39,31 @@ impl Loadout {
 
 // accessors
 impl Loadout {
-    pub fn get_slippery(&self) -> PerkSlot {
+    pub fn get_perk(&self, perk: PerkName) -> Option<&Perk> {
+        let index = match perk {
+            PerkName::SlipperyMeat => SLIPPERY_INDEX,
+            PerkName::UpTheAnte => UTA_INDEX
+        };
         self.perks
-            .get(SLIPPERY_INDEX)
-            .and_then(|x| x.as_ref())
-            .copied()
+            .get(index)
+            .and_then(Option::as_ref)
     }
-    pub fn get_uta(&self) -> PerkSlot {
-        self.perks.get(UTA_INDEX).and_then(Option::as_ref).copied()
+    pub fn get_offering(&self) -> Option<&Offering> {
+        self.offering.as_ref()
     }
-    pub fn get_offering(&self) -> OfferingSlot {
-        self.offering
+}
+
+// mutable accessors
+impl Loadout {
+    fn get_perk_mut(&mut self, name: PerkName) -> &mut Option<Perk> {
+        let index = match name {
+            PerkName::SlipperyMeat => SLIPPERY_INDEX,
+            PerkName::UpTheAnte => UTA_INDEX
+        };
+
+        self.perks
+            .get_mut(index)
+            .expect("{index} ought to be a valid index less than {COUNT_ALL_KNOWN_LUCK_PERKS}")
     }
 }
 

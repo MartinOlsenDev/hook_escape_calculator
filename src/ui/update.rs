@@ -1,7 +1,5 @@
 use super::{App, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData};
 
-use hook_escape_calculator::perk;
-
 impl App {
     pub fn update(&mut self, message: Message) {
         match message {
@@ -18,10 +16,7 @@ impl App {
             SurvivorUpdateData::Life(false) => player.set_alive(),
             SurvivorUpdateData::Life(true) => player.set_dead(),
             SurvivorUpdateData::Offering(x) => player.set_offering(x),
-            SurvivorUpdateData::Perk(PerkUpdate { perk, value }) => match perk {
-                perk::PerkName::SlipperyMeat => player.set_slippery(value),
-                perk::PerkName::UpTheAnte => player.set_uta(value),
-            },
+            SurvivorUpdateData::Perk(PerkUpdate { perk, value }) => player.set_perk_tier(perk, value)
         };
 
         self.widgets.renew_odds(&self.team);

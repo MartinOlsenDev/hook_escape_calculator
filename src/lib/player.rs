@@ -1,7 +1,7 @@
 use super::loadout::Loadout;
 use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
 use super::offering::Offering;
-use super::perk::Tier;
+use super::perk::{PerkName, Tier};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Player {
@@ -11,14 +11,11 @@ pub struct Player {
 
 // Delegated Mutators
 impl Player {
-    pub fn set_slippery(&mut self, tier: Option<Tier>) {
-        self.loadout.set_slippery(tier);
-    }
-    pub fn set_uta(&mut self, tier: Option<Tier>) {
-        self.loadout.set_uta(tier);
-    }
     pub fn set_offering(&mut self, offering: Option<Offering>) {
         self.loadout.set_offering(offering);
+    }
+    pub fn set_perk_tier(&mut self, name: PerkName, tier: Option<Tier>) {
+        self.loadout.set_perk_tier(name, tier);
     }
 }
 
@@ -34,13 +31,11 @@ impl Player {
 
 // Delegated Getters
 impl Player {
-    pub fn get_slippery_tier(&self) -> Option<crate::perk::Tier> {
-        self.loadout.get_slippery().map(|x| *x.tier())
+    pub fn get_perk_tier(&self, name: PerkName) -> Option<&Tier> {
+        self.loadout.get_perk(name).map(|x| x.tier())
     }
-    pub fn get_uta_tier(&self) -> Option<crate::perk::Tier> {
-        self.loadout.get_uta().map(|x| *x.tier())
-    }
-    pub fn get_offering(&self) -> Option<crate::offering::Offering> {
+
+    pub fn get_offering(&self) -> Option<&Offering> {
         self.loadout.get_offering()
     }
 }
