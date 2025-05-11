@@ -2,7 +2,7 @@ use strum::{EnumIter, IntoEnumIterator};
 
 use super::luck_record::{LoadoutLuckRecord, Luck};
 
-use crate::constants as k;
+use crate::constants::offering_luck as k;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum Offering {

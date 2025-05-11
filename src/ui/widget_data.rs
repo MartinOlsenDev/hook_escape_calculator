@@ -3,7 +3,7 @@ use std::borrow::Cow;
 use arrayvec::ArrayVec;
 use iced::widget::combo_box;
 
-use hook_escape_calculator::{constants as k, offering, perk, team};
+use hook_escape_calculator::{constants::misc as k, offering, perk, team};
 
 #[derive(Debug, Clone)]
 pub struct WidgetData {

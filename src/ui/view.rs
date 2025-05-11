@@ -7,7 +7,7 @@ use super::{
     App, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData, TierSlotDisplay,
 };
 
-use hook_escape_calculator::constants as k;
+use hook_escape_calculator::constants::misc as k;
 use hook_escape_calculator::perk::PerkName;
 
 impl App {

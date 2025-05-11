@@ -2,7 +2,7 @@ use arrayvec::ArrayVec;
 use frunk::monoid::Monoid;
 use frunk::Semigroup;
 
-use crate::constants as k;
+use crate::constants::misc::TEAM_MAX_CAPACITY;
 
 pub type Luck = f64;
 
@@ -149,7 +149,7 @@ impl PlayerTeamConverter {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamLuckRecord {
     global: Luck,
-    personals: ArrayVec<(Luck, i8), { k::TEAM_MAX_CAPACITY }>,
+    personals: ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>,
 }
 
 impl TeamLuckRecord {
@@ -212,13 +212,13 @@ mod tests {
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
         for _ in 0..3 {
-            personals.push((SM_TIER3, 3))
+            personals.push((perk_luck::SM_TIER3, 3))
         }
 
-        let global_team_luck_record = TeamLuckRecord::from_global(BASE_UNHOOK_CHANCE);
+        let global_team_luck_record = TeamLuckRecord::from_global(misc::BASE_UNHOOK_CHANCE);
 
         global_team_luck_record.combine(&TeamLuckRecord {
-            global: UTA_TIER3 * 3.0 * 3.0 + GREAT_LUCK * 3.0,
+            global: perk_luck::UTA_TIER3 * 3.0 * 3.0 + offering_luck::GREAT_LUCK * 3.0,
             personals,
         })
     }
