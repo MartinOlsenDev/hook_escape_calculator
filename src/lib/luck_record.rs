@@ -157,10 +157,10 @@ pub struct TeamLuckRecord {
 }
 
 impl TeamLuckRecord {
-    pub fn from_global(luck: Luck) -> Self {
+    pub const fn from_global(luck: Luck) -> Self {
         TeamLuckRecord {
             global: luck,
-            personals: ArrayVec::new(),
+            personals: ArrayVec::new_const(),
         }
     }
     pub fn luck_unhook_mod_pairs_iter(&self) -> impl Iterator<Item = (Luck, i8)> + '_ {
