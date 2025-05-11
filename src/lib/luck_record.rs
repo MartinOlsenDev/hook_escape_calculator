@@ -107,10 +107,6 @@ impl LoadoutPlayerConverter {
     }
 }
 
-//TODO: Convert this into its own struct with named fields. Change
-//from Option<f64> to f64 for up the ante. then make
-//LoadoutPlayerConverter, as well as the associated caller
-//function in player.rs
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PlayerLuckRecord(pub LoadoutLuckRecord);
 
