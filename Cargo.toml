@@ -26,6 +26,9 @@ derive-getters = {version = "0.5.0", features = ["auto_copy_getters"] }
 mimalloc = "0.1.46"
 # num-rational integration planned for future release
 
+[dev-dependencies]
+float-cmp = "0.10.0"
+
 [lints.rust]
 unsafe_code = "forbid"
 

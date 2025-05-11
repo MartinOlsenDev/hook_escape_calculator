@@ -205,9 +205,13 @@ impl Monoid for TeamLuckRecord {
 }
 
 #[cfg(test)]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
     use crate::constants::*;
+    use float_cmp::assert_approx_eq;
+
+    const EPSILON_FOUR_SIG_DIGITS: f64 = 0.00001;
 
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
@@ -231,7 +235,37 @@ mod tests {
     }
 
     #[test]
-    fn best_case() {
+    fn ante_prefers_left() {
+        let a = LoadoutLuckRecord::from_uta(0.03);
+        let b = LoadoutLuckRecord::from_uta(0.02);
+        let c = a.combine(&b);
+        assert_eq!(a, c)
+    }
+
+    // Note that this test is impossible
+    #[test]
+    fn integrated_combine() {
+        let a = LoadoutLuckRecord {
+            personal: 0.04,
+            global: 0.01,
+            up_the_ante_coeff: Some(0.02),
+            additional_unhooks: 0
+        };
+        let b = LoadoutLuckRecord {
+            personal: 0.02,
+            global: 0.02,
+            up_the_ante_coeff: None,
+            additional_unhooks: 3
+        };
+        let c = a.combine(&b);
+        assert_approx_eq!(f64, c.personal, 0.06, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_approx_eq!(f64, c.global, 0.03, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_approx_eq!(f64, c.up_the_ante_coeff.unwrap(), 0.02, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_eq!(c.additional_unhooks, 3)
+    }
+
+    #[test]
+    fn best_case_integration() {
         let mut personals = ArrayVec::new();
         personals.push((0.04, 3)); // slippery meat
         let player = TeamLuckRecord {
@@ -241,7 +275,7 @@ mod tests {
         let full_team = altruistic_team().combine(&player);
         let full_luck: Vec<(Luck, Luck)> = full_team.make_single_and_total_unhook_pairs().collect();
         let (one_try, all_tries) = full_luck.get(3).expect("3 less than full team size");
-        assert!(*all_tries >= 0.9927 && *all_tries < 0.99275);
-        assert!(*one_try >= 0.56 && *one_try < 0.56005)
+        assert_approx_eq!(f64, *all_tries, 0.992743686, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_approx_eq!(f64, *one_try, 0.5600, epsilon = EPSILON_FOUR_SIG_DIGITS)
     }
 }
