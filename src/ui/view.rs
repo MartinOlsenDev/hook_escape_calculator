@@ -5,7 +5,7 @@ use iced::{
 
 use super::{
     App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
-    TierSlotDisplay,
+    TierSlotDisplay, help_window
 };
 
 use hook_escape_calculator::constants::misc as k;
@@ -16,7 +16,7 @@ impl App {
         if window_id == self.calculator.0 {
             self.calculator.1.view()
         } else {
-            todo!()
+            help_window::view()
         }
     }
 

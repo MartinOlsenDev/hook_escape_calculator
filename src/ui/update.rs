@@ -6,9 +6,9 @@ impl App {
         match message {
             Message::UpdateSurvivor(x) => self.calculator.1.update_survivor(x),
             Message::ExitApp => std::process::exit(0),
-            Message::StartApp => {}
+            Message::StartApp => (),
             Message::CloseHelp => self.help = None,
-            Message::OpenHelp => todo!(),
+            Message::OpenHelp(id) => self.help = Some(id),
             Message::CloseWindow(id) => self.update(self.specify_close(id)),
         }
     }

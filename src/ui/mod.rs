@@ -7,6 +7,7 @@ use widget_data::*;
 pub mod subscription;
 pub mod update;
 pub mod view;
+pub mod help_window;
 use iced::window;
 use iced::Task;
 

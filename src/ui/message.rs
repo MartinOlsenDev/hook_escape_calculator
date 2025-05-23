@@ -4,7 +4,7 @@ use iced::window;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Message {
     UpdateSurvivor(SurvivorUpdate),
-    OpenHelp,
+    OpenHelp(window::Id),
     CloseHelp,
     ExitApp,
     StartApp,
