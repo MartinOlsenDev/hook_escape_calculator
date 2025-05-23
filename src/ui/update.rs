@@ -11,7 +11,7 @@ impl App {
                 self.calculator.1.update_survivor(x);
                 Task::none()
             }
-            Message::ExitApp => std::process::exit(0),
+            Message::ExitApp => iced::exit(),
             Message::StartApp => Task::none(),
             Message::CloseHelp => {
                 self.help = None;
