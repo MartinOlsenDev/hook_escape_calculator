@@ -27,11 +27,12 @@ pub fn view() -> Element<'static, Message> {
     c.into()
 }
 
-const TEXT: [&str; 12] = [
+const TEXT: [&str; 13] = [
     "Hook Calculator Copyright © 2025 Martin Olsen",
     ks::str_concat!(&["Version: ", VERSION]),
     "This program comes with ABSOLUTELY",
     "NO WARRANTY;",
+    "",
     "This is free software, and you are welcome to",
     "redistribute it under the terms of the ",
     "GNU General Public License version 3",
