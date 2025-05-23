@@ -28,7 +28,7 @@ impl Loadout {
             (None, None) => (),
             (Some(_), None) => *perk = None,
             (None, Some(t)) => *perk = Some(Perk::new(name, t)),
-            (Some(p), Some(t)) => p.set_tier(t)
+            (Some(p), Some(t)) => p.set_tier(t),
         };
     }
 
@@ -42,11 +42,9 @@ impl Loadout {
     pub fn get_perk(&self, perk: PerkName) -> Option<&Perk> {
         let index = match perk {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
-            PerkName::UpTheAnte => UTA_INDEX
+            PerkName::UpTheAnte => UTA_INDEX,
         };
-        self.perks
-            .get(index)
-            .and_then(Option::as_ref)
+        self.perks.get(index).and_then(Option::as_ref)
     }
     pub fn get_offering(&self) -> Option<&Offering> {
         self.offering.as_ref()
@@ -58,7 +56,7 @@ impl Loadout {
     fn get_perk_mut(&mut self, name: PerkName) -> &mut Option<Perk> {
         let index = match name {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
-            PerkName::UpTheAnte => UTA_INDEX
+            PerkName::UpTheAnte => UTA_INDEX,
         };
 
         self.perks

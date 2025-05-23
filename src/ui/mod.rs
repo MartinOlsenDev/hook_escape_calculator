@@ -4,16 +4,49 @@ mod message;
 use message::*;
 mod widget_data;
 use widget_data::*;
+pub mod subscription;
 pub mod update;
 pub mod view;
+use iced::window;
+use iced::Task;
 
 #[derive(Debug, Clone)]
 pub struct App {
+    calculator: (iced::window::Id, Calculator),
+    help: Option<iced::window::Id>,
+}
+
+impl App {
+    pub fn new() -> (Self, Task<Message>) {
+        let (id, open) = window::open(window::Settings::default());
+
+        (
+            App {
+                calculator: (id, Calculator::default()),
+                help: None,
+            },
+            open.map(|_| Message::StartApp),
+        )
+    }
+    pub fn title(&self, id: window::Id) -> String {
+        let title = if id == self.calculator.0 {
+            "Hook Calculator"
+        } else if Some(id) == self.help {
+            "Hook Calculator -- Help"
+        } else {
+            "Hook Calculator -- Other"
+        };
+        title.into()
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Calculator {
     team: team::Team,
     widgets: WidgetData,
 }
 
-impl std::default::Default for App {
+impl std::default::Default for Calculator {
     fn default() -> Self {
         let team = team::Team::default();
         let widgets = {
@@ -35,6 +68,6 @@ impl std::default::Default for App {
             widgets.renew_odds(&team);
             widgets
         };
-        App { team, widgets }
+        Calculator { team, widgets }
     }
 }

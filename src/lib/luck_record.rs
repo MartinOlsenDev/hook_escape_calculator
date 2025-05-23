@@ -245,18 +245,23 @@ mod tests {
             personal: 0.04,
             global: 0.01,
             up_the_ante_coeff: Some(0.02),
-            additional_unhooks: 0
+            additional_unhooks: 0,
         };
         let b = LoadoutLuckRecord {
             personal: 0.02,
             global: 0.02,
             up_the_ante_coeff: None,
-            additional_unhooks: 3
+            additional_unhooks: 3,
         };
         let c = a.combine(&b);
         assert_approx_eq!(f64, c.personal, 0.06, epsilon = EPSILON_FOUR_SIG_DIGITS);
         assert_approx_eq!(f64, c.global, 0.03, epsilon = EPSILON_FOUR_SIG_DIGITS);
-        assert_approx_eq!(f64, c.up_the_ante_coeff.unwrap(), 0.02, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_approx_eq!(
+            f64,
+            c.up_the_ante_coeff.unwrap(),
+            0.02,
+            epsilon = EPSILON_FOUR_SIG_DIGITS
+        );
         assert_eq!(c.additional_unhooks, 3)
     }
 
@@ -271,7 +276,12 @@ mod tests {
         let full_team = altruistic_team().combine(&player);
         let full_luck: Vec<(Luck, Luck)> = full_team.make_single_and_total_unhook_pairs().collect();
         let (one_try, all_tries) = full_luck.get(3).expect("3 less than full team size");
-        assert_approx_eq!(f64, *all_tries, 0.992743686, epsilon = EPSILON_FOUR_SIG_DIGITS);
+        assert_approx_eq!(
+            f64,
+            *all_tries,
+            0.992743686,
+            epsilon = EPSILON_FOUR_SIG_DIGITS
+        );
         assert_approx_eq!(f64, *one_try, 0.5600, epsilon = EPSILON_FOUR_SIG_DIGITS)
     }
 }

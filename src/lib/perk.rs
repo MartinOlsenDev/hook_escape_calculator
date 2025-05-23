@@ -71,7 +71,7 @@ const fn uta_tier_percent(tier: Tier) -> f64 {
     match tier {
         Tier::One => k::UTA_TIER1,
         Tier::Two => k::UTA_TIER2,
-        Tier::Three => k::UTA_TIER3
+        Tier::Three => k::UTA_TIER3,
     }
 }
 

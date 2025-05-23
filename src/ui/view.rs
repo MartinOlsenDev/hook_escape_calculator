@@ -1,16 +1,31 @@
 use iced::{
     widget::{checkbox, combo_box, container, row, text, Column},
-    Element, Padding,
+    window, Element, Padding,
 };
 
 use super::{
-    App, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData, TierSlotDisplay,
+    App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
+    TierSlotDisplay,
 };
 
 use hook_escape_calculator::constants::misc as k;
 use hook_escape_calculator::perk::PerkName;
 
 impl App {
+    pub fn view(&self, window_id: window::Id) -> Element<Message> {
+        if window_id == self.calculator.0 {
+            self.calculator.1.view()
+        } else {
+            todo!()
+        }
+    }
+
+    pub fn theme(&self, _: window::Id) -> iced::Theme {
+        iced::Theme::Dracula
+    }
+}
+
+impl Calculator {
     pub fn view(&self) -> Element<Message> {
         self.view_team()
     }
@@ -67,7 +82,9 @@ impl App {
                 combo_box(
                     &self.widgets.tier_choices,
                     "",
-                    Some(&TierSlotDisplay(player.get_perk_tier(PerkName::SlipperyMeat).cloned())),
+                    Some(&TierSlotDisplay(
+                        player.get_perk_tier(PerkName::SlipperyMeat).cloned()
+                    )),
                     move |TierSlotDisplay(x)| {
                         Message::UpdateSurvivor(SurvivorUpdate::slippery(id, x))
                     }
@@ -80,7 +97,9 @@ impl App {
                 combo_box(
                     &self.widgets.tier_choices,
                     "",
-                    Some(&TierSlotDisplay(player.get_perk_tier(PerkName::UpTheAnte).cloned())),
+                    Some(&TierSlotDisplay(
+                        player.get_perk_tier(PerkName::UpTheAnte).cloned()
+                    )),
                     move |TierSlotDisplay(x)| {
                         Message::UpdateSurvivor(SurvivorUpdate::uta(id, x))
                     }
@@ -109,9 +128,5 @@ impl App {
             .center_x(120)
         ]
         .into()
-    }
-
-    pub fn theme(&self) -> iced::Theme {
-        iced::Theme::Dracula
     }
 }

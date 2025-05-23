@@ -7,9 +7,8 @@ use mimalloc::MiMalloc;
 static GLOBAL: MiMalloc = MiMalloc;
 
 fn main() -> iced::Result {
-    iced::application("Hook Calculator", App::update, App::view)
+    iced::daemon(App::title, App::update, App::view)
+        .subscription(App::subscription)
         .theme(App::theme)
-        .window_size(Size::new(1054., 384.))
-        .resizable(false)
-        .run()
+        .run_with(App::new)
 }
