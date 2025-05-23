@@ -9,7 +9,7 @@ pub enum Message {
     ExitApp,
     StartApp,
     CloseWindow(window::Id),
-    Noop
+    Noop,
 }
 
 impl Message {

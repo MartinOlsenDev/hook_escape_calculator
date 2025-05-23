@@ -1,11 +1,11 @@
 use iced::{
-    widget::{checkbox, combo_box, container, row, text, Column, button, column},
+    widget::{button, checkbox, column, combo_box, container, row, text, Column},
     window, Element, Padding,
 };
 
 use super::{
-    App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
-    TierSlotDisplay, help_window
+    help_window, App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
+    TierSlotDisplay,
 };
 
 use hook_escape_calculator::constants::misc as k;
@@ -28,9 +28,12 @@ impl App {
 impl Calculator {
     pub fn view(&self) -> Element<Message> {
         column![
-            container(button("About Page").on_press(Message::OpenHelp)).align_right(1054).align_top(40),
+            container(button("About Page").on_press(Message::OpenHelp))
+                .align_right(1054)
+                .align_top(40),
             self.view_team()
-        ].into()
+        ]
+        .into()
     }
 
     fn view_team(&self) -> Element<Message> {

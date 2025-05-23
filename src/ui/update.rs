@@ -1,24 +1,32 @@
-use super::{App, Calculator, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData, help_window};
+use super::{
+    help_window, App, Calculator, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData,
+};
 use iced::{window, Task};
 
 impl App {
     pub fn update(&mut self, message: Message) -> Task<Message> {
         match message {
             Message::Noop => Task::none(),
-            Message::UpdateSurvivor(x) => {self.calculator.1.update_survivor(x); Task::none()},
+            Message::UpdateSurvivor(x) => {
+                self.calculator.1.update_survivor(x);
+                Task::none()
+            }
             Message::ExitApp => std::process::exit(0),
             Message::StartApp => Task::none(),
-            Message::CloseHelp => {self.help = None; Task::none()},
+            Message::CloseHelp => {
+                self.help = None;
+                Task::none()
+            }
             Message::OpenHelp => {
                 if self.help.is_some() {
-                    return Task::none()
+                    return Task::none();
                 }
 
                 let (id, open) = window::open(help_window::window_settings());
 
                 self.help = Some(id);
                 open.map(|_| Message::Noop)
-            },
+            }
             Message::CloseWindow(id) => self.update(self.specify_close(id)),
         }
     }

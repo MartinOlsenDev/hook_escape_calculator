@@ -4,10 +4,10 @@ mod message;
 use message::*;
 mod widget_data;
 use widget_data::*;
+pub mod help_window;
 pub mod subscription;
 pub mod update;
 pub mod view;
-pub mod help_window;
 use iced::window;
 use iced::Task;
 

@@ -1,6 +1,6 @@
-use iced::Element;
-use iced::widget::{text, column, container, Container, Column};
 use super::Message;
+use iced::widget::{container, text, Column, Container};
+use iced::Element;
 use konst::string as ks;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -39,7 +39,7 @@ const TEXT: [&str; 12] = [
     "",
     "View the source code and license at:",
     "https://github.com/MartinOlsenDev",
-    "/hook_escape_calculator"
+    "/hook_escape_calculator",
 ];
 
 fn about_centered_container(s: &str) -> Container<Message> {
