@@ -1,5 +1,5 @@
 use iced::{
-    widget::{checkbox, combo_box, container, row, text, Column},
+    widget::{checkbox, combo_box, container, row, text, Column, button, column},
     window, Element, Padding,
 };
 
@@ -27,7 +27,10 @@ impl App {
 
 impl Calculator {
     pub fn view(&self) -> Element<Message> {
-        self.view_team()
+        column![
+            container(button("About Page").on_press(Message::OpenHelp)).align_right(1054).align_top(40),
+            self.view_team()
+        ].into()
     }
 
     fn view_team(&self) -> Element<Message> {

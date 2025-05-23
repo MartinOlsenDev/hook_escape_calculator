@@ -1,6 +1,6 @@
 [package]
 name = "hook_escape_calculator"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Martin Olsen<Martin.Olsen2@protonmail.com>"]
 edition = "2021"
 license = "GPL-3"

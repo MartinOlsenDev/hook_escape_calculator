@@ -41,9 +41,9 @@ impl App {
         let title = if id == self.calculator.0 {
             "Hook Calculator"
         } else if Some(id) == self.help {
-            "Hook Calculator -- Help"
+            "Hook Calculator \u{2012} Help"
         } else {
-            "Hook Calculator -- Other"
+            "Hook Calculator \u{2012} Other"
         };
         title.into()
     }

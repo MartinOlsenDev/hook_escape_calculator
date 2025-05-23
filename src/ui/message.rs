@@ -4,11 +4,12 @@ use iced::window;
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum Message {
     UpdateSurvivor(SurvivorUpdate),
-    OpenHelp(window::Id),
+    OpenHelp,
     CloseHelp,
     ExitApp,
     StartApp,
     CloseWindow(window::Id),
+    Noop
 }
 
 impl Message {
