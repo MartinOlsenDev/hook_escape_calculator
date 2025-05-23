@@ -1,8 +1,8 @@
 [package]
 name = "hook_escape_calculator"
-version = "0.2.1"
+version = "0.3.0"
 authors = ["Martin Olsen<Martin.Olsen2@protonmail.com>"]
-edition = "2021"
+edition = "2024"
 license = "GPL-3"
 license-file = "LICENSE.txt"
 description = "A calculator for the odds of escape in the video game Dead By Daylight."
