@@ -1,5 +1,4 @@
 mod ui;
-use iced::Size;
 use ui::App;
 
 use mimalloc::MiMalloc;

@@ -18,7 +18,15 @@ pub struct App {
 
 impl App {
     pub fn new() -> (Self, Task<Message>) {
-        let (id, open) = window::open(window::Settings::default());
+        let main_window_size = iced::Size::new(1054., 384.);
+
+        let main_window_settings = window::Settings {
+            size: main_window_size,
+            resizable: false,
+            ..window::Settings::default()
+        };
+
+        let (id, open) = window::open(main_window_settings);
 
         (
             App {
