@@ -27,11 +27,15 @@ pub fn view() -> Element<'static, Message> {
     c.into()
 }
 
-const TEXT: [&str; 13] = [
+const TEXT: [&str; 17] = [
     "Hook Calculator Copyright © 2025 Martin Olsen",
     ks::str_concat!(&["Version: ", VERSION]),
+    "",
+    "A calculator for the odds of escaping a hook",
+    "in the game Dead by Daylight.",
+    "",
     "This program comes with ABSOLUTELY",
-    "NO WARRANTY;",
+    "NO WARRANTY.",
     "",
     "This is free software, and you are welcome to",
     "redistribute it under the terms of the ",
