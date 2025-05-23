@@ -18,8 +18,8 @@ impl App {
                 Task::none()
             }
             Message::OpenHelp => {
-                if self.help.is_some() {
-                    return Task::none();
+                if let Some(id) = self.help {
+                    return window::gain_focus(id);
                 }
 
                 let (id, open) = window::open(help_window::window_settings());

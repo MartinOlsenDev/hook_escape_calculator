@@ -28,7 +28,7 @@ impl App {
 impl Calculator {
     pub fn view(&self) -> Element<Message> {
         column![
-            container(button("About Page").on_press(Message::OpenHelp))
+            container(button("About").on_press(Message::OpenHelp))
                 .align_right(1054)
                 .align_top(40),
             self.view_team()
