@@ -12,7 +12,10 @@ use hook_escape_calculator::{
     update::{SurvivorId, SurvivorIdError, SurvivorUpdate},
 };
 
-use super::{App, Calculator, Message, OfferingSlotDisplay, TierSlotDisplay, help_window};
+use super::{
+    App, Calculator, Message, help_window,
+    widget_data::{OfferingSlotDisplay, TierSlotDisplay},
+};
 
 impl App {
     pub fn view(&self, window_id: window::Id) -> Element<Message> {
