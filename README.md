@@ -88,15 +88,13 @@ If the application is drawing to the screen incorrectly, please take a picture o
 ### Contributing
 hook_escape_calculator welcomes contributors. The following areas especially could use some love.
 
-- Assets
+#### Assets
+Currently, there are no visual assets for this app. Instead of having an icon for the perks and offerings, the app only displays text. Creators who can create recognizible assets representing luck items would be appreciated.
 
-        Currently, there are no visual assets for this app. Instead of having an icon for the perks and offerings, the app only displays text. Creators who can create recognizible assets representing luck items would be appreciated.
+Previous demonstrable experience creating Dead by Daylight perk packs or general asset creation preferred. Artists should consider the implications of the `LICENSE.txt` on their work. If you are interested in this, please express that interest in issue tracker #17 prior to creating any assets.
 
-        Previous demonstrable experience creating Dead by Daylight perk packs or general asset creation preferred. Artists should consider the implications of the `LICENSE.txt` on their work. If you are interested in this, please express that interest in issue tracker #17 prior to creating any assets.
-
-- User Interface
-
-        The user interface of this application is servicable, but could be beautified aesthetically and simplified practically. Users willing to work with iced to create a more streamlined design in both respects would be welcome.
+#### User Interface
+The user interface of this application is servicable, but could be beautified aesthetically and simplified practically. Users willing to work with iced to create a more streamlined design in both respects would be welcome.
 
 ### Consuming as a Lib
 The library probability engine and user interface for this app are not tightly coupled. A new crate could choose to consume this app solely for its library and create its own interface. User developers are invited to do so in accordance with the `LICENSE.txt`.
