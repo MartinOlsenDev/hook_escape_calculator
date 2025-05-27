@@ -1,5 +1,7 @@
 use super::luck_record::LoadoutLuckRecord;
+use bon::bon;
 use derive_getters::Getters;
+use nutype::nutype;
 use strum::{EnumIter, IntoEnumIterator};
 
 use crate::constants::perk_luck as k;
@@ -9,13 +11,17 @@ pub struct Perk {
     name: PerkName,
     tier: Tier,
 }
-pub type PerkSlot = Option<Perk>;
+
+#[nutype(
+    derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, AsRef, Deref),
+    default = None
+)]
+pub struct PerkSlot(Option<Perk>);
 
 impl Perk {
     pub const fn new(name: PerkName, tier: Tier) -> Perk {
         Perk { name, tier }
     }
-
     pub const fn get_tier_mut(&mut self) -> &mut Tier {
         &mut self.tier
     }
@@ -23,6 +29,9 @@ impl Perk {
         self.tier = tier
     }
 }
+
+#[nutype(derive(Debug, Clone, Copy, PartialEq, PartialOrd, Hash))]
+pub struct TierSlot(Option<Tier>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, EnumIter)]
 pub enum Tier {

@@ -6,3 +6,4 @@ pub mod offering;
 pub mod perk;
 pub mod player;
 pub mod team;
+pub mod update;

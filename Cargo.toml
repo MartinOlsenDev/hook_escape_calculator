@@ -16,6 +16,8 @@ name = "Hook-Escape-Calculator"
 path = "src/main.rs"
 
 [dependencies]
+bon = "3.6.3"
+nutype = "0.6.1"
 arrayvec = "0.7.6"
 konst = "0.3.15"
 iced = "0.13.1"

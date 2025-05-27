@@ -1,6 +1,7 @@
 use super::luck_record::{LoadoutLuckRecord, Luck};
 use crate::constants::offering_luck as k;
 
+use nutype::nutype;
 use strum::{EnumIter, IntoEnumIterator};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
@@ -12,7 +13,11 @@ pub enum Offering {
     IvoryPouch,
     SaltyLips,
 }
-pub type OfferingSlot = Option<Offering>;
+#[nutype(
+    derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, AsRef, Deref),
+    default = None
+)]
+pub struct OfferingSlot(Option<Offering>);
 
 impl From<&Offering> for LoadoutLuckRecord {
     fn from(offering: &Offering) -> Self {

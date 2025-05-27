@@ -16,38 +16,38 @@ pub struct Loadout {
 // mutators
 impl Loadout {
     pub fn set_perk_tier(&mut self, name: PerkName, tier: Option<Tier>) {
-        let mut perk = self.get_perk_mut(name);
-
-        match (&mut perk, tier) {
-            (None, None) => (),
-            (Some(_), None) => *perk = None,
-            (None, Some(t)) => *perk = Some(Perk::new(name, t)),
-            (Some(p), Some(t)) => p.set_tier(t),
-        };
+        let mut perk: &mut PerkSlot = self.get_perk_mut(name);
+        let new = tier.map(|t| Perk::new(name, t));
+        *perk = PerkSlot::new(new);
     }
 
     pub fn set_offering(&mut self, new: Option<Offering>) {
-        self.offering = new;
+        self.offering = OfferingSlot::new(new);
     }
 }
 
 // accessors
 impl Loadout {
-    pub fn get_perk(&self, perk: PerkName) -> Option<&Perk> {
+    pub fn get_perk(&self, perk: PerkName) -> &PerkSlot {
         let index = match perk {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
             PerkName::UpTheAnte => UTA_INDEX,
         };
-        self.perks.get(index).and_then(Option::as_ref)
+        self.perks.get(index).expect(&format!(
+            "Const index of {:?} is {:?}, which should be <= possible max {}.",
+            perk,
+            index,
+            k::PERKSLOT_COUNT - 1
+        ))
     }
-    pub fn get_offering(&self) -> Option<&Offering> {
-        self.offering.as_ref()
+    pub fn get_offering(&self) -> &OfferingSlot {
+        &self.offering
     }
 }
 
 // mutable accessors
 impl Loadout {
-    fn get_perk_mut(&mut self, name: PerkName) -> &mut Option<Perk> {
+    fn get_perk_mut(&mut self, name: PerkName) -> &mut PerkSlot {
         let index = match name {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
             PerkName::UpTheAnte => UTA_INDEX,
@@ -65,7 +65,7 @@ impl Loadout {
         let perk_records = self
             .perks
             .iter()
-            .filter_map(|&perk_slot| perk_slot)
+            .filter_map(|perk_slot| perk_slot.into_inner())
             .map(|perk| LoadoutLuckRecord::from(&perk));
 
         let offering_luck: LoadoutLuckRecord = self

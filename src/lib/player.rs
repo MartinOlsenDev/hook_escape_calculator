@@ -32,11 +32,15 @@ impl Player {
 // Delegated Getters
 impl Player {
     pub fn get_perk_tier(&self, name: PerkName) -> Option<&Tier> {
-        self.loadout.get_perk(name).map(|x| x.tier())
+        self.loadout
+            .get_perk(name)
+            .as_ref()
+            .as_ref()
+            .map(|perk| perk.tier())
     }
 
     pub fn get_offering(&self) -> Option<&Offering> {
-        self.loadout.get_offering()
+        self.loadout.get_offering().as_ref().as_ref()
     }
 }
 
