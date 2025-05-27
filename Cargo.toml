@@ -5,7 +5,7 @@ authors = ["Martin Olsen<Martin.Olsen2@protonmail.com>"]
 edition = "2024"
 license = "GPL-3"
 license-file = "LICENSE.txt"
-description = "A calculator for the odds of escape in the video game Dead By Daylight."
+description = "A calculator for the odds of escape from the hook in the video game Dead By Daylight."
 
 [lib]
 path = "src/lib/mod.rs"
