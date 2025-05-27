@@ -9,23 +9,23 @@ impl App {
         match message {
             Message::Noop => Task::none(),
             Message::UpdateSurvivor(x) => {
-                self.calculator.1.update_survivor(x);
+                self.calculator.update_survivor(x);
                 Task::none()
             }
             Message::ExitApp => iced::exit(),
             Message::StartApp => Task::none(),
             Message::CloseHelp => {
-                self.help = None;
+                self.help_window = None;
                 Task::none()
             }
             Message::OpenHelp => {
-                if let Some(id) = self.help {
+                if let Some(id) = self.help_window {
                     return window::gain_focus(id);
                 }
 
                 let (id, open) = window::open(help_window::window_settings());
 
-                self.help = Some(id);
+                self.help_window = Some(id);
                 open.map(|_| Message::Noop)
             }
             Message::CloseWindow(id) => self.update(self.specify_close(id)),
@@ -33,7 +33,7 @@ impl App {
     }
 
     fn specify_close(&self, id: window::Id) -> Message {
-        if id == self.calculator.0 {
+        if id == self.main_window {
             Message::ExitApp
         } else {
             Message::CloseHelp

@@ -16,8 +16,8 @@ use super::{App, Calculator, Message, OfferingSlotDisplay, TierSlotDisplay, help
 
 impl App {
     pub fn view(&self, window_id: window::Id) -> Element<Message> {
-        if window_id == self.calculator.0 {
-            self.calculator.1.view()
+        if window_id == self.main_window {
+            self.calculator.view()
         } else {
             help_window::view()
         }

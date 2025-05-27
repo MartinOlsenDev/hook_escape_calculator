@@ -1,5 +1,4 @@
-use iced::Task;
-use iced::window;
+use iced::{window, Task, Size};
 
 use hook_escape_calculator::team;
 
@@ -15,13 +14,14 @@ use widget_data::{OfferingSlotDisplay, TierSlotDisplay, WidgetData};
 
 #[derive(Debug, Clone)]
 pub struct App {
-    calculator: (iced::window::Id, Calculator),
-    help: Option<iced::window::Id>,
+    calculator: Calculator,
+    main_window: window::Id,
+    help_window: Option<iced::window::Id>,
 }
 
 impl App {
     pub fn new() -> (Self, Task<Message>) {
-        let main_window_size = iced::Size::new(1054., 384.);
+        let main_window_size = Size::new(1054., 384.);
 
         let main_window_settings = window::Settings {
             size: main_window_size,
@@ -33,16 +33,17 @@ impl App {
 
         (
             App {
-                calculator: (id, Calculator::default()),
-                help: None,
+                calculator: Calculator::default(),
+                main_window: id,
+                help_window: None,
             },
             open.map(|_| Message::StartApp),
         )
     }
     pub fn title(&self, id: window::Id) -> String {
-        let title = if id == self.calculator.0 {
+        let title = if id == self.main_window {
             "Hook Calculator"
-        } else if Some(id) == self.help {
+        } else if Some(id) == self.help_window {
             "Hook Calculator \u{2012} Help"
         } else {
             "Hook Calculator \u{2012} Other"
