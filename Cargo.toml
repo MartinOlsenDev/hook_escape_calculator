@@ -6,12 +6,13 @@ edition = "2024"
 license = "GPL-3"
 license-file = "LICENSE.txt"
 description = "A calculator for the odds of escape from the hook in the video game Dead By Daylight."
+readme = "README.md"
 
 [lib]
 path = "src/lib/mod.rs"
 
 [[bin]]
-name = "hook_escape_calculator"
+name = "Hook-Escape-Calculator"
 path = "src/main.rs"
 
 [dependencies]
