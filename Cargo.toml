@@ -16,7 +16,6 @@ path = "src/main.rs"
 
 [dependencies]
 arrayvec = "0.7.6"
-frunk = "0.4.3"
 konst = "0.3.15"
 iced = "0.13.1"
 derive_more = { version = "2.0.1", features = ["display"] }

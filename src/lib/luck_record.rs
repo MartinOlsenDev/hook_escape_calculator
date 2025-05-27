@@ -1,6 +1,4 @@
 use arrayvec::ArrayVec;
-use frunk::monoid::Monoid;
-use frunk::Semigroup;
 
 use crate::constants::misc::TEAM_MAX_CAPACITY;
 
@@ -53,27 +51,18 @@ impl LoadoutLuckRecord {
     }
 }
 
-/// A semigroup instance for `LoadoutLuckRecord`. It is assumed that
+/// An add instance for `LoadoutLuckRecord`. It is assumed that
 /// the input player luck items does not contain multiple instances
 /// of Up the Ante. If there are, the second is discarded.
-impl Semigroup for LoadoutLuckRecord {
-    fn combine(&self, other: &Self) -> Self {
+impl std::ops::Add for &LoadoutLuckRecord {
+    type Output = LoadoutLuckRecord;
+
+    fn add(self, other: Self) -> Self::Output {
         LoadoutLuckRecord {
             personal: self.personal + other.personal,
             global: self.global + other.global,
             up_the_ante_coeff: self.up_the_ante_coeff.or(other.up_the_ante_coeff),
             additional_unhooks: self.additional_unhooks + other.additional_unhooks,
-        }
-    }
-}
-
-impl Monoid for LoadoutLuckRecord {
-    fn empty() -> Self {
-        LoadoutLuckRecord {
-            personal: Luck::default(),
-            global: Luck::default(),
-            up_the_ante_coeff: None,
-            additional_unhooks: 0,
         }
     }
 }
@@ -146,7 +135,7 @@ impl PlayerTeamConverter {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct TeamLuckRecord {
     global: Luck,
     personals: ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>,
@@ -175,9 +164,10 @@ impl TeamLuckRecord {
     }
 }
 
-///TODO: This is a good optimization oppurtunity
-impl Semigroup for TeamLuckRecord {
-    fn combine(&self, other: &Self) -> Self {
+impl std::ops::Add for &TeamLuckRecord {
+    type Output = TeamLuckRecord;
+
+    fn add(self, other: Self) -> Self::Output {
         let personals = {
             let mut personals = self.personals.clone();
             personals.extend(other.personals.clone());
@@ -187,15 +177,6 @@ impl Semigroup for TeamLuckRecord {
         TeamLuckRecord {
             global: self.global + other.global,
             personals,
-        }
-    }
-}
-
-impl Monoid for TeamLuckRecord {
-    fn empty() -> Self {
-        TeamLuckRecord {
-            global: 0.0,
-            personals: ArrayVec::new(),
         }
     }
 }
@@ -217,7 +198,7 @@ mod tests {
 
         let global_team_luck_record = TeamLuckRecord::from_global(misc::BASE_UNHOOK_CHANCE);
 
-        global_team_luck_record.combine(&TeamLuckRecord {
+        &global_team_luck_record + (&TeamLuckRecord {
             global: perk_luck::UTA_TIER3 * 3.0 * 3.0 + offering_luck::GREAT_LUCK * 3.0,
             personals,
         })
@@ -234,7 +215,7 @@ mod tests {
     fn ante_prefers_left() {
         let a = LoadoutLuckRecord::from_uta(0.03);
         let b = LoadoutLuckRecord::from_uta(0.02);
-        let c = a.combine(&b);
+        let c = &a + &b;
         assert_eq!(a, c)
     }
 
@@ -253,7 +234,7 @@ mod tests {
             up_the_ante_coeff: None,
             additional_unhooks: 3,
         };
-        let c = a.combine(&b);
+        let c = &a + &b;
         assert_approx_eq!(f64, c.personal, 0.06, epsilon = EPSILON_FOUR_SIG_DIGITS);
         assert_approx_eq!(f64, c.global, 0.03, epsilon = EPSILON_FOUR_SIG_DIGITS);
         assert_approx_eq!(
@@ -273,7 +254,7 @@ mod tests {
             global: 0.03 + 0.03 * 3., // salty lips & up the ante with 3 others living
             personals,
         };
-        let full_team = altruistic_team().combine(&player);
+        let full_team = &altruistic_team() + &player;
         let full_luck: Vec<(Luck, Luck)> = full_team.make_single_and_total_unhook_pairs().collect();
         let (one_try, all_tries) = full_luck.get(3).expect("3 less than full team size");
         assert_approx_eq!(

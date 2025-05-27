@@ -2,9 +2,6 @@ use super::luck_record::LoadoutLuckRecord;
 use super::offering::{Offering, OfferingSlot};
 use super::perk::{Perk, PerkName, PerkSlot, Tier};
 
-use arrayvec::ArrayVec;
-use frunk::monoid;
-use frunk::Semigroup;
 use konst as kon;
 
 use crate::constants::misc as k;
@@ -68,18 +65,18 @@ impl Loadout {
 // luck collater
 impl Loadout {
     pub fn collate_luck(self) -> LoadoutLuckRecord {
-        let perk_record_list: ArrayVec<LoadoutLuckRecord, { k::COUNT_ALL_KNOWN_LUCK_PERKS }> = self
+        let perk_records = self
             .perks
             .iter()
             .filter_map(|&perk_slot| perk_slot)
-            .map(|perk| LoadoutLuckRecord::from(&perk))
-            .collect();
+            .map(|perk| LoadoutLuckRecord::from(&perk));
+
         let offering_luck: LoadoutLuckRecord = self
             .offering
             .map(|offering| LoadoutLuckRecord::from(&offering))
             .unwrap_or_default();
 
-        monoid::combine_all(&perk_record_list).combine(&offering_luck)
+        &offering_luck + &perk_records.fold(LoadoutLuckRecord::default(), |acc, x| &acc + &x )
     }
 }
 

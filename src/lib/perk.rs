@@ -1,6 +1,5 @@
 use super::luck_record::LoadoutLuckRecord;
 use derive_getters::Getters;
-use frunk::Semigroup;
 use strum::{EnumIter, IntoEnumIterator};
 
 use crate::constants::perk_luck as k;
@@ -82,5 +81,5 @@ fn slippery_meat_record(tier: Tier) -> LoadoutLuckRecord {
         Tier::Three => k::SM_TIER3,
     });
     let unhook_count_record = LoadoutLuckRecord::from_unhook_mod(3);
-    unhook_chance_record.combine(&unhook_count_record)
+    &unhook_chance_record + &unhook_count_record
 }

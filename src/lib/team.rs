@@ -2,8 +2,6 @@ use super::living_count::LivingCount;
 use super::luck_record::{PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord};
 use super::player::Player;
 use arrayvec::ArrayVec;
-use frunk::monoid::combine_all;
-use frunk::Semigroup;
 
 use crate::constants::misc as k;
 
@@ -59,9 +57,9 @@ impl Team {
 
     fn collate_luck(&self) -> TeamLuckRecord {
         let base_luck: TeamLuckRecord = TeamLuckRecord::from_global(k::BASE_UNHOOK_CHANCE);
-        let team_luck_records: ArrayVec<TeamLuckRecord, { k::TEAM_MAX_CAPACITY }> =
-            self.make_team_luck_records().collect();
-        base_luck.combine(&combine_all(&team_luck_records))
+        let team_luck_records = self.make_team_luck_records();
+        let total_team_record: TeamLuckRecord = team_luck_records.fold(TeamLuckRecord::default(), |acc, x| &acc + &x );
+        &base_luck + &total_team_record
     }
 
     pub fn luck_output(&self) -> ArrayVec<(f64, f64), { k::TEAM_MAX_CAPACITY }> {
