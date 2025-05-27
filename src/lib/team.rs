@@ -38,19 +38,12 @@ impl Team {
         .expect("Filtering on a [_;4] cannot yield count exceeding 4.")
     }
 
-    fn make_player_luck_records(&self) -> impl Iterator<Item = PlayerLuckRecord> + '_ {
-        self.list().iter().map(|player| player.make_player_luck())
-    }
-
-    fn make_team_adapters(&self) -> impl Iterator<Item = PlayerTeamConverter> + '_ {
-        (0_usize..(self.list().len()))
-            .map(|id| self.alive_not_counting(id))
-            .map(|count| PlayerTeamConverter::new(count.into()))
-    }
-
     fn make_team_luck_records(&self) -> impl Iterator<Item = TeamLuckRecord> + '_ {
-        let player_record_iter = self.make_player_luck_records();
-        let player_converter_iter = self.make_team_adapters();
+        let player_record_iter = self.list().iter().map(|player| player.make_player_luck());
+        let player_converter_iter = (0_usize..(self.list().len()))
+            .map(|id| self.alive_not_counting(id))
+            .map(|count| PlayerTeamConverter::new(count.into()));
+
         let iter = player_record_iter.zip(player_converter_iter);
         iter.map(|(record, converter)| converter.convert(&record))
     }
