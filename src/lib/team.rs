@@ -1,5 +1,5 @@
 use super::living_count::LivingCount;
-use super::luck_record::{PlayerLuckRecord, PlayerTeamConverter, TeamLuckRecord};
+use super::luck_record::{PlayerTeamConverter, TeamLuckRecord};
 use super::player::Player;
 use arrayvec::ArrayVec;
 
@@ -44,16 +44,16 @@ impl Team {
             .map(|id| self.alive_not_counting(id))
             .map(|count| PlayerTeamConverter::new(count.into()));
 
-        let iter = player_record_iter.zip(player_converter_iter);
-        iter.map(|(record, converter)| converter.convert(&record))
+        player_record_iter
+            .zip(player_converter_iter)
+            .map(|(record, converter)| converter.convert(&record))
     }
 
     fn collate_luck(&self) -> TeamLuckRecord {
         let base_luck: TeamLuckRecord = TeamLuckRecord::from_global(k::BASE_UNHOOK_CHANCE);
         let team_luck_records = self.make_team_luck_records();
-        let total_team_record: TeamLuckRecord =
-            team_luck_records.fold(TeamLuckRecord::default(), |acc, x| &acc + &x);
-        &base_luck + &total_team_record
+
+        team_luck_records.fold(base_luck, |acc, x| &acc + &x)
     }
 
     pub fn luck_output(&self) -> ArrayVec<(f64, f64), { k::TEAM_MAX_CAPACITY }> {
