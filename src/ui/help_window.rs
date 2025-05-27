@@ -1,7 +1,8 @@
-use super::Message;
 use iced::Element;
 use iced::widget::{Column, Container, container, text};
 use konst::string as ks;
+
+use super::Message;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 

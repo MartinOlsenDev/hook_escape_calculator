@@ -1,8 +1,10 @@
-use super::loadout::Loadout;
-use super::luck_record::{LoadoutPlayerConverter, PlayerLuckRecord};
-use super::offering::OfferingSlot;
-use super::perk::{PerkName, Tier};
-use super::update::SurvivorUpdateData as SUD;
+use super::{
+    loadout::Loadout,
+    luck_record::{LoadoutPlayerConverter, PlayerLuckRecord},
+    offering::OfferingSlot,
+    perk::{PerkName, Tier},
+    update::SurvivorUpdateData as SUD,
+};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Player {

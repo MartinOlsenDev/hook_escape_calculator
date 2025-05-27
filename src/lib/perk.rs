@@ -1,9 +1,10 @@
-use super::luck_record::LoadoutLuckRecord;
 use derive_getters::Getters;
 use nutype::nutype;
 use strum::{EnumIter, IntoEnumIterator};
 
 use crate::constants::perk_luck as k;
+
+use super::luck_record::LoadoutLuckRecord;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Getters)]
 pub struct Perk {

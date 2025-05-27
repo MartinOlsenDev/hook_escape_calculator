@@ -1,6 +1,8 @@
-use super::{App, Calculator, Message, help_window};
-use hook_escape_calculator::update::SurvivorUpdate;
 use iced::{Task, window};
+
+use hook_escape_calculator::update::SurvivorUpdate;
+
+use super::{App, Calculator, Message, help_window};
 
 impl App {
     pub fn update(&mut self, message: Message) -> Task<Message> {

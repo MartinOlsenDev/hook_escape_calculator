@@ -1,8 +1,9 @@
-use super::luck_record::{LoadoutLuckRecord, Luck};
-use crate::constants::offering_luck as k;
-
 use nutype::nutype;
 use strum::{EnumIter, IntoEnumIterator};
+
+use crate::constants::offering_luck as k;
+
+use super::luck_record::{LoadoutLuckRecord, Luck};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, EnumIter)]
 pub enum Offering {

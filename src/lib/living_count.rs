@@ -1,6 +1,6 @@
-use super::constants::misc as k;
-
 use nutype::nutype;
+
+use super::constants::misc as k;
 
 const MAX_CAP_U8: u8 = k::TEAM_MAX_CAPACITY as u8;
 

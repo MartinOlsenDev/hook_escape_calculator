@@ -1,10 +1,13 @@
-use super::{offering, perk};
-use crate::constants::misc as k;
-use offering::OfferingSlot;
-
 use bon::bon;
 use derive_getters::Getters;
 use nutype::nutype;
+
+use super::{
+    offering,
+    offering::OfferingSlot,
+    perk::{PerkName, TierSlot},
+};
+use crate::constants::misc as k;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Getters)]
 pub struct SurvivorUpdate {
@@ -14,7 +17,7 @@ pub struct SurvivorUpdate {
 
 #[bon]
 impl SurvivorUpdate {
-    fn from_perk(id: SurvivorId, perk: perk::PerkName, tier: perk::TierSlot) -> Self {
+    fn from_perk(id: SurvivorId, perk: PerkName, tier: TierSlot) -> Self {
         Self {
             id,
             update: SurvivorUpdateData::LoadoutUpdate(LoadoutUpdate::Perk(PerkUpdate {
@@ -24,15 +27,11 @@ impl SurvivorUpdate {
         }
     }
     #[builder]
-    pub fn perk(id: SurvivorId, perk: perk::PerkName, tier: perk::TierSlot) -> Self {
+    pub fn perk(id: SurvivorId, perk: PerkName, tier: TierSlot) -> Self {
         Self::from_perk(id, perk, tier)
     }
     #[builder]
-    pub fn perk_usize(
-        id: usize,
-        perk: perk::PerkName,
-        tier: perk::TierSlot,
-    ) -> Result<Self, SurvivorIdError> {
+    pub fn perk_usize(id: usize, perk: PerkName, tier: TierSlot) -> Result<Self, SurvivorIdError> {
         let id = SurvivorId::try_new(id)?;
         Ok(Self::from_perk(id, perk, tier))
     }
@@ -95,6 +94,6 @@ pub enum LoadoutUpdate {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Getters)]
 pub struct PerkUpdate {
-    perk: perk::PerkName,
-    value: perk::TierSlot,
+    perk: PerkName,
+    value: TierSlot,
 }

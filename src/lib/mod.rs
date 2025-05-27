@@ -1,9 +1,10 @@
 pub mod constants;
-pub mod living_count;
-pub mod loadout;
-pub mod luck_record;
 pub mod offering;
 pub mod perk;
-pub mod player;
 pub mod team;
 pub mod update;
+
+mod living_count;
+mod loadout;
+mod luck_record;
+mod player;

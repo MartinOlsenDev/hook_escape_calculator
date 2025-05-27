@@ -1,9 +1,11 @@
-use super::luck_record::LoadoutLuckRecord;
-use super::offering::OfferingSlot;
-use super::perk::{Perk, PerkName, PerkSlot};
-use super::update::{LoadoutUpdate, PerkUpdate};
-
 use crate::constants::misc as k;
+
+use super::{
+    luck_record::LoadoutLuckRecord,
+    offering::OfferingSlot,
+    perk::{Perk, PerkName, PerkSlot},
+    update::{LoadoutUpdate, PerkUpdate},
+};
 
 const SLIPPERY_INDEX: usize = 0;
 const UTA_INDEX: usize = 1;

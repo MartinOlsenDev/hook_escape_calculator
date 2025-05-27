@@ -5,12 +5,14 @@ use iced::{
     window,
 };
 
-use super::{App, Calculator, Message, OfferingSlotDisplay, TierSlotDisplay, help_window};
+use hook_escape_calculator::{
+    constants::misc as k,
+    offering::OfferingSlot,
+    perk::{PerkName, TierSlot},
+    update::{SurvivorId, SurvivorIdError, SurvivorUpdate},
+};
 
-use hook_escape_calculator::constants::misc as k;
-use hook_escape_calculator::offering::OfferingSlot;
-use hook_escape_calculator::perk::{PerkName, TierSlot};
-use hook_escape_calculator::update::{SurvivorId, SurvivorIdError, SurvivorUpdate};
+use super::{App, Calculator, Message, OfferingSlotDisplay, TierSlotDisplay, help_window};
 
 impl App {
     pub fn view(&self, window_id: window::Id) -> Element<Message> {

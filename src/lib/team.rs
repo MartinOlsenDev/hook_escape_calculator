@@ -1,10 +1,13 @@
-use super::living_count::{LivingCount, LivingCountError};
-use super::luck_record::{PlayerTeamConverter, TeamLuckRecord};
-use super::player::Player;
-use super::update::{SurvivorId, SurvivorUpdate};
 use arrayvec::ArrayVec;
 
 use crate::constants::misc as k;
+
+use super::{
+    living_count::{LivingCount, LivingCountError},
+    luck_record::{PlayerTeamConverter, TeamLuckRecord},
+    player::Player,
+    update::{SurvivorId, SurvivorUpdate},
+};
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
 pub struct Team([Player; k::TEAM_MAX_CAPACITY]);

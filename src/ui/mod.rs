@@ -1,15 +1,17 @@
-use hook_escape_calculator::team;
-
-mod message;
-use message::*;
-mod widget_data;
-use widget_data::*;
-pub mod help_window;
-pub mod subscription;
-pub mod update;
-pub mod view;
 use iced::Task;
 use iced::window;
+
+use hook_escape_calculator::team;
+
+mod help_window;
+mod message;
+mod subscription;
+mod update;
+mod view;
+mod widget_data;
+
+use message::Message;
+use widget_data::{OfferingSlotDisplay, TierSlotDisplay, WidgetData};
 
 #[derive(Debug, Clone)]
 pub struct App {

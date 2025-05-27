@@ -3,8 +3,11 @@ use std::borrow::Cow;
 use arrayvec::ArrayVec;
 use iced::widget::combo_box;
 
-use hook_escape_calculator::{constants::misc as k, offering, perk, team};
-use offering::OfferingSlot;
+use hook_escape_calculator::{
+    constants::misc as k,
+    offering::{Offering, OfferingSlot},
+    perk, team,
+};
 
 #[derive(Debug, Clone)]
 pub struct WidgetData {
@@ -54,12 +57,12 @@ impl std::fmt::Display for TierSlotDisplay {
 }
 
 #[derive(Debug, Clone)]
-pub struct OfferingSlotDisplay(pub offering::OfferingSlot);
+pub struct OfferingSlotDisplay(pub OfferingSlot);
 
 impl OfferingSlotDisplay {
     pub fn total_combo_box() -> combo_box::State<Self> {
         combo_box::State::new(
-            offering::Offering::iterator()
+            Offering::iterator()
                 .map(|x| OfferingSlotDisplay(OfferingSlot::new(Some(x))))
                 .chain(std::iter::once(OfferingSlotDisplay(OfferingSlot::new(
                     None,
