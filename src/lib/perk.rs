@@ -1,5 +1,4 @@
 use super::luck_record::LoadoutLuckRecord;
-use bon::bon;
 use derive_getters::Getters;
 use nutype::nutype;
 use strum::{EnumIter, IntoEnumIterator};
@@ -30,7 +29,7 @@ impl Perk {
     }
 }
 
-#[nutype(derive(Debug, Clone, Copy, PartialEq, PartialOrd, Hash))]
+#[nutype(derive(Debug, Clone, Copy, PartialEq, Eq, Hash))]
 pub struct TierSlot(Option<Tier>);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, EnumIter)]

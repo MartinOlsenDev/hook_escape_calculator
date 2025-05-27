@@ -1,6 +1,5 @@
-use super::{
-    App, Calculator, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData, help_window,
-};
+use super::{App, Calculator, Message, help_window};
+use hook_escape_calculator::update::SurvivorUpdate;
 use iced::{Task, window};
 
 impl App {
@@ -42,18 +41,7 @@ impl App {
 
 impl Calculator {
     fn update_survivor(&mut self, survivor_update: SurvivorUpdate) {
-        let player = self.team.get_player_mut(survivor_update.id).expect(
-            "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
-        );
-
-        match survivor_update.update {
-            SurvivorUpdateData::Life(false) => player.set_alive(),
-            SurvivorUpdateData::Life(true) => player.set_dead(),
-            SurvivorUpdateData::Offering(x) => player.set_offering(x),
-            SurvivorUpdateData::Perk(PerkUpdate { perk, value }) => {
-                player.set_perk_tier(perk, value)
-            }
-        };
+        self.team.alter(survivor_update);
 
         self.widgets.renew_odds(&self.team);
     }

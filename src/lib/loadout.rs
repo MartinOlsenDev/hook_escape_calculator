@@ -1,6 +1,7 @@
 use super::luck_record::LoadoutLuckRecord;
-use super::offering::{Offering, OfferingSlot};
-use super::perk::{Perk, PerkName, PerkSlot, Tier};
+use super::offering::OfferingSlot;
+use super::perk::{Perk, PerkName, PerkSlot};
+use super::update::{LoadoutUpdate, PerkUpdate};
 
 use crate::constants::misc as k;
 
@@ -13,16 +14,23 @@ pub struct Loadout {
     offering: OfferingSlot,
 }
 
-// mutators
 impl Loadout {
-    pub fn set_perk_tier(&mut self, name: PerkName, tier: Option<Tier>) {
-        let mut perk: &mut PerkSlot = self.get_perk_mut(name);
-        let new = tier.map(|t| Perk::new(name, t));
-        *perk = PerkSlot::new(new);
+    pub fn alter(&mut self, update: LoadoutUpdate) {
+        match update {
+            LoadoutUpdate::Offering(x) => self.offering = x,
+            LoadoutUpdate::Perk(x) => self.perk_update(x),
+        };
     }
+    fn perk_update(&mut self, update: PerkUpdate) {
+        let perk: &mut PerkSlot = self.get_perk_mut(*update.perk());
+        let new = PerkSlot::new(
+            update
+                .value()
+                .into_inner()
+                .map(|t| Perk::new(*update.perk(), t)),
+        );
 
-    pub fn set_offering(&mut self, new: Option<Offering>) {
-        self.offering = OfferingSlot::new(new);
+        *perk = new;
     }
 }
 
@@ -33,12 +41,13 @@ impl Loadout {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
             PerkName::UpTheAnte => UTA_INDEX,
         };
-        self.perks.get(index).expect(&format!(
+        let expect_msg = format!(
             "Const index of {:?} is {:?}, which should be <= possible max {}.",
             perk,
             index,
             k::PERKSLOT_COUNT - 1
-        ))
+        );
+        self.perks.get(index).expect(&expect_msg)
     }
     pub fn get_offering(&self) -> &OfferingSlot {
         &self.offering

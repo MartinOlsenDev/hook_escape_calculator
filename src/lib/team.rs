@@ -1,6 +1,7 @@
-use super::living_count::LivingCount;
+use super::living_count::{LivingCount, LivingCountError};
 use super::luck_record::{PlayerTeamConverter, TeamLuckRecord};
 use super::player::Player;
+use super::update::{SurvivorId, SurvivorUpdate};
 use arrayvec::ArrayVec;
 
 use crate::constants::misc as k;
@@ -8,41 +9,51 @@ use crate::constants::misc as k;
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
 pub struct Team([Player; k::TEAM_MAX_CAPACITY]);
 
-// Mutable Accessor Methods
+// Accessor Methods
 impl Team {
-    pub fn list(&self) -> &[Player; k::TEAM_MAX_CAPACITY] {
-        &self.0
+    pub fn list(&self) -> impl Iterator<Item = &Player> + '_ {
+        self.0.iter()
     }
-    pub fn get_player_mut(&mut self, i: usize) -> Option<&mut Player> {
-        self.0.get_mut(i)
+    pub fn get_player(&self, i: SurvivorId) -> &Player {
+        self.0
+            .get(*i)
+            .expect("SurvivorId always valid for Team size.")
     }
-    pub fn get_player(&self, i: usize) -> Option<&Player> {
-        self.0.get(i)
+}
+
+// Mutating Methods
+impl Team {
+    fn get_player_mut(&mut self, i: SurvivorId) -> &mut Player {
+        self.0
+            .get_mut(*i)
+            .expect("SurvivorId always valid for Team size.")
+    }
+    pub fn alter(&mut self, update: SurvivorUpdate) {
+        let player_to_change = self.get_player_mut(*update.id());
+        player_to_change.alter(*update.update());
     }
 }
 
 // Calculating Methods
 impl Team {
     fn alive_not_counting(self, uncounted_player: usize) -> LivingCount {
-        LivingCount::try_from(
-            u8::try_from(
-                self.list()
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, player)| player.is_alive())
-                    .filter(|(i, _)| *i != uncounted_player)
-                    .count(),
-            )
-            .expect("Filtering on [_;4] cannot yield count outside u8"),
-        )
-        .expect("Filtering on a [_;4] cannot yield count exceeding 4.")
+        let raw_answer = self
+            .list()
+            .enumerate()
+            .filter(|(_, player)| player.is_alive())
+            .filter(|(i, _)| *i != uncounted_player)
+            .count();
+        u8::try_from(raw_answer)
+            .map_err(|_| LivingCountError::LessOrEqualViolated)
+            .and_then(LivingCount::try_new)
+            .expect("Cannot generate living count above the max from a list of size max.")
     }
 
     fn make_team_luck_records(&self) -> impl Iterator<Item = TeamLuckRecord> + '_ {
-        let player_record_iter = self.list().iter().map(|player| player.make_player_luck());
-        let player_converter_iter = (0_usize..(self.list().len()))
+        let player_record_iter = self.list().map(|player| player.make_player_luck());
+        let player_converter_iter = (0_usize..(self.0.len()))
             .map(|id| self.alive_not_counting(id))
-            .map(|count| PlayerTeamConverter::new(count.into()));
+            .map(|count| PlayerTeamConverter::new(count.into_inner()));
 
         player_record_iter
             .zip(player_converter_iter)

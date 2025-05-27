@@ -1,16 +1,16 @@
+use arrayvec::ArrayVec;
 use iced::{
     Element, Padding,
     widget::{Column, button, checkbox, column, combo_box, container, row, text},
     window,
 };
 
-use super::{
-    App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
-    TierSlotDisplay, help_window,
-};
+use super::{App, Calculator, Message, OfferingSlotDisplay, TierSlotDisplay, help_window};
 
 use hook_escape_calculator::constants::misc as k;
-use hook_escape_calculator::perk::PerkName;
+use hook_escape_calculator::offering::OfferingSlot;
+use hook_escape_calculator::perk::{PerkName, TierSlot};
+use hook_escape_calculator::update::{SurvivorId, SurvivorIdError, SurvivorUpdate};
 
 impl App {
     pub fn view(&self, window_id: window::Id) -> Element<Message> {
@@ -59,10 +59,17 @@ impl Calculator {
 
         rows = rows.push(column_headers);
 
-        for player_id in 0..k::TEAM_MAX_CAPACITY {
-            let player_name = text(format!("Player {}", player_id + 1)).width(125);
+        let ids: ArrayVec<SurvivorId, { k::TEAM_MAX_CAPACITY }> = (0..k::TEAM_MAX_CAPACITY)
+            .map(SurvivorId::try_new)
+            .collect::<Result<ArrayVec<SurvivorId, { k::TEAM_MAX_CAPACITY }>, SurvivorIdError>>()
+            .expect(
+                "Can't observe a value >= max capacity in iterator below bound of max capacity.",
+            );
+
+        for player_id in ids.into_iter() {
+            let player_name = text(format!("Player {}", *player_id + 1)).width(125);
             let row_input = self.make_player(player_id);
-            let (attempt_chance, total_chance) = self.widgets.odds.get(player_id).expect(
+            let (attempt_chance, total_chance) = self.widgets.odds.get(*player_id).expect(
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
             );
             let row_output = row![
@@ -79,10 +86,8 @@ impl Calculator {
         rows.into()
     }
 
-    fn make_player(&self, id: usize) -> Element<Message> {
-        let player = self.team.get_player(id).expect(
-            "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
-        );
+    fn make_player(&self, id: SurvivorId) -> Element<Message> {
+        let player = self.team.get_player(id);
 
         row![
             container(
@@ -93,7 +98,13 @@ impl Calculator {
                         player.get_perk_tier(PerkName::SlipperyMeat).cloned()
                     )),
                     move |TierSlotDisplay(x)| {
-                        Message::UpdateSurvivor(SurvivorUpdate::slippery(id, x))
+                        Message::UpdateSurvivor(
+                            SurvivorUpdate::perk()
+                                .id(id)
+                                .perk(PerkName::SlipperyMeat)
+                                .tier(TierSlot::new(x))
+                                .call(),
+                        )
                     }
                 )
                 .width(120)
@@ -108,7 +119,13 @@ impl Calculator {
                         player.get_perk_tier(PerkName::UpTheAnte).cloned()
                     )),
                     move |TierSlotDisplay(x)| {
-                        Message::UpdateSurvivor(SurvivorUpdate::uta(id, x))
+                        Message::UpdateSurvivor(
+                            SurvivorUpdate::perk()
+                                .id(id)
+                                .perk(PerkName::UpTheAnte)
+                                .tier(TierSlot::new(x))
+                                .call(),
+                        )
                     }
                 )
                 .width(120)
@@ -119,9 +136,14 @@ impl Calculator {
                 combo_box(
                     &self.widgets.offering_choices,
                     "",
-                    Some(&OfferingSlotDisplay(player.get_offering().cloned())),
+                    Some(&OfferingSlotDisplay(*player.get_offering())),
                     move |OfferingSlotDisplay(x)| {
-                        Message::new_surv_update(id, SurvivorUpdateData::Offering(x))
+                        Message::UpdateSurvivor(
+                            SurvivorUpdate::offering()
+                                .id(id)
+                                .offering(OfferingSlot::new(*x))
+                                .call(),
+                        )
                     }
                 )
                 .width(150)
@@ -129,8 +151,9 @@ impl Calculator {
             .padding(Padding::ZERO.left(23))
             .center_x(200),
             container(
-                checkbox("", player.is_dead())
-                    .on_toggle(move |x| Message::new_surv_update(id, SurvivorUpdateData::Life(x)))
+                checkbox("", player.is_dead()).on_toggle(move |x| Message::UpdateSurvivor(
+                    SurvivorUpdate::living_status().id(id).alive(!x).call()
+                ))
             )
             .center_x(120)
         ]

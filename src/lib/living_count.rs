@@ -1,14 +1,12 @@
-pub struct LivingCount(pub u8);
+use super::constants::misc as k;
 
-impl From<LivingCount> for u8 {
-    fn from(value: LivingCount) -> Self {
-        value.0
-    }
-}
+use nutype::nutype;
 
-impl TryFrom<u8> for LivingCount {
-    type Error = (); // only one possible cause of failure: vaule >4
-    fn try_from(value: u8) -> Result<Self, ()> {
-        if value <= 4 { Ok(Self(value)) } else { Err(()) }
-    }
-}
+const MAX_CAP_U8: u8 = k::TEAM_MAX_CAPACITY as u8;
+
+#[nutype(
+    validate(less_or_equal = MAX_CAP_U8),
+    derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default, AsRef, Deref),
+    default = 0
+)]
+pub struct LivingCount(u8);
