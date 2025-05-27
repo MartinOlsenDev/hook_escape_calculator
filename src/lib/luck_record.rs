@@ -32,7 +32,6 @@ impl LoadoutLuckRecord {
             additional_unhooks: 0,
         }
     }
-    ///TODO: This should take a tier and map it, not a literal percent
     pub const fn from_uta(uta: Luck) -> Self {
         Self {
             personal: 0.0,
@@ -76,7 +75,7 @@ impl LoadoutPlayerConverter {
     pub const fn new(is_alive: bool) -> Self {
         Self { is_alive }
     }
-    pub fn convert(self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
+    pub const fn convert(self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
         let LoadoutLuckRecord {
             personal,
             global,
@@ -85,7 +84,10 @@ impl LoadoutPlayerConverter {
         } = loadout;
         // This line is what causes dead players to not contribute their
         // Up the Ante to the global luck.
-        up_the_ante_coeff = up_the_ante_coeff.filter(|_| self.is_alive);
+        up_the_ante_coeff = match self.is_alive {
+            true => up_the_ante_coeff,
+            false => None
+        };
 
         PlayerLuckRecord(LoadoutLuckRecord {
             personal,

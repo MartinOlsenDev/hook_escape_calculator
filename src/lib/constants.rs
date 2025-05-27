@@ -1,3 +1,5 @@
+use konst as kon;
+
 pub mod offering_luck {
     pub const SLIGHT_LUCK: f64 = 0.01;
     pub const MODERATE_LUCK: f64 = 0.02;
@@ -15,7 +17,9 @@ pub mod perk_luck {
 }
 
 pub mod misc {
+    use super::*;
     pub const COUNT_ALL_KNOWN_LUCK_PERKS: usize = 2;
+    pub const PERKSLOT_COUNT: usize = kon::min!(COUNT_ALL_KNOWN_LUCK_PERKS, 4_usize);
 
     pub const TEAM_MAX_CAPACITY: usize = 4;
 

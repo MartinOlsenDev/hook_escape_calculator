@@ -2,17 +2,14 @@ use super::luck_record::LoadoutLuckRecord;
 use super::offering::{Offering, OfferingSlot};
 use super::perk::{Perk, PerkName, PerkSlot, Tier};
 
-use konst as kon;
-
 use crate::constants::misc as k;
 
-const PERKSLOT_COUNT: usize = kon::min!(k::COUNT_ALL_KNOWN_LUCK_PERKS, 4_usize);
 const SLIPPERY_INDEX: usize = 0;
 const UTA_INDEX: usize = 1;
 
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loadout {
-    perks: [PerkSlot; PERKSLOT_COUNT],
+    perks: [PerkSlot; k::PERKSLOT_COUNT],
     offering: OfferingSlot,
 }
 

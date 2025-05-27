@@ -59,9 +59,9 @@ pub enum PerkName {
 
 impl From<&Perk> for LoadoutLuckRecord {
     fn from(perk: &Perk) -> Self {
-        match (perk.name, perk.tier) {
-            (PerkName::UpTheAnte, tier) => LoadoutLuckRecord::from_uta(uta_tier_percent(tier)),
-            (PerkName::SlipperyMeat, tier) => slippery_meat_record(tier),
+        match perk.name {
+            PerkName::UpTheAnte => LoadoutLuckRecord::from_uta(uta_tier_percent(perk.tier)),
+            PerkName::SlipperyMeat => slippery_meat_record(perk.tier),
         }
     }
 }
