@@ -9,10 +9,6 @@ impl From<LivingCount> for u8 {
 impl TryFrom<u8> for LivingCount {
     type Error = (); // only one possible cause of failure: vaule >4
     fn try_from(value: u8) -> Result<Self, ()> {
-        if value <= 4 {
-            Ok(Self(value))
-        } else {
-            Err(())
-        }
+        if value <= 4 { Ok(Self(value)) } else { Err(()) }
     }
 }

@@ -1,11 +1,12 @@
 use iced::{
-    widget::{button, checkbox, column, combo_box, container, row, text, Column},
-    window, Element, Padding,
+    Element, Padding,
+    widget::{Column, button, checkbox, column, combo_box, container, row, text},
+    window,
 };
 
 use super::{
-    help_window, App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
-    TierSlotDisplay,
+    App, Calculator, Message, OfferingSlotDisplay, SurvivorUpdate, SurvivorUpdateData,
+    TierSlotDisplay, help_window,
 };
 
 use hook_escape_calculator::constants::misc as k;

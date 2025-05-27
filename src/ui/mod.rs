@@ -8,8 +8,8 @@ pub mod help_window;
 pub mod subscription;
 pub mod update;
 pub mod view;
-use iced::window;
 use iced::Task;
+use iced::window;
 
 #[derive(Debug, Clone)]
 pub struct App {

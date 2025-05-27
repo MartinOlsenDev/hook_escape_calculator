@@ -1,5 +1,5 @@
-use crate::constants::offering_luck as k;
 use super::luck_record::{LoadoutLuckRecord, Luck};
+use crate::constants::offering_luck as k;
 
 use strum::{EnumIter, IntoEnumIterator};
 

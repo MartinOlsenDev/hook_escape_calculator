@@ -1,5 +1,5 @@
 use super::{App, Message};
-use iced::{window, Subscription};
+use iced::{Subscription, window};
 
 impl App {
     pub fn subscription(&self) -> Subscription<Message> {

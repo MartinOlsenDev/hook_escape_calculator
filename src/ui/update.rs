@@ -1,7 +1,7 @@
 use super::{
-    help_window, App, Calculator, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData,
+    App, Calculator, Message, PerkUpdate, SurvivorUpdate, SurvivorUpdateData, help_window,
 };
-use iced::{window, Task};
+use iced::{Task, window};
 
 impl App {
     pub fn update(&mut self, message: Message) -> Task<Message> {

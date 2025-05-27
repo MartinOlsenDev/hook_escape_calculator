@@ -86,7 +86,7 @@ impl LoadoutPlayerConverter {
         // Up the Ante to the global luck.
         up_the_ante_coeff = match self.is_alive {
             true => up_the_ante_coeff,
-            false => None
+            false => None,
         };
 
         PlayerLuckRecord(LoadoutLuckRecord {
@@ -200,10 +200,11 @@ mod tests {
 
         let global_team_luck_record = TeamLuckRecord::from_global(misc::BASE_UNHOOK_CHANCE);
 
-        &global_team_luck_record + (&TeamLuckRecord {
-            global: perk_luck::UTA_TIER3 * 3.0 * 3.0 + offering_luck::GREAT_LUCK * 3.0,
-            personals,
-        })
+        &global_team_luck_record
+            + (&TeamLuckRecord {
+                global: perk_luck::UTA_TIER3 * 3.0 * 3.0 + offering_luck::GREAT_LUCK * 3.0,
+                personals,
+            })
     }
 
     #[test]
