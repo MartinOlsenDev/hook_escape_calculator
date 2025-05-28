@@ -39,12 +39,12 @@ impl Team {
 
 // Calculating Methods
 impl Team {
-    fn alive_not_counting(self, uncounted_player: usize) -> LivingCount {
+    fn alive_not_counting(&self, uncounted_player: &usize) -> LivingCount {
         let raw_answer = self
             .list()
             .enumerate()
             .filter(|(_, player)| player.is_alive())
-            .filter(|(i, _)| *i != uncounted_player)
+            .filter(|(i, _)| i != uncounted_player)
             .count();
         u8::try_from(raw_answer)
             .map_err(|_| LivingCountError::LessOrEqualViolated)
@@ -55,7 +55,7 @@ impl Team {
     fn make_team_luck_records(&self) -> impl Iterator<Item = TeamLuckRecord> + '_ {
         let player_record_iter = self.list().map(|player| player.make_player_luck());
         let player_converter_iter = (0_usize..(self.0.len()))
-            .map(|id| self.alive_not_counting(id))
+            .map(|id| self.alive_not_counting(&id))
             .map(|count| PlayerTeamConverter::new(count.into_inner()));
 
         player_record_iter
