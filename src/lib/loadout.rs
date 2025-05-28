@@ -38,11 +38,14 @@ impl Loadout {
 
 // accessors
 impl Loadout {
-    pub fn get_perk(&self, perk: PerkName) -> &PerkSlot {
-        let index = match perk {
+    fn perk_index(perk: PerkName) -> usize {
+        match perk {
             PerkName::SlipperyMeat => SLIPPERY_INDEX,
             PerkName::UpTheAnte => UTA_INDEX,
-        };
+        }
+    }
+    pub fn get_perk(&self, perk: PerkName) -> &PerkSlot {
+        let index = Self::perk_index(perk);
         let expect_msg = format!(
             "Const index of {:?} is {:?}, which should be <= possible max {}.",
             perk,
@@ -58,11 +61,8 @@ impl Loadout {
 
 // mutable accessors
 impl Loadout {
-    fn get_perk_mut(&mut self, name: PerkName) -> &mut PerkSlot {
-        let index = match name {
-            PerkName::SlipperyMeat => SLIPPERY_INDEX,
-            PerkName::UpTheAnte => UTA_INDEX,
-        };
+    fn get_perk_mut(&mut self, perk: PerkName) -> &mut PerkSlot {
+        let index = Self::perk_index(perk);
 
         self.perks
             .get_mut(index)
