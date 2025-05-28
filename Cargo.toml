@@ -1,6 +1,6 @@
 [package]
 name = "hook_escape_calculator"
-version = "0.3.1"
+version = "0.4.0"
 authors = ["Martin Olsen<Martin.Olsen2@protonmail.com>"]
 edition = "2024"
 license = "GPL-3"
@@ -22,10 +22,8 @@ arrayvec = "0.7.6"
 konst = "0.3.15"
 iced = "0.13.1"
 derive_more = { version = "2.0.1", features = ["display"] }
-# consider eliminating derive_more in favor of strum derive display
 strum = { version = "0.27.1", features = ["derive"] }
 derive-getters = {version = "0.5.0", features = ["auto_copy_getters"] }
-# num-rational integration planned for future release
 
 [dev-dependencies]
 float-cmp = "0.10.0"
