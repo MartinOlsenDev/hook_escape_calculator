@@ -1,7 +1,7 @@
 use arrayvec::ArrayVec;
 use iced::{
     Element, Padding,
-    widget::{Column, button, checkbox, column, combo_box, container, row, text},
+    widget::{Column, button, checkbox, column, combo_box, container, row, text, Row},
     window,
 };
 
@@ -71,24 +71,33 @@ impl Calculator {
                 "Can't observe a value >= max capacity in iterator below bound of max capacity.",
             );
 
-        for player_id in ids.into_iter() {
-            let player_name = text(format!("Player {}", *player_id + 1)).width(125);
-            let row_input = self.make_player(player_id);
+        let make_name = |player_id: SurvivorId| {
+            text(format!("Player {}", *player_id + 1)).width(125)
+        };
+        let make_input = |player_id| {
+            self.make_player(player_id)
+        };
+        let make_output = |player_id: SurvivorId| -> Row<'_, Message> {
             let (attempt_chance, total_chance) = self.widgets.odds.get(*player_id).expect(
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
             );
-            let row_output = row![
+            row![
                 container(text(attempt_chance.to_owned()))
                     .padding(Padding::ZERO.left(10))
                     .width(120),
                 container(text(total_chance.to_owned()))
                     .padding(Padding::ZERO.left(10))
                     .width(120)
-            ];
-            let row = container(row![player_name, row_input, row_output]).height(50);
-            rows = rows.push(row)
-        }
-        rows.into()
+            ]
+        };
+        let make_row = |id: SurvivorId| {
+            container(row![make_name(id), make_input(id), make_output(id)]).height(50)
+        };
+
+        ids.into_iter()
+            .map(make_row)
+            .fold(rows, Column::push)
+            .into()
     }
 
     fn make_player(&self, id: SurvivorId) -> Element<Message> {

@@ -20,12 +20,10 @@ pub fn window_settings() -> iced::window::Settings {
 }
 
 pub fn view() -> Element<'static, Message> {
-    let mut c = Column::new();
-    for s in TEXT {
-        c = c.push(about_centered_container(s))
-    }
-
-    c.into()
+    TEXT.into_iter()
+        .map(|s| about_centered_container(s))
+        .fold(Column::new(), |acc, x| acc.push(x))
+        .into()
 }
 
 const TEXT: [&str; 17] = [
