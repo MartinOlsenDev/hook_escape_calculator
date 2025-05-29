@@ -37,18 +37,18 @@ impl Player {
 
 // Getters
 impl Player {
-    pub const fn is_alive(self) -> bool {
+    pub const fn is_alive(&self) -> bool {
         self.is_alive
     }
-    pub const fn is_dead(self) -> bool {
+    pub const fn is_dead(&self) -> bool {
         !self.is_alive()
     }
-    fn make_record_converter(self) -> LoadoutPlayerConverter {
+    fn make_record_converter(&self) -> LoadoutPlayerConverter {
         LoadoutPlayerConverter::new(self.is_alive)
     }
 
     // Consider placing in sub-module
-    pub fn make_player_luck(self) -> PlayerLuckRecord {
+    pub fn make_player_luck(&self) -> PlayerLuckRecord {
         self.make_record_converter()
             .convert(self.loadout.collate_luck())
     }

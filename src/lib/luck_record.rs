@@ -77,7 +77,7 @@ impl LoadoutPlayerConverter {
     pub const fn new(is_alive: bool) -> Self {
         Self { is_alive }
     }
-    pub const fn convert(self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
+    pub const fn convert(&self, loadout: LoadoutLuckRecord) -> PlayerLuckRecord {
         let LoadoutLuckRecord {
             personal,
             global,
@@ -114,7 +114,7 @@ impl PlayerTeamConverter {
             living_other_than_self_count,
         }
     }
-    pub fn convert(self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
+    pub fn convert(&self, plr: &PlayerLuckRecord) -> TeamLuckRecord {
         let LoadoutLuckRecord {
             personal,
             global,

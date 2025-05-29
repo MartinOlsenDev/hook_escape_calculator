@@ -72,7 +72,7 @@ impl Loadout {
 
 // luck collater
 impl Loadout {
-    pub fn collate_luck(self) -> LoadoutLuckRecord {
+    pub fn collate_luck(&self) -> LoadoutLuckRecord {
         let perk_records = self
             .perks
             .iter()

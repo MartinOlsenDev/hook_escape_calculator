@@ -31,14 +31,14 @@ impl From<&Offering> for LoadoutLuckRecord {
 }
 
 impl Offering {
-    const fn luck_value(self) -> Luck {
+    const fn luck_value(&self) -> Luck {
         match self {
             Offering::ChalkPouch | Offering::SaltPouch => k::SLIGHT_LUCK,
             Offering::CreamPouch | Offering::SaltStatuette => k::MODERATE_LUCK,
             Offering::IvoryPouch | Offering::SaltyLips => k::GREAT_LUCK,
         }
     }
-    const fn luck_is_personal(self) -> bool {
+    const fn luck_is_personal(&self) -> bool {
         matches!(
             self,
             Offering::ChalkPouch | Offering::CreamPouch | Offering::IvoryPouch
