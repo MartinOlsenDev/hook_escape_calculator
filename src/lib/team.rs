@@ -56,7 +56,7 @@ impl Team {
         let player_record_iter = self.list().map(|player| player.make_player_luck());
         let player_converter_iter = (0_usize..(self.0.len()))
             .map(|id| self.alive_not_counting(&id))
-            .map(|count| PlayerTeamConverter::new(count.into_inner()));
+            .map(PlayerTeamConverter::new);
 
         player_record_iter
             .zip(player_converter_iter)

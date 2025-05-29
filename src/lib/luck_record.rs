@@ -2,6 +2,8 @@ use arrayvec::ArrayVec;
 
 use crate::constants::misc::TEAM_MAX_CAPACITY;
 
+use super::living_count::LivingCount;
+
 pub type Luck = f64;
 
 /// A record that represents a players luck items such that
@@ -103,11 +105,11 @@ pub struct PlayerLuckRecord(pub LoadoutLuckRecord);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PlayerTeamConverter {
-    living_other_than_self_count: u8,
+    living_other_than_self_count: LivingCount,
 }
 
 impl PlayerTeamConverter {
-    pub const fn new(living_other_than_self_count: u8) -> Self {
+    pub const fn new(living_other_than_self_count: LivingCount) -> Self {
         Self {
             living_other_than_self_count,
         }
@@ -121,7 +123,7 @@ impl PlayerTeamConverter {
         } = plr.0;
 
         let uta_contribution =
-            up_the_ante_coeff.map_or(0.0, |x| x * f64::from(self.living_other_than_self_count));
+            up_the_ante_coeff.map_or(0.0, |x| x * f64::from(self.living_other_than_self_count.into_inner()));
 
         let final_global = global + uta_contribution;
         let personal_data = {
