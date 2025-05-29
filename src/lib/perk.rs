@@ -22,9 +22,6 @@ impl Perk {
     pub const fn new(name: PerkName, tier: Tier) -> Perk {
         Perk { name, tier }
     }
-    pub const fn get_tier_mut(&mut self) -> &mut Tier {
-        &mut self.tier
-    }
     pub const fn set_tier(&mut self, tier: Tier) {
         self.tier = tier
     }
