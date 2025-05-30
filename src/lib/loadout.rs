@@ -84,7 +84,7 @@ impl Loadout {
             .map(|offering| LoadoutLuckRecord::from(&offering))
             .unwrap_or_default();
 
-        &offering_luck + &perk_records.fold(LoadoutLuckRecord::default(), |acc, x| &acc + &x)
+        perk_records.fold(offering_luck, |acc, x| &acc + &x)
     }
 }
 
