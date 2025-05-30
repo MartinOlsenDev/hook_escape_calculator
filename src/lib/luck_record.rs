@@ -288,8 +288,16 @@ mod tests {
                 assert_eq!(left, &left + &right)
             }
         }
+        proptest! {
+            #[test]
+            fn equality(a in arb::loadout_record()) {
+                let x = a;
+                let y = a;
+                assert_eq!(&x, &y, "testing PartialEq with {:?} {:?}", &x, &y);
+                assert_eq!(&y, &x, "testing Eq after PartialEq success with {:?} {:?}", &y, &x)
+            }
+        }
     }
-
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
         for _ in 0..3 {
@@ -304,14 +312,6 @@ mod tests {
                 personals,
             })
     }
-
-    #[test]
-    fn trivial_default_comparison() {
-        let a = LoadoutLuckRecord::default();
-        let b = LoadoutLuckRecord::default();
-        assert_eq!(a, b);
-    }
-
     // Note that this test is impossible
     #[test]
     fn integrated_combine() {
