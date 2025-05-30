@@ -196,8 +196,7 @@ impl std::ops::Add for &TeamLuckRecord {
     fn add(self, other: Self) -> Self::Output {
         let personals = match (&self.personals, &other.personals) {
             (None, None) => None,
-            (None, Some(right)) => Some(right.clone()),
-            (Some(left), None) => Some(left.clone()),
+            (Some(x), None) | (None, Some(x)) => Some(x.clone()),
             (Some(left), Some(right)) => {
                 let mut left: ArrayVec<(f64, i8), TEAM_MAX_CAPACITY> = left.clone();
                 left.extend(right.clone());
