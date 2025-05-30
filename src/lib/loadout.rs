@@ -54,7 +54,7 @@ impl Loadout {
         );
         self.perks.get(index).expect(&expect_msg)
     }
-    pub fn get_offering(&self) -> &OfferingSlot {
+    pub fn offering(&self) -> &OfferingSlot {
         &self.offering
     }
 }

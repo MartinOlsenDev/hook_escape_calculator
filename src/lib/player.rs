@@ -30,8 +30,8 @@ impl Player {
             .as_ref()
             .map(|perk| perk.tier())
     }
-    pub fn get_offering(&self) -> &OfferingSlot {
-        self.loadout.get_offering()
+    pub fn offering(&self) -> &OfferingSlot {
+        self.loadout.offering()
     }
 }
 

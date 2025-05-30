@@ -147,7 +147,7 @@ impl Calculator {
                 combo_box(
                     &self.widgets.offering_choices,
                     "",
-                    Some(&OfferingSlotDisplay(*player.get_offering())),
+                    Some(&OfferingSlotDisplay(*player.offering())),
                     move |OfferingSlotDisplay(x)| {
                         Message::UpdateSurvivor(
                             SurvivorUpdate::offering()
