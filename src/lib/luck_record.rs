@@ -225,8 +225,7 @@ mod tests {
         use super::*;
 
         fn loadout_records_not_overflow(xs: &[LoadoutLuckRecord]) -> bool {
-            (-128_i16..128_i16)
-                .contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
+            (-128_i16..128_i16).contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
         }
 
         proptest! {

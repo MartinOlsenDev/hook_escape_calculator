@@ -1,7 +1,7 @@
 use arrayvec::ArrayVec;
 use iced::{
     Element, Padding,
-    widget::{Column, button, checkbox, column, combo_box, container, row, text, Row},
+    widget::{Column, Row, button, checkbox, column, combo_box, container, row, text},
     window,
 };
 
@@ -71,12 +71,9 @@ impl Calculator {
                 "Can't observe a value >= max capacity in iterator below bound of max capacity.",
             );
 
-        let make_name = |player_id: SurvivorId| {
-            text(format!("Player {}", *player_id + 1)).width(125)
-        };
-        let make_input = |player_id| {
-            self.make_player(player_id)
-        };
+        let make_name =
+            |player_id: SurvivorId| text(format!("Player {}", *player_id + 1)).width(125);
+        let make_input = |player_id| self.make_player(player_id);
         let make_output = |player_id: SurvivorId| -> Row<'_, Message> {
             let (attempt_chance, total_chance) = self.widgets.odds.get(*player_id).expect(
                 "Generated id in range 0..TEAM_MAX_CAPACITY always less than TEAM_MAX_CAPACITY.",
