@@ -1,5 +1,6 @@
 use arrayvec::ArrayVec;
 use derive_getters::Getters;
+use itertools::Either;
 
 use crate::constants::misc::TEAM_MAX_CAPACITY;
 
@@ -9,7 +10,7 @@ pub type Luck = f64;
 
 /// A record that represents a players luck items such that
 /// two personal lucks are summed rather than list appended
-#[derive(PartialEq, Debug, Clone, Copy, Default, Getters)]
+#[derive(PartialEq, Debug, Clone, Copy, Getters)]
 pub struct LoadoutLuckRecord {
     personal: Luck,
     global: Luck,
@@ -19,37 +20,43 @@ pub struct LoadoutLuckRecord {
 
 /// Init methods
 impl LoadoutLuckRecord {
+    const fn const_default() -> Self {
+        Self {
+            personal: 0.0,
+            global: 0.0,
+            up_the_ante_coeff: None,
+            additional_unhooks: 0
+        }
+    }
     pub const fn from_personal(personal: Luck) -> Self {
         Self {
             personal,
-            global: 0.0,
-            up_the_ante_coeff: None,
-            additional_unhooks: 0,
+            ..Self::const_default()
         }
     }
     pub const fn from_global(global: Luck) -> Self {
         Self {
-            personal: 0.0,
             global,
-            up_the_ante_coeff: None,
-            additional_unhooks: 0,
+            ..Self::const_default()
         }
     }
     pub const fn from_uta(uta: Luck) -> Self {
         Self {
-            personal: 0.0,
-            global: 0.0,
             up_the_ante_coeff: Some(uta),
-            additional_unhooks: 0,
+            ..Self::const_default()
         }
     }
     pub const fn from_unhook_mod(additional_unhooks: i8) -> Self {
         Self {
-            personal: 0.0,
-            global: 0.0,
-            up_the_ante_coeff: None,
             additional_unhooks,
+            ..Self::const_default()
         }
+    }
+}
+
+impl std::default::Default for LoadoutLuckRecord {
+    fn default() -> Self {
+        Self::const_default()
     }
 }
 
@@ -136,28 +143,35 @@ impl PlayerTeamConverter {
 
         TeamLuckRecord {
             global: final_global,
-            personals: personal_data,
+            personals: Some(personal_data),
         }
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct TeamLuckRecord {
     global: Luck,
-    personals: ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>,
+    personals: Option<ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>>
 }
 
 impl TeamLuckRecord {
+    const fn const_default() -> Self {
+        TeamLuckRecord {
+            global: 0.0,
+            personals: None
+        }
+    }
     pub const fn from_global(luck: Luck) -> Self {
         TeamLuckRecord {
             global: luck,
-            personals: ArrayVec::new_const(),
+            personals: None
         }
     }
     pub fn luck_unhook_mod_pairs_iter(&self) -> impl Iterator<Item = (Luck, i8)> + '_ {
-        self.personals
-            .iter()
-            .map(|(luck, unhook_mod)| (luck + self.global, *unhook_mod))
+        match &self.personals {
+            Some(personals) => Either::Left(personals.iter().map(|(l, u)| (l + self.global, *u))),
+            None => Either::Right(std::iter::empty::<(f64, i8)>()),
+        }
     }
     pub fn make_single_and_total_unhook_pairs(&self) -> impl Iterator<Item = (Luck, Luck)> + '_ {
         self.luck_unhook_mod_pairs_iter()
@@ -170,15 +184,26 @@ impl TeamLuckRecord {
     }
 }
 
+impl std::default::Default for TeamLuckRecord {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
 impl std::ops::Add for &TeamLuckRecord {
     type Output = TeamLuckRecord;
 
     fn add(self, other: Self) -> Self::Output {
-        let personals = {
-            let mut personals = self.personals.clone();
-            personals.extend(other.personals.clone());
-            personals
-        };
+        let personals = match (&self.personals, &other.personals) {
+            (None, None) => None,
+            (None, Some(right)) => Some(right.clone()),
+            (Some(left), None) => Some(left.clone()),
+            (Some(left), Some(right)) => {
+                let mut left: ArrayVec<(f64, i8), TEAM_MAX_CAPACITY> = left.clone();
+                left.extend(right.clone());
+                Some(left)
+        }
+    };
 
         TeamLuckRecord {
             global: self.global + other.global,
@@ -309,7 +334,7 @@ mod tests {
         &global_team_luck_record
             + (&TeamLuckRecord {
                 global: perk_luck::UTA_TIER3 * 3.0 * 3.0 + offering_luck::GREAT_LUCK * 3.0,
-                personals,
+                personals: Some(personals),
             })
     }
     // Note that this test is impossible
@@ -345,7 +370,7 @@ mod tests {
         personals.push((0.04, 3)); // slippery meat
         let player = TeamLuckRecord {
             global: 0.03 + 0.03 * 3., // salty lips & up the ante with 3 others living
-            personals,
+            personals: Some(personals),
         };
         let full_team = &altruistic_team() + &player;
         let full_luck: Vec<(Luck, Luck)> = full_team.make_single_and_total_unhook_pairs().collect();
