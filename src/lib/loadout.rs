@@ -7,9 +7,6 @@ use super::{
     update::{LoadoutUpdate, PerkUpdate},
 };
 
-const SLIPPERY_INDEX: usize = 0;
-const UTA_INDEX: usize = 1;
-
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Loadout {
     perks: [PerkSlot; k::PERKSLOT_COUNT],
@@ -38,14 +35,17 @@ impl Loadout {
 
 // accessors
 impl Loadout {
-    fn perk_index(perk: PerkName) -> usize {
+    /// Any implementation of perk_label is acceptable so long
+    /// as its inverse function exists, it returns unsigned, and 
+    /// tests::all_perks_valid_index passes
+    const fn perk_label(perk: PerkName) -> usize {
         match perk {
-            PerkName::SlipperyMeat => SLIPPERY_INDEX,
-            PerkName::UpTheAnte => UTA_INDEX,
+            PerkName::SlipperyMeat => 0,
+            PerkName::UpTheAnte => 1,
         }
     }
     pub fn get_perk(&self, perk: PerkName) -> &PerkSlot {
-        let index = Self::perk_index(perk);
+        let index = Self::perk_label(perk);
         let expect_msg = format!(
             "Const index of {:?} is {:?}, which should be <= possible max {}.",
             perk,
@@ -62,7 +62,7 @@ impl Loadout {
 // mutable accessors
 impl Loadout {
     fn get_perk_mut(&mut self, perk: PerkName) -> &mut PerkSlot {
-        let index = Self::perk_index(perk);
+        let index = Self::perk_label(perk);
 
         self.perks
             .get_mut(index)
@@ -88,38 +88,17 @@ impl Loadout {
     }
 }
 
-//TODO: Refactor Tests for New Technique
-/*#[cfg(test)]
+#[cfg(test)]
 mod tests {
-    use super::super::perk::*;
     use super::*;
-    use crate::lib::backend::luck::TeamDynamicLuck;
+    use proptest::prelude::*;
+    use super::super::perk;
 
-    #[test]
-    fn example0() {
-        let survivor = Loadout {
-            perks: [Some(Perk::SlipperyMeat(SlipperyMeat::One)), None],
-            offering: Some(Offering::SaltStatuette),
-        };
-        assert_eq!(survivor.make_personal_luck(), 0.02);
-        assert_eq!(survivor.make_max_unhook(), 6_u8);
-        assert_eq!(survivor.make_global_luck(), 0.02);
-        assert_eq!(Vec::<DynamicLuck>::new(), survivor.get_dyn_luck());
+    proptest! {
+        #[test]
+        fn all_perks_valid_index(perk in perk::arb::name()) {
+            assert!(Loadout::perk_label(perk) < k::PERKSLOT_COUNT)
+        }
     }
-    #[test]
-    fn example1() {
-        let survivor = Loadout {
-            perks: [None, Some(Perk::UpTheAnte(UpTheAnte::Three))],
-            offering: Some(Offering::ChalkPouch),
-        };
-        assert_eq!(survivor.make_personal_luck(), 0.01);
-        assert_eq!(survivor.make_max_unhook(), 3_u8);
-        assert_eq!(survivor.make_global_luck(), 0.0);
-        assert_eq!(
-            vec![DynamicLuck::Team(TeamDynamicLuck::UpTheAnte(
-                UpTheAnte::Three
-            ))],
-            survivor.get_dyn_luck()
-        );
-    }
-}*/
+
+}

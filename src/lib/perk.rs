@@ -58,6 +58,7 @@ impl std::fmt::Display for Tier {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[cfg_attr(test, derive(EnumIter))]
 pub enum PerkName {
     SlipperyMeat,
     UpTheAnte,
@@ -88,4 +89,27 @@ fn slippery_meat_record(tier: Tier) -> LoadoutLuckRecord {
     });
     let unhook_count_record = LoadoutLuckRecord::from_unhook_mod(3);
     &unhook_chance_record + &unhook_count_record
+}
+
+/// Module for generating arbitrary test values
+#[cfg(test)]
+pub mod arb {
+    use super::*;
+    use proptest::prelude::*;
+
+    pub fn name() -> impl Strategy<Value = PerkName> {
+        let perks: Vec<PerkName> = PerkName::iter().collect();
+        prop::sample::select(perks)
+    }
+}
+/// Actual test module
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn perk_count_actual_and_expected_match() {
+        let perks: usize = PerkName::iter().count();
+        let expected = super::super::constants::misc::COUNT_LUCK_PERKS;
+        assert_eq!(perks, expected)
+    }
 }
