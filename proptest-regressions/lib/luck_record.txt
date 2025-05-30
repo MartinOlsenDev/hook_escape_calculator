@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 9038b56d6ae9f76ca8c98d15a5dcf25283e1531ab1a74722487184d2e0e1e5fa # shrinks to a = LoadoutLuckRecord { personal: 0.0, global: 0.0, up_the_ante_coeff: None, additional_unhooks: 22 }, b = LoadoutLuckRecord { personal: 0.0, global: 0.0, up_the_ante_coeff: None, additional_unhooks: 63 }, c = LoadoutLuckRecord { personal: 0.0, global: 0.0, up_the_ante_coeff: None, additional_unhooks: 43 }

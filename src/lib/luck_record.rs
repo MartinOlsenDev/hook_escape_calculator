@@ -1,4 +1,5 @@
 use arrayvec::ArrayVec;
+use derive_getters::Getters;
 
 use crate::constants::misc::TEAM_MAX_CAPACITY;
 
@@ -8,7 +9,7 @@ pub type Luck = f64;
 
 /// A record that represents a players luck items such that
 /// two personal lucks are summed rather than list appended
-#[derive(PartialEq, Debug, Clone, Copy, Default)]
+#[derive(PartialEq, Debug, Clone, Copy, Default, Getters)]
 pub struct LoadoutLuckRecord {
     personal: Luck,
     global: Luck,
@@ -122,8 +123,9 @@ impl PlayerTeamConverter {
             additional_unhooks,
         } = plr.0;
 
-        let uta_contribution =
-            up_the_ante_coeff.map_or(0.0, |x| x * f64::from(self.living_other_than_self_count.into_inner()));
+        let uta_contribution = up_the_ante_coeff.map_or(0.0, |x| {
+            x * f64::from(self.living_other_than_self_count.into_inner())
+        });
 
         let final_global = global + uta_contribution;
         let personal_data = {
@@ -191,8 +193,103 @@ mod tests {
     use super::*;
     use crate::constants::*;
     use float_cmp::assert_approx_eq;
+    use proptest::prelude::*;
 
     const EPSILON_FOUR_SIG_DIGITS: f64 = 0.00001;
+
+    /// arb is a module that governs how to create and compose arbitrary
+    /// inputs, but it does not perform any tests.
+    mod arb {
+        use super::*;
+        prop_compose! {
+            pub fn prob()(luck in 0.0_f64..1.0_f64) -> f64 {
+                luck
+            }
+        }
+        pub fn maybe_prob() -> impl Strategy<Value = Option<f64>> {
+            prop_oneof![Just(None), prob().prop_map(Option::Some),]
+        }
+        prop_compose! {
+            pub fn loadout_record()
+                (personal in prob(),
+                global in prob(),
+                up_the_ante_coeff in maybe_prob(),
+                additional_unhooks in 0_i8..100)
+                -> LoadoutLuckRecord {
+                    LoadoutLuckRecord { personal, global, up_the_ante_coeff, additional_unhooks }
+                }
+        }
+    }
+
+    mod loadout_tests {
+        use super::*;
+
+        fn loadout_records_not_overflow(xs: &[LoadoutLuckRecord]) -> bool {
+            (-128_i16..128_i16)
+                .contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
+        }
+
+        proptest! {
+            #[test]
+            fn add_personals(a in arb::loadout_record(), b in arb::loadout_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                assert_eq!(*c.personal(), a.personal() + b.personal())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_globals(a in arb::loadout_record(), b in arb::loadout_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                assert_eq!(*c.global(), a.global() + b.global())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_unhook_modifier(a in arb::loadout_record(), b in arb::loadout_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                assert_eq!(c.additional_unhooks(), a.additional_unhooks() + b.additional_unhooks())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_uta(a in arb::loadout_record(), b in arb::loadout_record()) {
+                prop_assume! ( loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                assert_eq!(c.up_the_ante_coeff, a.up_the_ante_coeff.or(b.up_the_ante_coeff))
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_associative(a in arb::loadout_record(), b in arb::loadout_record(), c in arb::loadout_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b, c]));
+                let (a, b, c) = (&a, &b, &c);
+                let (left, right) = (&(a + b) + c, a + &(b + c));
+                let p_test = |&l, &r| assert_approx_eq!(f64, l, r);
+
+                p_test(left.global(), right.global());
+                p_test(left.personal(), right.personal());
+                assert_eq!(left.up_the_ante_coeff(), right.up_the_ante_coeff());
+                assert_eq!(left.additional_unhooks(), right.additional_unhooks())
+            }
+        }
+        proptest! {
+            #[test]
+            fn ante_prefers_left(a in 0.0_f64..1.0_f64, b in 0.0_f64..1.0) {
+                let left = LoadoutLuckRecord {
+                    up_the_ante_coeff: Some(a),
+                    ..LoadoutLuckRecord::default()
+                };
+                let right = LoadoutLuckRecord {
+                    up_the_ante_coeff: Some(b),
+                    ..LoadoutLuckRecord::default()
+                };
+                assert_eq!(left, &left + &right)
+            }
+        }
+    }
 
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
@@ -214,14 +311,6 @@ mod tests {
         let a = LoadoutLuckRecord::default();
         let b = LoadoutLuckRecord::default();
         assert_eq!(a, b);
-    }
-
-    #[test]
-    fn ante_prefers_left() {
-        let a = LoadoutLuckRecord::from_uta(0.03);
-        let b = LoadoutLuckRecord::from_uta(0.02);
-        let c = &a + &b;
-        assert_eq!(a, c)
     }
 
     // Note that this test is impossible
