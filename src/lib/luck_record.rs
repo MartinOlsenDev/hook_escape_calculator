@@ -29,25 +29,25 @@ impl LoadoutLuckRecord {
             additional_unhooks: 0
         }
     }
-    pub const fn from_personal(personal: Luck) -> Self {
+    pub const fn with_personal(personal: Luck) -> Self {
         Self {
             personal,
             ..Self::const_default()
         }
     }
-    pub const fn from_global(global: Luck) -> Self {
+    pub const fn with_global(global: Luck) -> Self {
         Self {
             global,
             ..Self::const_default()
         }
     }
-    pub const fn from_uta(uta: Luck) -> Self {
+    pub const fn with_uta(uta: Luck) -> Self {
         Self {
             up_the_ante_coeff: Some(uta),
             ..Self::const_default()
         }
     }
-    pub const fn from_unhook_mod(additional_unhooks: i8) -> Self {
+    pub const fn with_unhook_mod(additional_unhooks: i8) -> Self {
         Self {
             additional_unhooks,
             ..Self::const_default()
@@ -162,7 +162,7 @@ impl TeamLuckRecord {
             personals: None
         }
     }
-    pub const fn from_global(luck: Luck) -> Self {
+    pub const fn with_global(luck: Luck) -> Self {
         TeamLuckRecord {
             global: luck,
             personals: None
@@ -329,7 +329,7 @@ mod tests {
             personals.push((perk_luck::SM_TIER3, 3))
         }
 
-        let global_team_luck_record = TeamLuckRecord::from_global(misc::BASE_UNHOOK_CHANCE);
+        let global_team_luck_record = TeamLuckRecord::with_global(misc::BASE_UNHOOK_CHANCE);
 
         &global_team_luck_record
             + (&TeamLuckRecord {

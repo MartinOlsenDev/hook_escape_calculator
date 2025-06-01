@@ -63,7 +63,7 @@ impl Team {
     }
 
     fn collate_luck(&self) -> TeamLuckRecord {
-        let base_luck: TeamLuckRecord = TeamLuckRecord::from_global(k::BASE_UNHOOK_CHANCE);
+        let base_luck: TeamLuckRecord = TeamLuckRecord::with_global(k::BASE_UNHOOK_CHANCE);
         let team_luck_records = self.make_team_luck_records();
 
         team_luck_records.fold(base_luck, |acc, x| &acc + &x)

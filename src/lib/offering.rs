@@ -23,9 +23,9 @@ pub struct OfferingSlot(Option<Offering>);
 impl From<&Offering> for LoadoutLuckRecord {
     fn from(offering: &Offering) -> Self {
         if offering.luck_is_personal() {
-            LoadoutLuckRecord::from_personal(offering.luck_value())
+            LoadoutLuckRecord::with_personal(offering.luck_value())
         } else {
-            LoadoutLuckRecord::from_global(offering.luck_value())
+            LoadoutLuckRecord::with_global(offering.luck_value())
         }
     }
 }

@@ -67,7 +67,7 @@ pub enum PerkName {
 impl From<&Perk> for LoadoutLuckRecord {
     fn from(perk: &Perk) -> Self {
         match perk.name {
-            PerkName::UpTheAnte => LoadoutLuckRecord::from_uta(uta_tier_percent(perk.tier)),
+            PerkName::UpTheAnte => LoadoutLuckRecord::with_uta(uta_tier_percent(perk.tier)),
             PerkName::SlipperyMeat => slippery_meat_record(perk.tier),
         }
     }
@@ -82,12 +82,12 @@ const fn uta_tier_percent(tier: Tier) -> f64 {
 }
 
 fn slippery_meat_record(tier: Tier) -> LoadoutLuckRecord {
-    let unhook_chance_record = LoadoutLuckRecord::from_personal(match tier {
+    let unhook_chance_record = LoadoutLuckRecord::with_personal(match tier {
         Tier::One => k::SM_TIER1,
         Tier::Two => k::SM_TIER2,
         Tier::Three => k::SM_TIER3,
     });
-    let unhook_count_record = LoadoutLuckRecord::from_unhook_mod(3);
+    let unhook_count_record = LoadoutLuckRecord::with_unhook_mod(3);
     &unhook_chance_record + &unhook_count_record
 }
 
