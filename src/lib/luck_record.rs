@@ -2,9 +2,10 @@ use arrayvec::ArrayVec;
 use derive_getters::Getters;
 use itertools::Either;
 
-use crate::constants::misc::TEAM_MAX_CAPACITY;
-
-use super::living_count::LivingCount;
+use super::{
+    living_count::LivingCount,
+    constants::misc::TEAM_MAX_CAPACITY
+};
 
 pub type Luck = f64;
 
