@@ -2,10 +2,7 @@ use arrayvec::ArrayVec;
 use derive_getters::Getters;
 use itertools::Either;
 
-use super::{
-    living_count::LivingCount,
-    constants::misc::TEAM_MAX_CAPACITY
-};
+use super::{constants::misc::TEAM_MAX_CAPACITY, living_count::LivingCount};
 
 pub type Luck = f64;
 
@@ -26,7 +23,7 @@ impl LoadoutLuckRecord {
             personal: 0.0,
             global: 0.0,
             up_the_ante_coeff: None,
-            additional_unhooks: 0
+            additional_unhooks: 0,
         }
     }
     pub const fn with_personal(personal: Luck) -> Self {
@@ -152,20 +149,20 @@ impl PlayerTeamConverter {
 #[derive(Debug, Clone, PartialEq)]
 pub struct TeamLuckRecord {
     global: Luck,
-    personals: Option<ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>>
+    personals: Option<ArrayVec<(Luck, i8), { TEAM_MAX_CAPACITY }>>,
 }
 
 impl TeamLuckRecord {
     const fn const_default() -> Self {
         TeamLuckRecord {
             global: 0.0,
-            personals: None
+            personals: None,
         }
     }
     pub const fn with_global(luck: Luck) -> Self {
         TeamLuckRecord {
             global: luck,
-            personals: None
+            personals: None,
         }
     }
     pub fn luck_unhook_mod_pairs_iter(&self) -> impl Iterator<Item = (Luck, i8)> + '_ {
@@ -202,8 +199,8 @@ impl std::ops::Add for &TeamLuckRecord {
                 let mut left: ArrayVec<(f64, i8), TEAM_MAX_CAPACITY> = left.clone();
                 left.extend(right.clone());
                 Some(left)
-        }
-    };
+            }
+        };
 
         TeamLuckRecord {
             global: self.global + other.global,
@@ -253,66 +250,121 @@ mod tests {
             (-128_i16..128_i16).contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
         }
 
-        proptest! {
-            #[test]
-            fn add_personals(a in arb::loadout_record(), b in arb::loadout_record()) {
-                prop_assume! (loadout_records_not_overflow(&[a, b]));
-                let c = &a + &b;
-                assert_eq!(*c.personal(), a.personal() + b.personal())
-            }
-        }
-        proptest! {
-            #[test]
-            fn add_globals(a in arb::loadout_record(), b in arb::loadout_record()) {
-                prop_assume! (loadout_records_not_overflow(&[a, b]));
-                let c = &a + &b;
-                assert_eq!(*c.global(), a.global() + b.global())
-            }
-        }
-        proptest! {
-            #[test]
-            fn add_unhook_modifier(a in arb::loadout_record(), b in arb::loadout_record()) {
-                prop_assume! (loadout_records_not_overflow(&[a, b]));
-                let c = &a + &b;
-                assert_eq!(c.additional_unhooks(), a.additional_unhooks() + b.additional_unhooks())
-            }
-        }
-        proptest! {
-            #[test]
-            fn add_uta(a in arb::loadout_record(), b in arb::loadout_record()) {
-                prop_assume! ( loadout_records_not_overflow(&[a, b]));
-                let c = &a + &b;
-                assert_eq!(c.up_the_ante_coeff, a.up_the_ante_coeff.or(b.up_the_ante_coeff))
-            }
-        }
-        proptest! {
-            #[test]
-            fn add_associative(a in arb::loadout_record(), b in arb::loadout_record(), c in arb::loadout_record()) {
-                prop_assume! (loadout_records_not_overflow(&[a, b, c]));
-                let (a, b, c) = (&a, &b, &c);
-                let (left, right) = (&(a + b) + c, a + &(b + c));
-                let p_test = |&l, &r| assert_approx_eq!(f64, l, r);
+        mod constructor_tests {
+            use super::*;
 
-                p_test(left.global(), right.global());
-                p_test(left.personal(), right.personal());
-                assert_eq!(left.up_the_ante_coeff(), right.up_the_ante_coeff());
-                assert_eq!(left.additional_unhooks(), right.additional_unhooks())
+            const BASIC: LoadoutLuckRecord = LoadoutLuckRecord::const_default();
+
+            proptest! {
+                #[test]
+                fn personal_sets_only_personal(p in 0.0_f64..1.0_f64) {
+                    let result = LoadoutLuckRecord::with_personal(p);
+
+                    assert_eq!(*result.personal(), p);
+                    assert_eq!(*result.global(), *BASIC.global());
+                    assert_eq!(result.up_the_ante_coeff(),  BASIC.up_the_ante_coeff());
+                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+                }
+            }
+            proptest! {
+                #[test]
+                fn global_sets_only_global(g in 0.0_f64..1.0_f64) {
+                    let result = LoadoutLuckRecord::with_global(g);
+
+                    assert_eq!(*result.global(), g);
+                    assert_eq!(*result.personal(), *BASIC.personal());
+                    assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
+                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+                }
+            }
+            proptest! {
+                #[test]
+                fn uta_sets_only_uta(c in 0.0_f64..1.0_f64) {
+                    let result = LoadoutLuckRecord::with_uta(c);
+
+                    assert_eq!(result.up_the_ante_coeff(), &Some(c));
+                    assert_eq!(*result.personal(), *BASIC.personal());
+                    assert_eq!(*result.global(), *BASIC.global());
+                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+                }
+            }
+            proptest! {
+                #[test]
+                fn unhook_mod_sets_only_modifier(m in -128_i8..=127_i8) {
+                    let result = LoadoutLuckRecord::with_unhook_mod(m);
+
+                    assert_eq!(result.additional_unhooks(), m);
+                    assert_eq!(*result.personal(), *BASIC.personal());
+                    assert_eq!(*result.global(), *BASIC.global());
+                    assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
+                }
             }
         }
-        proptest! {
-            #[test]
-            fn ante_prefers_left(a in 0.0_f64..1.0_f64, b in 0.0_f64..1.0) {
-                let left = LoadoutLuckRecord {
-                    up_the_ante_coeff: Some(a),
-                    ..LoadoutLuckRecord::default()
-                };
-                let right = LoadoutLuckRecord {
-                    up_the_ante_coeff: Some(b),
-                    ..LoadoutLuckRecord::default()
-                };
-                assert_eq!(left, &left + &right)
+
+        mod add_tests {
+            use super::*;
+            proptest! {
+                #[test]
+                fn add_personals(a in arb::loadout_record(), b in arb::loadout_record()) {
+                    prop_assume! (loadout_records_not_overflow(&[a, b]));
+                    let c = &a + &b;
+                    assert_eq!(*c.personal(), a.personal() + b.personal())
+                }
+            }
+            proptest! {
+                #[test]
+                fn add_globals(a in arb::loadout_record(), b in arb::loadout_record()) {
+                    prop_assume! (loadout_records_not_overflow(&[a, b]));
+                    let c = &a + &b;
+                    assert_eq!(*c.global(), a.global() + b.global())
+                }
+            }
+            proptest! {
+                #[test]
+                fn add_unhook_modifier(a in arb::loadout_record(), b in arb::loadout_record()) {
+                    prop_assume! (loadout_records_not_overflow(&[a, b]));
+                    let c = &a + &b;
+                    assert_eq!(c.additional_unhooks(), a.additional_unhooks() + b.additional_unhooks())
+                }
+            }
+            proptest! {
+                #[test]
+                fn add_uta(a in arb::loadout_record(), b in arb::loadout_record()) {
+                    prop_assume! ( loadout_records_not_overflow(&[a, b]));
+                    let c = &a + &b;
+                    assert_eq!(c.up_the_ante_coeff, a.up_the_ante_coeff.or(b.up_the_ante_coeff))
+                }
+            }
+            proptest! {
+                #[test]
+                fn add_associative(a in arb::loadout_record(), b in arb::loadout_record(), c in arb::loadout_record()) {
+                    prop_assume! (loadout_records_not_overflow(&[a, b, c]));
+                    let (a, b, c) = (&a, &b, &c);
+                    let (left, right) = (&(a + b) + c, a + &(b + c));
+                    let p_test = |&l, &r| assert_approx_eq!(f64, l, r);
+
+                    p_test(left.global(), right.global());
+                    p_test(left.personal(), right.personal());
+                    assert_eq!(left.up_the_ante_coeff(), right.up_the_ante_coeff());
+                    assert_eq!(left.additional_unhooks(), right.additional_unhooks())
+                }
+            }
+            proptest! {
+                #[test]
+                fn ante_prefers_left(a in 0.0_f64..1.0_f64, b in 0.0_f64..1.0) {
+                    let left = LoadoutLuckRecord {
+                        up_the_ante_coeff: Some(a),
+                        ..LoadoutLuckRecord::default()
+                    };
+                    let right = LoadoutLuckRecord {
+                        up_the_ante_coeff: Some(b),
+                        ..LoadoutLuckRecord::default()
+                    };
+                    assert_eq!(left, &left + &right)
+                }
             }
         }
+
         proptest! {
             #[test]
             fn equality(a in arb::loadout_record()) {
