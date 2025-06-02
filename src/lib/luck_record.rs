@@ -196,6 +196,10 @@ impl std::ops::Add for &TeamLuckRecord {
             (None, None) => None,
             (Some(x), None) | (None, Some(x)) => Some(x.clone()),
             (Some(left), Some(right)) => {
+                assert!(
+                    left.len() + right.len() <= TEAM_MAX_CAPACITY,
+                    "Wanted to combine to ArrayVecs with combined length >TEAM_MAX_CAPACITY"
+                );
                 let mut left: ArrayVec<(f64, i8), TEAM_MAX_CAPACITY> = left.clone();
                 left.extend(right.clone());
                 Some(left)
