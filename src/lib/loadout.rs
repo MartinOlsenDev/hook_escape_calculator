@@ -36,7 +36,7 @@ impl Loadout {
 // accessors
 impl Loadout {
     /// Any implementation of perk_label is acceptable so long
-    /// as its inverse function exists, it returns unsigned, and 
+    /// as its inverse function exists, it returns unsigned, and
     /// tests::all_perks_valid_index passes
     const fn perk_label(perk: PerkName) -> usize {
         match perk {
@@ -90,9 +90,9 @@ impl Loadout {
 
 #[cfg(test)]
 mod tests {
+    use super::super::perk;
     use super::*;
     use proptest::prelude::*;
-    use super::super::perk;
 
     proptest! {
         #[test]
@@ -100,5 +100,4 @@ mod tests {
             assert!(Loadout::perk_label(perk) < k::PERKSLOT_COUNT)
         }
     }
-
 }

@@ -1,11 +1,11 @@
 use arrayvec::ArrayVec;
 
 use super::{
+    constants::misc as k,
     living_count::{LivingCount, LivingCountError},
     luck_record::{PlayerTeamConverter, TeamLuckRecord},
     player::Player,
     update::{SurvivorId, SurvivorUpdate},
-    constants::misc as k
 };
 
 #[derive(Debug, Clone, Copy, Default, Hash, PartialEq, Eq)]
