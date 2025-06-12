@@ -52,14 +52,11 @@ impl Team {
     }
 
     fn make_team_luck_records(&self) -> impl Iterator<Item = TeamLuckRecord> + '_ {
-        let player_record_iter = self.list().map(|player| player.make_player_luck());
-        let player_converter_iter = (0_usize..(self.0.len()))
-            .map(|id| self.alive_not_counting(&id))
-            .map(PlayerTeamConverter::new);
-
-        player_record_iter
-            .zip(player_converter_iter)
-            .map(|(record, converter)| converter.convert(&record))
+        self.list().enumerate().map(|(id, player)| {
+            let player_luck = player.make_player_luck();
+            let converter = PlayerTeamConverter::new(self.alive_not_counting(&id));
+            converter.convert(&player_luck)
+        })
     }
 
     fn collate_luck(&self) -> TeamLuckRecord {
