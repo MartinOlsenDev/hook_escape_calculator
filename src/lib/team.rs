@@ -1,5 +1,3 @@
-use arrayvec::ArrayVec;
-
 use super::{
     constants::misc as k,
     living_count::{LivingCount, LivingCountError},
@@ -69,9 +67,12 @@ impl Team {
         team_luck_records.fold(base_luck, |acc, x| &acc + &x)
     }
 
-    pub fn luck_output(&self) -> ArrayVec<(f64, f64), { k::TEAM_MAX_CAPACITY }> {
+    pub fn luck_output(&self) -> Vec<(f64, f64)> {
+        let mut output: Vec<(f64, f64)> = Vec::with_capacity(k::TEAM_MAX_CAPACITY);
+
         self.collate_luck()
             .make_single_and_total_unhook_pairs()
-            .collect()
+            .for_each(|x| output.push(x));
+        output
     }
 }

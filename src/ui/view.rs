@@ -1,4 +1,3 @@
-use arrayvec::ArrayVec;
 use iced::{
     Element, Padding,
     widget::{Column, Row, button, checkbox, column, combo_box, container, row, text},
@@ -64,9 +63,9 @@ impl Calculator {
 
         rows = rows.push(column_headers);
 
-        let ids: ArrayVec<SurvivorId, { k::TEAM_MAX_CAPACITY }> = (0..k::TEAM_MAX_CAPACITY)
+        let ids: Vec<SurvivorId> = (0..k::TEAM_MAX_CAPACITY)
             .map(SurvivorId::try_new)
-            .collect::<Result<ArrayVec<SurvivorId, { k::TEAM_MAX_CAPACITY }>, SurvivorIdError>>()
+            .collect::<Result<Vec<SurvivorId>, SurvivorIdError>>()
             .expect(
                 "Can't observe a value >= max capacity in iterator below bound of max capacity.",
             );

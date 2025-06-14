@@ -1,10 +1,8 @@
 use std::borrow::Cow;
 
-use arrayvec::ArrayVec;
 use iced::widget::combo_box;
 
 use hook_escape_calculator::{
-    constants::misc as k,
     offering::{Offering, OfferingSlot},
     perk, team,
 };
@@ -13,21 +11,36 @@ use hook_escape_calculator::{
 pub struct WidgetData {
     pub tier_choices: combo_box::State<TierSlotDisplay>,
     pub offering_choices: combo_box::State<OfferingSlotDisplay>,
-    pub odds: ArrayVec<(String, String), { k::TEAM_MAX_CAPACITY }>,
+    pub odds: Vec<(String, String)>,
 }
 
 impl WidgetData {
+    pub fn from_team(team: &team::Team) -> Self {
+        let tier_choices = TierSlotDisplay::total_combo_box();
+        let offering_choices = OfferingSlotDisplay::total_combo_box();
+        let odds = Self::make_odds(team);
+        Self {
+            tier_choices,
+            offering_choices,
+            odds
+        }
+    }
+
     pub fn renew_odds(&mut self, team: &team::Team) {
+        self.odds = Self::make_odds(team);
+    }
+
+    fn make_odds(team: &team::Team) -> Vec<(String, String)> {
         let f = |num: f64| {
             let num = num * 100.;
             format!("{num:.2}%")
         };
 
-        self.odds = team
+        team
             .luck_output()
             .into_iter()
             .map(|(num1, num2)| (f(num1), f(num2)))
-            .collect();
+            .collect()
     }
 }
 

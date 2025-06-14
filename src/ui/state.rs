@@ -4,7 +4,7 @@ use hook_escape_calculator::team;
 
 use super::{
     message::Message,
-    widget_data::{OfferingSlotDisplay, TierSlotDisplay, WidgetData},
+    widget_data::WidgetData,
 };
 
 #[derive(Debug, Clone)]
@@ -56,25 +56,7 @@ pub struct Calculator {
 impl std::default::Default for Calculator {
     fn default() -> Self {
         let team = team::Team::default();
-        let widgets = {
-            let tier_choices = TierSlotDisplay::total_combo_box();
-
-            let offering_choices = OfferingSlotDisplay::total_combo_box();
-
-            let empty_odds = {
-                let f = || "%0.00".to_string();
-                core::array::from_fn(|_| (f(), f()))
-            };
-            let odds = empty_odds.into();
-
-            let mut widgets = WidgetData {
-                tier_choices,
-                offering_choices,
-                odds,
-            };
-            widgets.renew_odds(&team);
-            widgets
-        };
+        let widgets = WidgetData::from_team(&team);
         Calculator { team, widgets }
     }
 }
