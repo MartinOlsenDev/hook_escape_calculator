@@ -1,0 +1,7 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 3eeed54a334eb57497f3d6b449bfa09e965bfc115aaf2699ae6e759c9933dbbb # shrinks to team = Team([Player { loadout: Loadout { perks: [PerkSlot(None), PerkSlot(None)], offering: OfferingSlot(None) }, is_alive: false }, Player { loadout: Loadout { perks: [PerkSlot(None), PerkSlot(None)], offering: OfferingSlot(None) }, is_alive: false }, Player { loadout: Loadout { perks: [PerkSlot(None), PerkSlot(None)], offering: OfferingSlot(None) }, is_alive: false }, Player { loadout: Loadout { perks: [PerkSlot(None), PerkSlot(None)], offering: OfferingSlot(None) }, is_alive: false }])

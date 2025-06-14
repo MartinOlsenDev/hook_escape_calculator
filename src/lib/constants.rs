@@ -27,3 +27,27 @@ pub mod misc {
 
     pub const BASE_UNHOOK_CHANCE: f64 = 0.04;
 }
+
+/// Observations are things we know about the universe of the application that the
+/// compiler cannot prove. We can test against our observations of the world
+/// in tests.
+#[cfg(test)]
+pub mod observations {
+    // awful, awful pow implementation--but does work in const
+    // context for small powers
+    const fn const_power(x: f64, p: i8) -> f64 {
+        if p <= 0 {
+            1.
+        } else {
+            x * const_power(x, p - 1)
+        }
+    }
+
+    pub const MIN_UNHOOK_ATTEMPTS: i8 = 3;
+    pub const MAX_UNHOOK_ATTEMPTS: i8 = 6;
+
+    pub const MAX_SINGLE_LUCK: f64 = 0.56;
+    pub const MIN_SINGLE_LUCK: f64 = 0.04;
+    pub const MIN_MULTIPLE_LUCK: f64 = 1. - const_power(1. - MIN_SINGLE_LUCK, MIN_UNHOOK_ATTEMPTS);
+    pub const MAX_MULTIPLE_LUCK: f64 = 1. - const_power(1. - MAX_SINGLE_LUCK, MAX_UNHOOK_ATTEMPTS);
+}

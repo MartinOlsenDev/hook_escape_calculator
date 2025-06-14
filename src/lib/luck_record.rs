@@ -214,6 +214,57 @@ impl std::ops::Add for &TeamLuckRecord {
 }
 
 #[cfg(test)]
+mod arb {
+    use super::super::{offering::arb::offering, perk::arb::perk, team};
+    use super::*;
+    use proptest::prelude::*;
+
+    mod arb_loadout_item {
+        use super::*;
+        #[derive(Debug, Clone)]
+        pub enum LuckItem {
+            Perk(crate::perk::Perk),
+            Offering(crate::offering::Offering),
+        }
+        pub fn loadout_item() -> BoxedStrategy<LuckItem> {
+            prop_oneof![offering_luck_item(), perk_luck_item()].boxed()
+        }
+        prop_compose! {
+            fn perk_luck_item()(perk in perk()) -> LuckItem {
+                LuckItem::Perk(perk)
+            }
+        }
+        prop_compose! {
+            fn offering_luck_item()(offering in offering()) -> LuckItem {
+                LuckItem::Offering(offering)
+            }
+        }
+    }
+    use arb_loadout_item::{LuckItem, loadout_item};
+
+    prop_compose! {
+        pub fn single_loadout_luck_record()(item in loadout_item()) -> LoadoutLuckRecord {
+            match item {
+                LuckItem::Perk(p) => LoadoutLuckRecord::from(&p),
+                LuckItem::Offering(o) => LoadoutLuckRecord::from(&o)
+            }
+        }
+    }
+
+    prop_compose! {
+        pub fn prob()(luck in 0.0_f64..1.0_f64) -> f64 {
+            luck
+        }
+    }
+
+    prop_compose! {
+        pub fn real_team_record()(team in team::arb::team()) -> TeamLuckRecord {
+            team::arb::collate_luck_cfg_test(&team)
+        }
+    }
+}
+
+#[cfg(test)]
 #[allow(clippy::unwrap_used)]
 mod tests {
     use super::*;
@@ -223,162 +274,135 @@ mod tests {
 
     const EPSILON_FOUR_SIG_DIGITS: f64 = 0.00001;
 
-    /// arb is a module that governs how to create and compose arbitrary
-    /// inputs, but it does not perform any tests.
-    mod arb {
-        use super::*;
-        prop_compose! {
-            pub fn prob()(luck in 0.0_f64..1.0_f64) -> f64 {
-                luck
-            }
-        }
-        pub fn maybe_prob() -> impl Strategy<Value = Option<f64>> {
-            prop_oneof![Just(None), prob().prop_map(Option::Some),]
-        }
-        prop_compose! {
-            pub fn loadout_record()
-                (personal in prob(),
-                global in prob(),
-                up_the_ante_coeff in maybe_prob(),
-                additional_unhooks in 0_i8..100)
-                -> LoadoutLuckRecord {
-                    LoadoutLuckRecord { personal, global, up_the_ante_coeff, additional_unhooks }
-                }
-        }
+    fn loadout_records_not_overflow(xs: &[LoadoutLuckRecord]) -> bool {
+        (-128_i16..128_i16).contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
     }
 
-    mod loadout_tests {
+    mod constructor_tests {
         use super::*;
 
-        fn loadout_records_not_overflow(xs: &[LoadoutLuckRecord]) -> bool {
-            (-128_i16..128_i16).contains(&xs.iter().map(|x| x.additional_unhooks() as i16).sum())
-        }
-
-        mod constructor_tests {
-            use super::*;
-
-            const BASIC: LoadoutLuckRecord = LoadoutLuckRecord::const_default();
-
-            proptest! {
-                #[test]
-                fn personal_sets_only_personal(p in 0.0_f64..1.0_f64) {
-                    let result = LoadoutLuckRecord::with_personal(p);
-
-                    assert_eq!(*result.personal(), p);
-                    assert_eq!(*result.global(), *BASIC.global());
-                    assert_eq!(result.up_the_ante_coeff(),  BASIC.up_the_ante_coeff());
-                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
-                }
-            }
-            proptest! {
-                #[test]
-                fn global_sets_only_global(g in 0.0_f64..1.0_f64) {
-                    let result = LoadoutLuckRecord::with_global(g);
-
-                    assert_eq!(*result.global(), g);
-                    assert_eq!(*result.personal(), *BASIC.personal());
-                    assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
-                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
-                }
-            }
-            proptest! {
-                #[test]
-                fn uta_sets_only_uta(c in 0.0_f64..1.0_f64) {
-                    let result = LoadoutLuckRecord::with_uta(c);
-
-                    assert_eq!(result.up_the_ante_coeff(), &Some(c));
-                    assert_eq!(*result.personal(), *BASIC.personal());
-                    assert_eq!(*result.global(), *BASIC.global());
-                    assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
-                }
-            }
-            proptest! {
-                #[test]
-                fn unhook_mod_sets_only_modifier(m in -128_i8..=127_i8) {
-                    let result = LoadoutLuckRecord::with_unhook_mod(m);
-
-                    assert_eq!(result.additional_unhooks(), m);
-                    assert_eq!(*result.personal(), *BASIC.personal());
-                    assert_eq!(*result.global(), *BASIC.global());
-                    assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
-                }
-            }
-        }
-
-        mod add_tests {
-            use super::*;
-            proptest! {
-                #[test]
-                fn add_personals(a in arb::loadout_record(), b in arb::loadout_record()) {
-                    prop_assume! (loadout_records_not_overflow(&[a, b]));
-                    let c = &a + &b;
-                    assert_eq!(*c.personal(), a.personal() + b.personal())
-                }
-            }
-            proptest! {
-                #[test]
-                fn add_globals(a in arb::loadout_record(), b in arb::loadout_record()) {
-                    prop_assume! (loadout_records_not_overflow(&[a, b]));
-                    let c = &a + &b;
-                    assert_eq!(*c.global(), a.global() + b.global())
-                }
-            }
-            proptest! {
-                #[test]
-                fn add_unhook_modifier(a in arb::loadout_record(), b in arb::loadout_record()) {
-                    prop_assume! (loadout_records_not_overflow(&[a, b]));
-                    let c = &a + &b;
-                    assert_eq!(c.additional_unhooks(), a.additional_unhooks() + b.additional_unhooks())
-                }
-            }
-            proptest! {
-                #[test]
-                fn add_uta(a in arb::loadout_record(), b in arb::loadout_record()) {
-                    prop_assume! ( loadout_records_not_overflow(&[a, b]));
-                    let c = &a + &b;
-                    assert_eq!(c.up_the_ante_coeff, a.up_the_ante_coeff.or(b.up_the_ante_coeff))
-                }
-            }
-            proptest! {
-                #[test]
-                fn add_associative(a in arb::loadout_record(), b in arb::loadout_record(), c in arb::loadout_record()) {
-                    prop_assume! (loadout_records_not_overflow(&[a, b, c]));
-                    let (a, b, c) = (&a, &b, &c);
-                    let (left, right) = (&(a + b) + c, a + &(b + c));
-                    let p_test = |&l, &r| assert_approx_eq!(f64, l, r);
-
-                    p_test(left.global(), right.global());
-                    p_test(left.personal(), right.personal());
-                    assert_eq!(left.up_the_ante_coeff(), right.up_the_ante_coeff());
-                    assert_eq!(left.additional_unhooks(), right.additional_unhooks())
-                }
-            }
-            proptest! {
-                #[test]
-                fn ante_prefers_left(a in 0.0_f64..1.0_f64, b in 0.0_f64..1.0) {
-                    let left = LoadoutLuckRecord {
-                        up_the_ante_coeff: Some(a),
-                        ..LoadoutLuckRecord::default()
-                    };
-                    let right = LoadoutLuckRecord {
-                        up_the_ante_coeff: Some(b),
-                        ..LoadoutLuckRecord::default()
-                    };
-                    assert_eq!(left, &left + &right)
-                }
-            }
-        }
+        const BASIC: LoadoutLuckRecord = LoadoutLuckRecord::const_default();
 
         proptest! {
             #[test]
-            fn equality(a in arb::loadout_record()) {
-                let x = a;
-                let y = a;
-                assert_eq!(&x, &y, "testing PartialEq with {:?} {:?}", &x, &y);
-                assert_eq!(&y, &x, "testing Eq after PartialEq success with {:?} {:?}", &y, &x)
+            fn personal_sets_only_personal(p in 0.0_f64..1.0_f64) {
+                let result = LoadoutLuckRecord::with_personal(p);
+
+                prop_assert_eq!(*result.personal(), p);
+                prop_assert_eq!(*result.global(), *BASIC.global());
+                prop_assert_eq!(result.up_the_ante_coeff(),  BASIC.up_the_ante_coeff());
+                prop_assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+            }
+        }
+        proptest! {
+            #[test]
+            fn global_sets_only_global(g in 0.0_f64..1.0_f64) {
+                let result = LoadoutLuckRecord::with_global(g);
+
+                prop_assert_eq!(*result.global(), g);
+                prop_assert_eq!(*result.personal(), *BASIC.personal());
+                prop_assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
+                prop_assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+            }
+        }
+        proptest! {
+            #[test]
+            fn uta_sets_only_uta(c in 0.0_f64..1.0_f64) {
+                let result = LoadoutLuckRecord::with_uta(c);
+
+                prop_assert_eq!(result.up_the_ante_coeff(), &Some(c));
+                prop_assert_eq!(*result.personal(), *BASIC.personal());
+                prop_assert_eq!(*result.global(), *BASIC.global());
+                prop_assert_eq!(result.additional_unhooks(), BASIC.additional_unhooks());
+            }
+        }
+        proptest! {
+            #[test]
+            fn unhook_mod_sets_only_modifier(m in -128_i8..=127_i8) {
+                let result = LoadoutLuckRecord::with_unhook_mod(m);
+
+                prop_assert_eq!(result.additional_unhooks(), m);
+                prop_assert_eq!(*result.personal(), *BASIC.personal());
+                prop_assert_eq!(*result.global(), *BASIC.global());
+                prop_assert_eq!(result.up_the_ante_coeff(), BASIC.up_the_ante_coeff());
             }
         }
     }
+
+    mod add_tests {
+        use super::*;
+        proptest! {
+            #[test]
+            fn add_personals(a in arb::single_loadout_luck_record(), b in arb::single_loadout_luck_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                prop_assert_eq!(*c.personal(), a.personal() + b.personal())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_globals(a in arb::single_loadout_luck_record(), b in arb::single_loadout_luck_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                prop_assert_eq!(*c.global(), a.global() + b.global())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_unhook_modifier(a in arb::single_loadout_luck_record(), b in arb::single_loadout_luck_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                prop_assert_eq!(c.additional_unhooks(), a.additional_unhooks() + b.additional_unhooks())
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_uta(a in arb::single_loadout_luck_record(), b in arb::single_loadout_luck_record()) {
+                prop_assume! ( loadout_records_not_overflow(&[a, b]));
+                let c = &a + &b;
+                prop_assert_eq!(c.up_the_ante_coeff, a.up_the_ante_coeff.or(b.up_the_ante_coeff))
+            }
+        }
+        proptest! {
+            #[test]
+            fn add_associative(a in arb::single_loadout_luck_record(), b in arb::single_loadout_luck_record(), c in arb::single_loadout_luck_record()) {
+                prop_assume! (loadout_records_not_overflow(&[a, b, c]));
+                let (a, b, c) = (&a, &b, &c);
+                let (left, right) = (&(a + b) + c, a + &(b + c));
+                let p_test = |&l, &r| assert_approx_eq!(f64, l, r);
+
+                p_test(left.global(), right.global());
+                p_test(left.personal(), right.personal());
+                prop_assert_eq!(left.up_the_ante_coeff(), right.up_the_ante_coeff());
+                prop_assert_eq!(left.additional_unhooks(), right.additional_unhooks())
+            }
+        }
+        proptest! {
+            #[test]
+            fn ante_prefers_left(a in 0.0_f64..1.0_f64, b in 0.0_f64..1.0) {
+                let left = LoadoutLuckRecord {
+                    up_the_ante_coeff: Some(a),
+                    ..LoadoutLuckRecord::default()
+                };
+                let right = LoadoutLuckRecord {
+                    up_the_ante_coeff: Some(b),
+                    ..LoadoutLuckRecord::default()
+                };
+                prop_assert_eq!(left, &left + &right)
+            }
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn equality(a in arb::single_loadout_luck_record()) {
+            let x = a;
+            let y = a;
+            prop_assert_eq!(&x, &y, "testing PartialEq with {:?} {:?}", &x, &y);
+            prop_assert_eq!(&y, &x, "testing Eq after PartialEq success with {:?} {:?}", &y, &x)
+        }
+    }
+
     fn altruistic_team() -> TeamLuckRecord {
         let mut personals = ArrayVec::new();
         for _ in 0..3 {

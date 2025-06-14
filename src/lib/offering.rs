@@ -66,3 +66,27 @@ impl std::fmt::Display for Offering {
         )
     }
 }
+
+#[cfg(test)]
+pub mod arb {
+    use super::*;
+    use proptest::prelude::*;
+
+    pub fn offering() -> impl Strategy<Value = Offering> {
+        let possibles: Vec<_> = Offering::iter().collect();
+        prop::sample::select(possibles)
+    }
+    prop_compose! {
+        fn some_perk_slot()(offering in offering()) -> OfferingSlot {
+            OfferingSlot::new(Some(offering))
+        }
+    }
+    pub fn offering_slot_strategy() -> BoxedStrategy<OfferingSlot> {
+        prop_oneof![Just(OfferingSlot::new(None)), some_perk_slot()].boxed()
+    }
+    prop_compose! {
+        pub fn offering_slot()(offering in offering_slot_strategy()) -> OfferingSlot {
+            offering
+        }
+    }
+}

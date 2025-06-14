@@ -2,10 +2,7 @@ use iced::{Size, Task, window};
 
 use hook_escape_calculator::team;
 
-use super::{
-    message::Message,
-    widget_data::WidgetData,
-};
+use super::{message::Message, widget_data::WidgetData};
 
 #[derive(Debug, Clone)]
 pub struct App {

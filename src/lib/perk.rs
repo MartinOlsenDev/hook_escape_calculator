@@ -12,12 +12,6 @@ pub struct Perk {
     tier: Tier,
 }
 
-#[nutype(
-    derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, AsRef, Deref),
-    default = None
-)]
-pub struct PerkSlot(Option<Perk>);
-
 impl Perk {
     pub const fn new(name: PerkName, tier: Tier) -> Perk {
         Perk { name, tier }
@@ -26,6 +20,12 @@ impl Perk {
         self.tier = tier
     }
 }
+
+#[nutype(
+    derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, AsRef, Deref),
+    default = None
+)]
+pub struct PerkSlot(Option<Perk>);
 
 #[nutype(derive(Debug, Clone, Copy, PartialEq, Eq, Hash))]
 pub struct TierSlot(Option<Tier>);
@@ -95,11 +95,40 @@ fn slippery_meat_record(tier: Tier) -> LoadoutLuckRecord {
 #[cfg(test)]
 pub mod arb {
     use super::*;
+    use prop::collection::HashSetStrategy;
     use proptest::prelude::*;
 
     pub fn name() -> impl Strategy<Value = PerkName> {
         let perks: Vec<PerkName> = PerkName::iter().collect();
         prop::sample::select(perks)
+    }
+    pub fn dinstinct_names(n: usize) -> HashSetStrategy<impl Strategy<Value = PerkName>> {
+        proptest::collection::hash_set(name(), n)
+    }
+    pub fn tier() -> impl Strategy<Value = Tier> {
+        let tiers: Vec<_> = Tier::iter().collect();
+        prop::sample::select(tiers)
+    }
+    prop_compose! {
+        fn some_tier_slot()(tier in tier()) -> TierSlot {
+            TierSlot::new(Some(tier))
+        }
+    }
+    pub fn tier_slot() -> BoxedStrategy<TierSlot> {
+        prop_oneof![Just(TierSlot::new(None)), some_tier_slot()].boxed()
+    }
+    prop_compose! {
+        pub fn perk()(name in name(), tier in tier()) -> Perk {
+            Perk::new(name, tier)
+        }
+    }
+    prop_compose! {
+        fn some_perk_slot()(perk in perk()) -> PerkSlot {
+            PerkSlot::new(Some(perk))
+        }
+    }
+    pub fn perk_slot() -> BoxedStrategy<PerkSlot> {
+        prop_oneof![Just(PerkSlot::new(None)), some_perk_slot()].boxed()
     }
 }
 /// Actual test module

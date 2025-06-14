@@ -76,3 +76,59 @@ impl Team {
         output
     }
 }
+
+#[cfg(test)]
+pub mod arb {
+    use super::super::player;
+    use super::*;
+    use proptest::prelude::*;
+
+    prop_compose! {
+        pub fn team()(players in prop::collection::vec(player::arb::player(), k::TEAM_MAX_CAPACITY)) -> Team {
+            let mut team = [Player::default(); k::TEAM_MAX_CAPACITY];
+
+            for (i, player) in players.into_iter().take(k::TEAM_MAX_CAPACITY).enumerate() {
+                team[i] = player;
+            }
+
+            Team(team)
+        }
+    }
+
+    pub fn collate_luck_cfg_test(t: &Team) -> TeamLuckRecord {
+        t.collate_luck()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::super::constants::observations as obs;
+    use super::*;
+    use proptest::prelude::*;
+
+    proptest! {
+        #[test]
+        fn no_player_single_try_less_than_min_single_luck(team in arb::team()) {
+            let lucks = team.luck_output();
+            let all_single_lucks: Vec<f64> = lucks.into_iter().map(|(single, _)| single).collect();
+            let single_lucks_gte_min: Vec<bool> = all_single_lucks.into_iter().map(|luck| luck >= obs::MIN_SINGLE_LUCK).collect();
+            let all_single_lucks_gte_min: bool = single_lucks_gte_min.into_iter().all(|x| x);
+
+
+            prop_assert!(all_single_lucks_gte_min)
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn no_player_single_try_more_than_max_single_luck(team in arb::team()) {
+            let lucks = team.luck_output();
+            let all_single_lucks: Vec<f64> = lucks.into_iter().map(|(single, _)| single).collect();
+            let single_lucks_lte_min: Vec<bool> = all_single_lucks.into_iter().map(|luck| luck <= obs::MAX_SINGLE_LUCK).collect();
+            let all_single_lucks_lte_min: bool = single_lucks_lte_min.into_iter().all(|x| x);
+
+
+            prop_assert!(all_single_lucks_lte_min)
+        }
+    }
+}

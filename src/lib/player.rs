@@ -62,3 +62,24 @@ impl Default for Player {
         }
     }
 }
+
+#[cfg(test)]
+pub mod arb {
+    use super::super::loadout;
+    use super::*;
+    use proptest::prelude::*;
+
+    prop_compose! {
+        pub fn player()(
+            loadout in loadout::arb::loadout(),
+            is_alive in 0..1
+        ) -> Player {
+            let is_alive = is_alive != 0;
+
+            Player {
+                loadout,
+                is_alive
+            }
+        }
+    }
+}

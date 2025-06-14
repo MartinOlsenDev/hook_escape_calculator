@@ -89,6 +89,37 @@ impl Loadout {
 }
 
 #[cfg(test)]
+pub mod arb {
+    use super::super::offering;
+    use super::super::perk;
+    use super::*;
+    use proptest::prelude::*;
+
+    prop_compose! {
+        pub fn loadout()(
+            perk_names in perk::arb::dinstinct_names(k::PERKSLOT_COUNT),
+            perk_tiers in prop::collection::vec(perk::arb::tier_slot(), k::PERKSLOT_COUNT),
+            offering in offering::arb::offering_slot_strategy()
+        ) -> Loadout {
+            let iter = perk_names.into_iter().zip(
+                perk_tiers.into_iter()
+            ).map(|(name, tier_slot)| {
+                perk::PerkSlot::new(tier_slot.into_inner().map(|tier| perk::Perk::new(name, tier)))
+            });
+            let mut perks: [PerkSlot; k::PERKSLOT_COUNT] = [PerkSlot::new(None); k::PERKSLOT_COUNT];
+            for (i, perk_slot) in iter.take(k::PERKSLOT_COUNT).enumerate() {
+                perks[i] = perk_slot;
+            }
+
+            Loadout {
+                perks,
+                offering
+            }
+        }
+    }
+}
+
+#[cfg(test)]
 mod tests {
     use super::super::perk;
     use super::*;

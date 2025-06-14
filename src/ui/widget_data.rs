@@ -22,7 +22,7 @@ impl WidgetData {
         Self {
             tier_choices,
             offering_choices,
-            odds
+            odds,
         }
     }
 
@@ -36,8 +36,7 @@ impl WidgetData {
             format!("{num:.2}%")
         };
 
-        team
-            .luck_output()
+        team.luck_output()
             .into_iter()
             .map(|(num1, num2)| (f(num1), f(num2)))
             .collect()
